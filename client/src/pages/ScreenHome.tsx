@@ -12,6 +12,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import React from "react";
+import { Link } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -94,7 +95,7 @@ export const ScreenHome = (): JSX.Element => {
           <h2 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#8b8585] text-2xl text-center">
             Criadores sugeridos
           </h2>
-          <Button variant="ghost" className="absolute right-0" size="icon">
+          <Button variant="ghost" className="absolute right-0" size="icon" data-testid="button-view-more-creators">
             <ChevronRightIcon className="w-10 h-10" />
           </Button>
         </div>
@@ -147,7 +148,10 @@ export const ScreenHome = (): JSX.Element => {
                     </p>
                   </div>
 
-                  <Button className="absolute w-20 h-[30px] top-[30px] right-[21px] bg-[#e71d36] rounded-[40px] hover:bg-[#c41a2f]">
+                  <Button 
+                    className="absolute w-20 h-[30px] top-[30px] right-[21px] bg-[#e71d36] rounded-[40px] hover:bg-[#c41a2f]"
+                    data-testid={`button-follow-${creator.id}`}
+                  >
                     <span className="[font-family:'Inria_Sans',Helvetica] font-bold text-white text-[13px]">
                       Seguir
                     </span>
@@ -196,7 +200,7 @@ export const ScreenHome = (): JSX.Element => {
                 há 2 dias
               </span>
 
-              <Button variant="ghost" size="icon" className="p-0">
+              <Button variant="ghost" size="icon" className="p-0" data-testid="button-post-options">
                 <MoreVerticalIcon className="w-6 h-6 text-[#5d5b5b]" />
               </Button>
             </div>
@@ -214,19 +218,19 @@ export const ScreenHome = (): JSX.Element => {
           <CardFooter className="p-0">
             <div className="w-full h-[78px] bg-white rounded-[0px_0px_10px_10px] overflow-hidden">
               <div className="flex justify-between items-center px-8 pt-3.5">
-                <Button variant="ghost" size="icon" className="p-0">
+                <Button variant="ghost" size="icon" className="p-0" data-testid="button-like-post">
                   <HeartIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
                 </Button>
 
-                <Button variant="ghost" size="icon" className="p-0">
+                <Button variant="ghost" size="icon" className="p-0" data-testid="button-comment-post">
                   <MessageSquareIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
                 </Button>
 
-                <Button variant="ghost" size="icon" className="p-0">
+                <Button variant="ghost" size="icon" className="p-0" data-testid="button-tip-post">
                   <DollarSignIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
                 </Button>
 
-                <Button variant="ghost" size="icon" className="p-0">
+                <Button variant="ghost" size="icon" className="p-0" data-testid="button-bookmark-post">
                   <BookmarkIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
                 </Button>
               </div>
@@ -246,25 +250,33 @@ export const ScreenHome = (): JSX.Element => {
 
       {/* Bottom navigation */}
       <div className="flex w-[440px] items-center justify-center gap-[30px] px-[5px] py-2.5 fixed bottom-0 left-0 bg-white rounded-[30px_30px_0px_0px] overflow-hidden shadow-[3px_4px_4px_#00000040]">
-        <Button variant="ghost" size="icon" className="p-0">
+        <Button variant="ghost" size="icon" className="p-0" data-testid="nav-home">
           <HomeIcon className="w-[43px] h-9 text-[#e71d36]" />
         </Button>
 
-        <Button variant="ghost" size="icon" className="p-0">
-          <MessageCircleIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
-        </Button>
+        <Link href="/messages">
+          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-messages">
+            <MessageCircleIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
+          </Button>
+        </Link>
 
-        <Button variant="ghost" size="icon" className="p-0">
-          <SearchIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
-        </Button>
+        <Link href="/search">
+          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
+            <SearchIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
+          </Button>
+        </Link>
 
-        <Button variant="ghost" size="icon" className="p-0">
-          <BellIcon className="w-[43px] h-[43px] text-[#5d5b5b]" />
-        </Button>
+        <Link href="/notifications">
+          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
+            <BellIcon className="w-[43px] h-[43px] text-[#5d5b5b]" />
+          </Button>
+        </Link>
 
-        <Button variant="ghost" size="icon" className="p-0">
-          <UserIcon className="w-[50px] h-[49px] text-[#5d5b5b]" />
-        </Button>
+        <Link href="/profile">
+          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-profile">
+            <UserIcon className="w-[50px] h-[49px] text-[#5d5b5b]" />
+          </Button>
+        </Link>
       </div>
     </div>
   );
