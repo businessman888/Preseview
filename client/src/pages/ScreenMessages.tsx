@@ -77,11 +77,21 @@ export const ScreenMessages = (): JSX.Element => {
           <Card
             key={conversation.id}
             className="bg-white rounded-lg border border-[#cccccc] hover:bg-gray-50 cursor-pointer transition-colors"
+            onClick={() => {
+              console.log(`Abrindo conversa com ${conversation.name}`);
+            }}
             data-testid={`card-conversation-${conversation.id}`}
           >
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
-                <Avatar className="w-12 h-12">
+                <Avatar 
+                  className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log(`Navegando para o perfil de ${conversation.name}`);
+                  }}
+                  data-testid={`avatar-${conversation.id}`}
+                >
                   <AvatarImage
                     src={conversation.avatar}
                     alt={conversation.name}

@@ -120,11 +120,21 @@ export const ScreenNotifications = (): JSX.Element => {
             className={`rounded-lg border border-[#cccccc] hover:bg-gray-50 cursor-pointer transition-colors ${
               notification.isNew ? "bg-blue-50" : "bg-white"
             }`}
+            onClick={() => {
+              console.log(`Navegando para notificação de ${notification.user}`);
+            }}
             data-testid={`notification-${notification.id}`}
           >
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
-                <Avatar className="w-12 h-12">
+                <Avatar 
+                  className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log(`Navegando para o perfil de ${notification.user}`);
+                  }}
+                  data-testid={`avatar-${notification.id}`}
+                >
                   <AvatarImage
                     src={notification.avatar}
                     alt={notification.user}
@@ -158,6 +168,10 @@ export const ScreenNotifications = (): JSX.Element => {
                   {notification.type === "follow" && (
                     <Button
                       className="bg-[#e71d36] hover:bg-[#c41a2f] text-white px-3 py-1 rounded-full text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log(`Seguindo de volta ${notification.user}`);
+                      }}
                       data-testid={`button-follow-back-${notification.id}`}
                     >
                       Seguir

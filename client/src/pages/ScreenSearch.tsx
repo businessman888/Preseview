@@ -98,7 +98,11 @@ export const ScreenSearch = (): JSX.Element => {
               {recentSearches.map((search, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-[#cccccc]"
+                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-[#cccccc] cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setSearchQuery(search);
+                    console.log(`Pesquisando por: ${search}`);
+                  }}
                   data-testid={`recent-search-${index}`}
                 >
                   <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
@@ -121,6 +125,10 @@ export const ScreenSearch = (): JSX.Element => {
               <Card
                 key={topic.id}
                 className="bg-white rounded-lg border border-[#cccccc] hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => {
+                  setSearchQuery(topic.tag);
+                  console.log(`Explorando tendência: ${topic.tag}`);
+                }}
                 data-testid={`trend-${topic.id}`}
               >
                 <CardContent className="p-4">
@@ -145,12 +153,22 @@ export const ScreenSearch = (): JSX.Element => {
             {suggestedCreators.map((creator) => (
               <Card
                 key={creator.id}
-                className="bg-white rounded-lg border border-[#cccccc]"
+                className="bg-white rounded-lg border border-[#cccccc] cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => {
+                  console.log(`Navegando para o perfil de ${creator.name}`);
+                }}
                 data-testid={`creator-${creator.id}`}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <Avatar className="w-12 h-12">
+                    <Avatar 
+                      className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log(`Navegando para o perfil de ${creator.name}`);
+                      }}
+                      data-testid={`avatar-creator-${creator.id}`}
+                    >
                       <AvatarImage
                         src={creator.avatar}
                         alt={creator.name}
@@ -187,6 +205,10 @@ export const ScreenSearch = (): JSX.Element => {
 
                     <Button
                       className="bg-[#e71d36] hover:bg-[#c41a2f] text-white px-4 py-1 rounded-full text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log(`Seguindo ${creator.name}`);
+                      }}
                       data-testid={`button-follow-${creator.id}`}
                     >
                       Seguir

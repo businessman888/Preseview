@@ -126,7 +126,11 @@ export const ScreenProfile = (): JSX.Element => {
               </div>
               
               <div className="flex space-x-6 mb-3">
-                <div className="text-center">
+                <div 
+                  className="text-center cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => console.log("Visualizando posts")}
+                  data-testid="stats-posts"
+                >
                   <div className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
                     {userProfile.posts}
                   </div>
@@ -134,7 +138,11 @@ export const ScreenProfile = (): JSX.Element => {
                     Posts
                   </div>
                 </div>
-                <div className="text-center">
+                <div 
+                  className="text-center cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => console.log("Visualizando seguidores")}
+                  data-testid="stats-followers"
+                >
                   <div className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
                     {userProfile.followers}
                   </div>
@@ -142,7 +150,11 @@ export const ScreenProfile = (): JSX.Element => {
                     Seguidores
                   </div>
                 </div>
-                <div className="text-center">
+                <div 
+                  className="text-center cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => console.log("Visualizando seguindo")}
+                  data-testid="stats-following"
+                >
                   <div className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
                     {userProfile.following}
                   </div>
@@ -154,6 +166,9 @@ export const ScreenProfile = (): JSX.Element => {
 
               <Button
                 className="w-full bg-[#e71d36] hover:bg-[#c41a2f] text-white rounded-lg"
+                onClick={() => {
+                  console.log("Abrindo edição de perfil");
+                }}
                 data-testid="button-edit-profile"
               >
                 Editar Perfil
@@ -213,6 +228,9 @@ export const ScreenProfile = (): JSX.Element => {
               <div
                 key={post.id}
                 className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                onClick={() => {
+                  console.log(`Abrindo post ${post.id} em tela cheia`);
+                }}
                 data-testid={`post-${post.id}`}
               >
                 <img
