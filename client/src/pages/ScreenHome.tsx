@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { Link } from "wouter";
+import { useInteractions } from "@/hooks/use-interactions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,17 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export const ScreenHome = (): JSX.Element => {
+  const {
+    likedPosts,
+    bookmarkedPosts,
+    followedCreators,
+    toggleLike,
+    toggleBookmark,
+    toggleFollow,
+    handleComment,
+    handleTip,
+  } = useInteractions();
+
   // Data for the creator profiles in the horizontal scroll
   const creatorProfiles = [
     { id: 1, src: "/figmaAssets/ellipse-4.png", alt: "Creator profile" },
@@ -75,7 +87,14 @@ export const ScreenHome = (): JSX.Element => {
       <ScrollArea className="relative w-[411px] h-[95px]">
         <div className="flex space-x-[25px]">
           {creatorProfiles.map((profile) => (
-            <Avatar key={profile.id} className="w-20 h-20">
+            <Avatar 
+              key={profile.id} 
+              className="w-20 h-20 cursor-pointer hover:opacity-80 transition-opacity border-2 border-transparent hover:border-[#e71d36]"
+              onClick={() => {
+                console.log(`Navegando para o perfil ${profile.id}`);
+              }}
+              data-testid={`avatar-creator-${profile.id}`}
+            >
               <AvatarImage
                 src={profile.src}
                 alt={profile.alt}
@@ -105,7 +124,7 @@ export const ScreenHome = (): JSX.Element => {
           {suggestedCreators.map((creator, index) => (
             <Card
               key={creator.id}
-              className="absolute w-[380px] h-64 rounded-[30px] overflow-hidden"
+              className="absolute w-[380px] h-64 rounded-[30px] overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
               style={{
                 top: index === 0 ? "0" : "286px",
                 left: "0",
@@ -113,6 +132,11 @@ export const ScreenHome = (): JSX.Element => {
                 backgroundSize: "cover",
                 backgroundPosition: "50% 50%",
               }}
+              onClick={() => {
+                // Navigate to creator profile - you can implement this later
+                console.log(`Navegando para o perfil de ${creator.name}`);
+              }}
+              data-testid={`card-creator-${creator.id}`}
             >
               <CardContent className="p-0">
                 <div className="relative h-[138px] top-[118px]">
@@ -149,11 +173,19 @@ export const ScreenHome = (): JSX.Element => {
                   </div>
 
                   <Button 
-                    className="absolute w-20 h-[30px] top-[30px] right-[21px] bg-[#e71d36] rounded-[40px] hover:bg-[#c41a2f]"
+                    className={`absolute w-20 h-[30px] top-[30px] right-[21px] rounded-[40px] transition-colors ${
+                      followedCreators.has(creator.id.toString())
+                        ? "bg-[#8b8585] hover:bg-[#6b6565] text-white"
+                        : "bg-[#e71d36] hover:bg-[#c41a2f] text-white"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFollow(creator.id.toString(), creator.name);
+                    }}
                     data-testid={`button-follow-${creator.id}`}
                   >
-                    <span className="[font-family:'Inria_Sans',Helvetica] font-bold text-white text-[13px]">
-                      Seguir
+                    <span className="[font-family:'Inria_Sans',Helvetica] font-bold text-[13px]">
+                      {followedCreators.has(creator.id.toString()) ? "Seguindo" : "Seguir"}
                     </span>
                   </Button>
                 </div>
@@ -175,10 +207,19 @@ export const ScreenHome = (): JSX.Element => {
 
       {/* Post section */}
       <div className="relative self-stretch w-full h-[578px]">
-        <Card className="relative w-[410px] h-[524px] top-[26px] left-[15px] rounded-[10px] overflow-hidden border border-solid border-[#cccccc]">
+        <Card 
+          className="relative w-[410px] h-[524px] top-[26px] left-[15px] rounded-[10px] overflow-hidden border border-solid border-[#cccccc] cursor-pointer hover:shadow-lg transition-shadow"
+          data-testid="card-main-post"
+        >
           <CardHeader className="p-0">
             <div className="w-full h-[83px] bg-white rounded-[10px_10px_0px_0px] overflow-hidden flex items-center px-4">
-              <Avatar className="w-[54px] h-[54px]">
+              <Avatar 
+                className="w-[54px] h-[54px] cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => {
+                  console.log("Navegando para o perfil de Mariana Cardoso");
+                }}
+                data-testid="avatar-post-author"
+              >
                 <AvatarImage
                   src="/figmaAssets/ellipse-19.png"
                   alt="Mariana Cardoso"
@@ -187,7 +228,13 @@ export const ScreenHome = (): JSX.Element => {
                 <AvatarFallback>MC</AvatarFallback>
               </Avatar>
 
-              <div className="ml-3 flex flex-col">
+              <div 
+                className="ml-3 flex flex-col cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => {
+                  console.log("Navegando para o perfil de Mariana Cardoso");
+                }}
+                data-testid="text-post-author-info"
+              >
                 <span className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-base">
                   Mariana Cardoso
                 </span>
@@ -208,30 +255,74 @@ export const ScreenHome = (): JSX.Element => {
 
           <CardContent className="p-0">
             <div
-              className="w-[410px] h-[363px]"
+              className="w-[410px] h-[363px] cursor-pointer hover:opacity-95 transition-opacity"
               style={{
                 background: "url(/figmaAssets/fttpost2.png) 50% 50% / cover",
               }}
+              onClick={() => {
+                console.log("Abrindo post em tela cheia");
+              }}
+              data-testid="image-post-content"
             />
           </CardContent>
 
           <CardFooter className="p-0">
             <div className="w-full h-[78px] bg-white rounded-[0px_0px_10px_10px] overflow-hidden">
               <div className="flex justify-between items-center px-8 pt-3.5">
-                <Button variant="ghost" size="icon" className="p-0" data-testid="button-like-post">
-                  <HeartIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="p-0" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleLike("main-post");
+                  }}
+                  data-testid="button-like-post"
+                >
+                  <HeartIcon className={`w-[35px] h-[35px] transition-colors ${
+                    likedPosts.has("main-post") ? "text-[#e71d36] fill-current" : "text-[#5d5b5b]"
+                  }`} />
                 </Button>
 
-                <Button variant="ghost" size="icon" className="p-0" data-testid="button-comment-post">
-                  <MessageSquareIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="p-0" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleComment("main-post");
+                  }}
+                  data-testid="button-comment-post"
+                >
+                  <MessageSquareIcon className="w-[35px] h-[35px] text-[#5d5b5b] hover:text-[#e71d36] transition-colors" />
                 </Button>
 
-                <Button variant="ghost" size="icon" className="p-0" data-testid="button-tip-post">
-                  <DollarSignIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="p-0" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTip("main-post");
+                  }}
+                  data-testid="button-tip-post"
+                >
+                  <DollarSignIcon className="w-[35px] h-[35px] text-[#5d5b5b] hover:text-green-500 transition-colors" />
                 </Button>
 
-                <Button variant="ghost" size="icon" className="p-0" data-testid="button-bookmark-post">
-                  <BookmarkIcon className="w-[35px] h-[35px] text-[#5d5b5b]" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="p-0" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleBookmark("main-post");
+                  }}
+                  data-testid="button-bookmark-post"
+                >
+                  <BookmarkIcon className={`w-[35px] h-[35px] transition-colors ${
+                    bookmarkedPosts.has("main-post") ? "text-[#e71d36] fill-current" : "text-[#5d5b5b]"
+                  }`} />
                 </Button>
               </div>
 
