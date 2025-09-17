@@ -10,10 +10,14 @@ import {
   MoreVerticalIcon,
   SearchIcon,
   UserIcon,
+  Camera,
+  Plus,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "wouter";
 import { useInteractions } from "@/hooks/use-interactions";
+import { useStories } from "@/hooks/use-stories";
+import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,8 +27,11 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { StoryViewer } from "@/components/StoryViewer";
+import { CreateStoryModal } from "@/components/CreateStoryModal";
 
 export const ScreenHome = (): JSX.Element => {
+  const { user } = useAuth();
   const {
     likedPosts,
     bookmarkedPosts,
@@ -36,14 +43,21 @@ export const ScreenHome = (): JSX.Element => {
     handleTip,
   } = useInteractions();
 
-  // Data for the creator profiles in the horizontal scroll
-  const creatorProfiles = [
-    { id: 1, src: "/figmaAssets/ellipse-4.png", alt: "Creator profile" },
-    { id: 2, src: "/figmaAssets/frame-14.png", alt: "Creator profile" },
-    { id: 3, src: "/figmaAssets/ellipse-5.png", alt: "Creator profile" },
-    { id: 4, src: "/figmaAssets/ellipse-7.png", alt: "Creator profile" },
-    { id: 5, src: "/figmaAssets/ellipse-8.png", alt: "Creator profile" },
-  ];
+  const { activeStories, isLoadingStories } = useStories();
+  
+  const [selectedStoryIndex, setSelectedStoryIndex] = useState<number | null>(null);
+  const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
+  const [isCreateStoryModalOpen, setIsCreateStoryModalOpen] = useState(false);
+
+  const openStoryViewer = (index: number) => {
+    setSelectedStoryIndex(index);
+    setIsStoryViewerOpen(true);
+  };
+
+  const closeStoryViewer = () => {
+    setIsStoryViewerOpen(false);
+    setSelectedStoryIndex(null);
+  };
 
   // Data for suggested creators
   const suggestedCreators = [
@@ -83,26 +97,59 @@ export const ScreenHome = (): JSX.Element => {
         src="/figmaAssets/head.svg"
       />
 
-      {/* Creator profiles horizontal scroll */}
+      {/* Stories horizontal scroll */}
       <ScrollArea className="relative w-[411px] h-[95px]">
         <div className="flex space-x-[25px]">
-          {creatorProfiles.map((profile) => (
-            <Avatar 
-              key={profile.id} 
-              className="w-20 h-20 cursor-pointer hover:opacity-80 transition-opacity border-2 border-transparent hover:border-[#e71d36]"
-              onClick={() => {
-                console.log(`Navegando para o perfil ${profile.id}`);
-              }}
-              data-testid={`avatar-creator-${profile.id}`}
-            >
-              <AvatarImage
-                src={profile.src}
-                alt={profile.alt}
-                className="object-cover"
-              />
-              <AvatarFallback>CP</AvatarFallback>
-            </Avatar>
-          ))}
+          {/* Create story button for creators */}
+          {user?.userType === 'creator' && (
+            <div className="flex flex-col items-center space-y-1 min-w-[80px]">
+              <Button
+                className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 p-0"
+                onClick={() => setIsCreateStoryModalOpen(true)}
+                data-testid="button-create-story"
+              >
+                <Plus size={32} className="text-white" />
+              </Button>
+              <span className="text-xs text-muted-foreground">Seu story</span>
+            </div>
+          )}
+          
+          {/* Active stories */}
+          {isLoadingStories ? (
+            <div className="flex space-x-[25px]">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="w-20 h-20 rounded-full bg-gray-200 animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            activeStories.map((story, index) => (
+              <div key={story.id} className="flex flex-col items-center space-y-1 min-w-[80px]">
+                <Avatar 
+                  className={`w-20 h-20 cursor-pointer hover:opacity-80 transition-all duration-200 border-2 ${
+                    story.isViewed 
+                      ? "border-gray-300" 
+                      : "border-gradient-to-r from-purple-500 to-pink-500 border-2 bg-gradient-to-r from-purple-500 to-pink-500 p-0.5"
+                  }`}
+                  onClick={() => openStoryViewer(index)}
+                  data-testid={`avatar-story-${story.id}`}
+                >
+                  <div className={`w-full h-full rounded-full overflow-hidden ${!story.isViewed ? "bg-white" : ""}`}>
+                    <AvatarImage
+                      src={story.creator.profileImage || undefined}
+                      alt={`Story de ${story.creator.displayName}`}
+                      className="object-cover"
+                    />
+                    <AvatarFallback>
+                      {story.creator.displayName.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </div>
+                </Avatar>
+                <span className="text-xs text-muted-foreground text-center max-w-[80px] truncate">
+                  {story.creator.displayName}
+                </span>
+              </div>
+            ))
+          )}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
@@ -369,6 +416,22 @@ export const ScreenHome = (): JSX.Element => {
           </Button>
         </Link>
       </div>
+
+      {/* Story Viewer Modal */}
+      {isStoryViewerOpen && selectedStoryIndex !== null && (
+        <StoryViewer
+          stories={activeStories}
+          initialStoryIndex={selectedStoryIndex}
+          isOpen={isStoryViewerOpen}
+          onClose={closeStoryViewer}
+        />
+      )}
+
+      {/* Create Story Modal */}
+      <CreateStoryModal
+        isOpen={isCreateStoryModalOpen}
+        onClose={() => setIsCreateStoryModalOpen(false)}
+      />
     </div>
   );
 };
