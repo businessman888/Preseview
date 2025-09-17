@@ -4,22 +4,29 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 import { ScreenHome } from "@/pages/ScreenHome";
 import { ScreenMessages } from "@/pages/ScreenMessages";
 import { ScreenSearch } from "@/pages/ScreenSearch";
 import { ScreenNotifications } from "@/pages/ScreenNotifications";
 import { ScreenProfile } from "@/pages/ScreenProfile";
+import AuthPage from "@/pages/AuthPage";
 
 function Router() {
   return (
     <Switch>
-      {/* Add pages below */}
-      <Route path="/" component={ScreenHome} />
-      <Route path="/messages" component={ScreenMessages} />
-      <Route path="/search" component={ScreenSearch} />
-      <Route path="/notifications" component={ScreenNotifications} />
-      <Route path="/profile" component={ScreenProfile} />
+      {/* Auth route */}
+      <Route path="/auth" component={AuthPage} />
+      
+      {/* Protected routes */}
+      <ProtectedRoute path="/" component={ScreenHome} />
+      <ProtectedRoute path="/messages" component={ScreenMessages} />
+      <ProtectedRoute path="/search" component={ScreenSearch} />
+      <ProtectedRoute path="/notifications" component={ScreenNotifications} />
+      <ProtectedRoute path="/profile" component={ScreenProfile} />
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
@@ -29,10 +36,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
