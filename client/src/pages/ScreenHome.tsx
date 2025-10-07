@@ -29,6 +29,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { StoryViewer } from "@/components/StoryViewer";
 import { CreateStoryModal } from "@/components/CreateStoryModal";
+import { CreatePostModal } from "@/components/CreatePostModal";
 
 export const ScreenHome = (): JSX.Element => {
   const { user } = useAuth();
@@ -48,6 +49,7 @@ export const ScreenHome = (): JSX.Element => {
   const [selectedStoryIndex, setSelectedStoryIndex] = useState<number | null>(null);
   const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
   const [isCreateStoryModalOpen, setIsCreateStoryModalOpen] = useState(false);
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
 
   const openStoryViewer = (index: number) => {
     setSelectedStoryIndex(index);
@@ -398,11 +400,15 @@ export const ScreenHome = (): JSX.Element => {
           </Button>
         </Link>
 
-        <Link href="/search">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
-            <SearchIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
-          </Button>
-        </Link>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="p-0" 
+          onClick={() => setIsCreatePostModalOpen(true)}
+          data-testid="nav-create-post"
+        >
+          <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
+        </Button>
 
         <Link href="/notifications">
           <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
@@ -431,6 +437,12 @@ export const ScreenHome = (): JSX.Element => {
       <CreateStoryModal
         isOpen={isCreateStoryModalOpen}
         onClose={() => setIsCreateStoryModalOpen(false)}
+      />
+
+      {/* Create Post Modal */}
+      <CreatePostModal
+        isOpen={isCreatePostModalOpen}
+        onClose={() => setIsCreatePostModalOpen(false)}
       />
     </div>
   );
