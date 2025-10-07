@@ -73,6 +73,8 @@ export interface IStorage {
   // Posts
   createPost(post: InsertPost): Promise<Post>;
   getPost(id: number): Promise<Post | undefined>;
+  getPostById(id: number): Promise<Post | undefined>;
+  updatePost(id: number, post: Partial<InsertPost>): Promise<Post | undefined>;
   getPostsByCreator(creatorId: number, limit?: number, offset?: number): Promise<Post[]>;
   getFeedPosts(userId: number, limit?: number, offset?: number): Promise<(Post & { creator: User, isLiked: boolean, isBookmarked: boolean })[]>;
   updatePostStats(postId: number, type: 'like' | 'comment' | 'view', increment: boolean): Promise<void>;
@@ -286,6 +288,24 @@ export class DatabaseStorage implements IStorage {
   async getPost(id: number): Promise<Post | undefined> {
     const [post] = await db.select().from(posts).where(eq(posts.id, id));
     return post || undefined;
+  }
+
+  async getPostById(id: number): Promise<Post | undefined> {
+    const [post] = await db.select().from(posts).where(eq(posts.id, id));
+    return post || undefined;
+  }
+
+  async updatePost(id: number, post: Partial<InsertPost>): Promise<Post | undefined> {
+    const [updatedPost] = await db
+      .update(posts)
+      .set({
+        ...post,
+        updatedAt: new Date(),
+      })
+      .where(eq(posts.id, id))
+      .returning();
+    
+    return updatedPost || undefined;
   }
 
   async getPostsByCreator(creatorId: number, limit = 20, offset = 0): Promise<Post[]> {

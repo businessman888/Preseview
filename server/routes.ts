@@ -126,6 +126,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/posts/creator/:creatorId", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const creatorId = parseInt(req.params.creatorId);
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const posts = await storage.getPostsByCreator(creatorId, limit, offset);
+      res.json(posts);
+    } catch (error) {
+      console.error("Error fetching creator posts:", error);
+      res.status(500).json({ error: "Erro ao buscar posts do criador" });
+    }
+  });
+
+  app.put("/api/posts/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const postId = parseInt(req.params.id);
+      const post = await storage.getPostById(postId);
+      
+      if (!post) {
+        return res.status(404).json({ error: "Post não encontrado" });
+      }
+      
+      // Only the creator can edit their own posts
+      if (post.creatorId !== req.user!.id) {
+        return res.status(403).json({ error: "Você não tem permissão para editar este post" });
+      }
+
+      const { title, content, mediaUrls, tags, isExclusive } = req.body;
+      
+      const updatedPost = await storage.updatePost(postId, {
+        title,
+        content,
+        mediaUrls,
+        tags,
+        isExclusive,
+      });
+
+      res.json(updatedPost);
+    } catch (error) {
+      console.error("Error updating post:", error);
+      res.status(500).json({ error: "Erro ao atualizar post" });
+    }
+  });
+
+  app.delete("/api/posts/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const postId = parseInt(req.params.id);
+      const post = await storage.getPostById(postId);
+      
+      if (!post) {
+        return res.status(404).json({ error: "Post não encontrado" });
+      }
+      
+      // Only the creator can delete their own posts
+      if (post.creatorId !== req.user!.id) {
+        return res.status(403).json({ error: "Você não tem permissão para deletar este post" });
+      }
+
+      await storage.deletePost(postId, req.user!.id);
+      res.sendStatus(204);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      res.status(500).json({ error: "Erro ao deletar post" });
+    }
+  });
+
   // Creators routes
   app.get("/api/creators", async (req, res) => {
     try {
