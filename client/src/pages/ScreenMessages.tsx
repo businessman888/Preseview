@@ -3,15 +3,23 @@ import {
   MessageCircleIcon,
   SearchIcon,
   SendIcon,
+  HomeIcon,
+  BellIcon,
+  UserIcon,
+  Plus,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { CreatePostModal } from "@/components/CreatePostModal";
 
 export const ScreenMessages = (): JSX.Element => {
+  const { user } = useAuth();
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const conversations = [
     {
       id: 1,
@@ -132,7 +140,7 @@ export const ScreenMessages = (): JSX.Element => {
       <div className="flex w-full items-center justify-center gap-[30px] px-[5px] py-2.5 bg-white rounded-[30px_30px_0px_0px] overflow-hidden shadow-[3px_4px_4px_#00000040]">
         <Link href="/">
           <Button variant="ghost" size="icon" className="p-0" data-testid="nav-home">
-            <MessageCircleIcon className="w-[43px] h-9 text-[#5d5b5b]" />
+            <HomeIcon className="w-[43px] h-9 text-[#5d5b5b]" />
           </Button>
         </Link>
 
@@ -140,24 +148,42 @@ export const ScreenMessages = (): JSX.Element => {
           <MessageCircleIcon className="w-[38px] h-[38px] text-[#e71d36]" />
         </Button>
 
-        <Link href="/search">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
-            <SearchIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
+        {user?.userType === 'creator' ? (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="p-0" 
+            onClick={() => setIsCreatePostModalOpen(true)}
+            data-testid="nav-create-post"
+          >
+            <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
           </Button>
-        </Link>
+        ) : (
+          <Link href="/search">
+            <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
+              <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
+            </Button>
+          </Link>
+        )}
 
         <Link href="/notifications">
           <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
-            <MessageCircleIcon className="w-[43px] h-[43px] text-[#5d5b5b]" />
+            <BellIcon className="w-[43px] h-[43px] text-[#5d5b5b]" />
           </Button>
         </Link>
 
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="p-0" data-testid="nav-profile">
-            <MessageCircleIcon className="w-[50px] h-[49px] text-[#5d5b5b]" />
+            <UserIcon className="w-[50px] h-[49px] text-[#5d5b5b]" />
           </Button>
         </Link>
       </div>
+
+      {/* Create Post Modal */}
+      <CreatePostModal
+        isOpen={isCreatePostModalOpen}
+        onClose={() => setIsCreatePostModalOpen(false)}
+      />
     </div>
   );
 };

@@ -9,14 +9,19 @@ import {
   MessageSquareIcon,
   DollarSignIcon,
   UserPlusIcon,
+  Plus,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { CreatePostModal } from "@/components/CreatePostModal";
 
 export const ScreenNotifications = (): JSX.Element => {
+  const { user } = useAuth();
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const notifications = [
     {
       id: 1,
@@ -198,11 +203,23 @@ export const ScreenNotifications = (): JSX.Element => {
           </Button>
         </Link>
 
-        <Link href="/search">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
-            <SearchIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
+        {user?.userType === 'creator' ? (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="p-0" 
+            onClick={() => setIsCreatePostModalOpen(true)}
+            data-testid="nav-create-post"
+          >
+            <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
           </Button>
-        </Link>
+        ) : (
+          <Link href="/search">
+            <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
+              <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
+            </Button>
+          </Link>
+        )}
 
         <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
           <BellIcon className="w-[43px] h-[43px] text-[#e71d36]" />
@@ -214,6 +231,12 @@ export const ScreenNotifications = (): JSX.Element => {
           </Button>
         </Link>
       </div>
+
+      {/* Create Post Modal */}
+      <CreatePostModal
+        isOpen={isCreatePostModalOpen}
+        onClose={() => setIsCreatePostModalOpen(false)}
+      />
     </div>
   );
 };
