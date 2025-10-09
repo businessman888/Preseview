@@ -14,6 +14,11 @@ import {
   storyViews,
   searchHistory,
   trendingHashtags,
+  paymentMethods,
+  transactions,
+  notificationPreferences,
+  privacySettings,
+  blockedUsers,
   type User, 
   type InsertUser,
   type CreatorProfile,
@@ -43,7 +48,17 @@ import {
   type SearchHistory,
   type InsertSearchHistory,
   type TrendingHashtag,
-  type InsertTrendingHashtag
+  type InsertTrendingHashtag,
+  type PaymentMethod,
+  type InsertPaymentMethod,
+  type Transaction,
+  type InsertTransaction,
+  type NotificationPreferences,
+  type InsertNotificationPreferences,
+  type PrivacySettings,
+  type InsertPrivacySettings,
+  type BlockedUser,
+  type InsertBlockedUser
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, desc, asc, and, or, like, sql, gte, lte, count } from "drizzle-orm";
