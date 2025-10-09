@@ -37,6 +37,8 @@ A full-stack JavaScript social media application migrated from Figma to Replit. 
 - [x] All features tested and working
 
 ## Current Features
+- **Unified Account System**: All users create a single account type, with option to upgrade to creator within the platform
+- **Creator Upgrade Flow**: Users can become creators through a dedicated page with subscription price and profile setup
 - Social media feed interface (Homepage)
 - Creator profiles display
 - Post interaction buttons (like, comment, tip, bookmark)
@@ -61,6 +63,12 @@ The application references Figma assets in `/figmaAssets/` directory:
 None specified yet.
 
 ## Recent Changes
+- 2025-10-09: Implemented unified account creation system
+  - Removed user type selection from registration (all new accounts are regular users)
+  - Created "Become Creator" page at `/become-creator` with subscription setup
+  - Added `POST /api/user/become-creator` endpoint for account upgrades
+  - Added "Tornar-se Criador" button in profile for non-creator users
+  - Updated storage layer with `upgradeToCreator()` method
 - 2025-08-03: Initial migration from Figma to Replit completed
 - Project structure examined and documented
 - Created functional navigation system with wouter routing
