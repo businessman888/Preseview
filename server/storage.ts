@@ -62,6 +62,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+  upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }>;
   
   // Creator Profiles
   getCreatorProfile(userId: number): Promise<CreatorProfile | undefined>;
@@ -199,6 +200,37 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
+  }
+
+  async upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }> {
+    // Update user type to creator
+    const [user] = await db
+      .update(users)
+      .set({ 
+        userType: 'creator',
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning();
+
+    if (!user) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    // Create creator profile
+    const [profile] = await db
+      .insert(creatorProfiles)
+      .values({
+        userId,
+        subscriptionPrice: profileData?.subscriptionPrice || 0,
+        description: profileData?.description || null,
+        categories: profileData?.categories || [],
+        socialLinks: profileData?.socialLinks || [],
+        isActive: profileData?.isActive ?? true,
+      })
+      .returning();
+
+    return { user, profile };
   }
 
   // Creator Profiles

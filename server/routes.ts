@@ -7,6 +7,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // sets up /api/register, /api/login, /api/logout, /api/user
   setupAuth(app);
 
+  // User upgrade to creator
+  app.post("/api/user/become-creator", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      // Check if user is already a creator
+      if (req.user!.userType === 'creator') {
+        return res.status(400).json({ error: "Você já é um criador" });
+      }
+
+      const { subscriptionPrice, description, categories } = req.body;
+      
+      const result = await storage.upgradeToCreator(req.user!.id, {
+        subscriptionPrice: subscriptionPrice || 0,
+        description: description || null,
+        categories: categories || [],
+      });
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error upgrading to creator:", error);
+      if (error.message === "Usuário não encontrado") {
+        return res.status(404).json({ error: error.message });
+      }
+      res.status(500).json({ error: "Erro ao se tornar criador" });
+    }
+  });
+
   // Stories routes
   app.get("/api/stories", async (req, res) => {
     try {
