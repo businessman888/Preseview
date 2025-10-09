@@ -166,6 +166,14 @@ export interface IStorage {
   getUserSearchHistory(userId: number, limit?: number): Promise<SearchHistory[]>;
   updateTrendingHashtag(hashtag: string): Promise<void>;
   getTrendingHashtags(limit?: number): Promise<TrendingHashtag[]>;
+  
+  // Notification Preferences
+  getNotificationPreferences(userId: number): Promise<NotificationPreferences | undefined>;
+  updateNotificationPreferences(userId: number, preferences: Partial<InsertNotificationPreferences>): Promise<NotificationPreferences>;
+  
+  // Privacy Settings
+  getPrivacySettings(userId: number): Promise<PrivacySettings | undefined>;
+  updatePrivacySettings(userId: number, settings: Partial<InsertPrivacySettings>): Promise<PrivacySettings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -955,6 +963,66 @@ export class DatabaseStorage implements IStorage {
       .from(trendingHashtags)
       .orderBy(desc(trendingHashtags.count))
       .limit(limit);
+  }
+
+  // Notification Preferences
+  async getNotificationPreferences(userId: number): Promise<NotificationPreferences | undefined> {
+    const [preferences] = await db
+      .select()
+      .from(notificationPreferences)
+      .where(eq(notificationPreferences.userId, userId));
+    
+    if (!preferences) {
+      const [newPreferences] = await db
+        .insert(notificationPreferences)
+        .values({ userId })
+        .returning();
+      return newPreferences;
+    }
+    
+    return preferences;
+  }
+
+  async updateNotificationPreferences(userId: number, preferencesData: Partial<InsertNotificationPreferences>): Promise<NotificationPreferences> {
+    await this.getNotificationPreferences(userId);
+    
+    const [updated] = await db
+      .update(notificationPreferences)
+      .set({ ...preferencesData, updatedAt: new Date() })
+      .where(eq(notificationPreferences.userId, userId))
+      .returning();
+    
+    return updated;
+  }
+
+  // Privacy Settings
+  async getPrivacySettings(userId: number): Promise<PrivacySettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(privacySettings)
+      .where(eq(privacySettings.userId, userId));
+    
+    if (!settings) {
+      const [newSettings] = await db
+        .insert(privacySettings)
+        .values({ userId })
+        .returning();
+      return newSettings;
+    }
+    
+    return settings;
+  }
+
+  async updatePrivacySettings(userId: number, settingsData: Partial<InsertPrivacySettings>): Promise<PrivacySettings> {
+    await this.getPrivacySettings(userId);
+    
+    const [updated] = await db
+      .update(privacySettings)
+      .set({ ...settingsData, updatedAt: new Date() })
+      .where(eq(privacySettings.userId, userId))
+      .returning();
+    
+    return updated;
   }
 }
 

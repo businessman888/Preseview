@@ -23,6 +23,7 @@ function Router() {
       <Route path="/search" component={ScreenSearch} />
       <Route path="/notifications" component={ScreenNotifications} />
       <Route path="/profile" component={ScreenProfile} />
+      <Route path="/settings" component={ScreenSettings} />
       <Route path="/settings/:rest*" component={ScreenSettings} />
       <Route path="/become-creator" component={BecomeCreatorPage} />
       

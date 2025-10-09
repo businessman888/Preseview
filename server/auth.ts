@@ -149,42 +149,50 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      let guestUser = await storage.getUserByUsername("convidado");
-      
-      if (!guestUser) {
-        guestUser = await storage.createUser({
-          username: "convidado",
-          email: "convidado@app.com",
-          password: await hashPassword("123456"),
-          displayName: "Usuário Convidado",
-          userType: "user",
+    try {
+      if (!req.isAuthenticated()) {
+        let guestUser = await storage.getUserByUsername("convidado");
+        
+        if (!guestUser) {
+          guestUser = await storage.createUser({
+            username: "convidado",
+            email: "convidado@app.com",
+            password: await hashPassword("123456"),
+            displayName: "Usuário Convidado",
+            userType: "user",
+          });
+        }
+        
+        return new Promise<void>((resolve) => {
+          req.login(guestUser!, (err) => {
+            if (err) {
+              console.error("Error auto-logging in guest user:", err);
+              return res.status(500).json({ error: "Erro ao criar sessão" });
+            }
+            res.json({ 
+              id: guestUser!.id,
+              username: guestUser!.username,
+              email: guestUser!.email,
+              displayName: guestUser!.displayName,
+              userType: guestUser!.userType,
+              isVerified: guestUser!.isVerified
+            });
+            resolve();
+          });
         });
       }
-      
-      req.login(guestUser, (err) => {
-        if (err) {
-          return res.status(500).json({ error: "Erro ao criar sessão" });
-        }
-        res.json({ 
-          id: guestUser.id,
-          username: guestUser.username,
-          email: guestUser.email,
-          displayName: guestUser.displayName,
-          userType: guestUser.userType,
-          isVerified: guestUser.isVerified
-        });
+      const user = req.user as SelectUser;
+      res.json({ 
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        displayName: user.displayName,
+        userType: user.userType,
+        isVerified: user.isVerified
       });
-      return;
+    } catch (error) {
+      console.error("Error in /api/user:", error);
+      res.status(500).json({ error: "Erro ao obter usuário" });
     }
-    const user = req.user as SelectUser;
-    res.json({ 
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      displayName: user.displayName,
-      userType: user.userType,
-      isVerified: user.isVerified
-    });
   });
 }

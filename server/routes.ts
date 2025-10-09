@@ -604,6 +604,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Notification preferences routes
+  app.get("/api/notification-preferences", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const preferences = await storage.getNotificationPreferences(req.user!.id);
+      res.json(preferences);
+    } catch (error) {
+      console.error("Error fetching notification preferences:", error);
+      res.status(500).json({ error: "Erro ao buscar preferências de notificação" });
+    }
+  });
+
+  app.put("/api/notification-preferences", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const preferences = await storage.updateNotificationPreferences(req.user!.id, req.body);
+      res.json(preferences);
+    } catch (error) {
+      console.error("Error updating notification preferences:", error);
+      res.status(500).json({ error: "Erro ao atualizar preferências de notificação" });
+    }
+  });
+
+  // Privacy settings routes
+  app.get("/api/privacy-settings", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const settings = await storage.getPrivacySettings(req.user!.id);
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching privacy settings:", error);
+      res.status(500).json({ error: "Erro ao buscar configurações de privacidade" });
+    }
+  });
+
+  app.put("/api/privacy-settings", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const settings = await storage.updatePrivacySettings(req.user!.id, req.body);
+      res.json(settings);
+    } catch (error) {
+      console.error("Error updating privacy settings:", error);
+      res.status(500).json({ error: "Erro ao atualizar configurações de privacidade" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

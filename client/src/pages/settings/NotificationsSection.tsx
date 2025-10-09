@@ -18,10 +18,7 @@ export const NotificationsSection = (): JSX.Element => {
 
   const updatePreferencesMutation = useMutation({
     mutationFn: async (data: Partial<NotificationPreferences>) => {
-      return await apiRequest("/api/notification-preferences", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", "/api/notification-preferences", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notification-preferences"] });
@@ -110,9 +107,9 @@ export const NotificationsSection = (): JSX.Element => {
                 </div>
                 <Switch
                   id={option.id}
-                  checked={preferences?.[option.id as keyof NotificationPreferences] as boolean || false}
+                  checked={Boolean(preferences?.[option.id as keyof NotificationPreferences])}
                   onCheckedChange={(value) => handleToggle(option.id as keyof NotificationPreferences, value)}
-                  disabled={preferences?.muteAll}
+                  disabled={preferences?.muteAll ?? false}
                   data-testid={`switch-${option.id}`}
                 />
               </div>
