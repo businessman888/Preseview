@@ -174,15 +174,28 @@ export const ScreenProfile = (): JSX.Element => {
                 </div>
               </div>
 
-              <Button
-                className="w-full bg-[#e71d36] hover:bg-[#c41a2f] text-white rounded-lg"
-                onClick={() => {
-                  console.log("Abrindo edição de perfil");
-                }}
-                data-testid="button-edit-profile"
-              >
-                Editar Perfil
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  className="w-full bg-[#e71d36] hover:bg-[#c41a2f] text-white rounded-lg"
+                  onClick={() => {
+                    console.log("Abrindo edição de perfil");
+                  }}
+                  data-testid="button-edit-profile"
+                >
+                  Editar Perfil
+                </Button>
+                
+                {user?.userType !== 'creator' && (
+                  <Link href="/become-creator">
+                    <Button
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg"
+                      data-testid="button-become-creator"
+                    >
+                      ✨ Tornar-se Criador
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
 
