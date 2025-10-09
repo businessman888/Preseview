@@ -63,6 +63,11 @@ The application references Figma assets in `/figmaAssets/` directory:
 None specified yet.
 
 ## Recent Changes
+- 2025-10-09: **Fixed SSL certificate error with Neon database**
+  - Configured `neonConfig.pipelineTLS = false` to resolve self-signed certificate issues
+  - Set `neonConfig.pipelineConnect = false` for better connection stability
+  - Configured Pool with `ssl: { rejectUnauthorized: false }` for development environment
+  - This prevents "self-signed certificate in certificate chain" errors during registration/login
 - 2025-10-09: Implemented unified account creation system
   - Removed user type selection from registration (all new accounts are regular users)
   - Created "Become Creator" page at `/become-creator` with subscription setup
@@ -76,3 +81,33 @@ None specified yet.
 - Added interactive elements and proper data-testid attributes
 - Fixed all import errors and navigation links
 - All pages now fully functional and accessible via bottom navigation
+
+## Database Configuration
+
+### Neon PostgreSQL SSL Configuration
+The project uses Neon serverless PostgreSQL with environment-aware SSL configuration to handle development certificates while maintaining security in production:
+
+**File: `server/db.ts`**
+```typescript
+neonConfig.webSocketConstructor = ws;
+
+// Only disable TLS checks in development to handle self-signed certificates
+const isDevelopment = process.env.NODE_ENV !== 'production';
+if (isDevelopment) {
+  neonConfig.pipelineTLS = false;
+  neonConfig.pipelineConnect = false;
+}
+
+export const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: isDevelopment ? {
+    rejectUnauthorized: false  // Accept self-signed certificates in dev
+  } : true  // Proper SSL validation in production
+});
+```
+
+**Why this is needed:**
+- Neon uses SSL certificates that may be self-signed in development
+- Without this configuration, you'll get "self-signed certificate in certificate chain" errors
+- The environment-based guard ensures proper SSL validation is used in production
+- This setup is **automatically secure for production** while working seamlessly in development
