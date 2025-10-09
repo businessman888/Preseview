@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, EyeOff, User, UserCheck, Heart, Star } from "lucide-react";
+import { Eye, EyeOff, Heart, Star, Sparkles } from "lucide-react";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
@@ -67,7 +66,7 @@ export default function AuthPage() {
               <span className="text-lg">Stories e posts que você não encontra em outro lugar</span>
             </div>
             <div className="flex items-center gap-3 justify-center lg:justify-start">
-              <UserCheck className="text-green-400" size={24} />
+              <Sparkles className="text-green-400" size={24} />
               <span className="text-lg">Interação direta através de mensagens e presentes</span>
             </div>
           </div>
@@ -146,39 +145,11 @@ export default function AuthPage() {
                 <CardHeader>
                   <CardTitle>Criar nova conta</CardTitle>
                   <CardDescription>
-                    Junte-se à comunidade como usuário ou criador
+                    Junte-se à comunidade e comece a explorar conteúdo exclusivo
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="register-type">Tipo de conta</Label>
-                      <Select 
-                        value={registerData.userType} 
-                        onValueChange={(value: "user" | "creator") => 
-                          setRegisterData({ ...registerData, userType: value })
-                        }
-                      >
-                        <SelectTrigger data-testid="select-user-type">
-                          <SelectValue placeholder="Selecione o tipo de conta" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">
-                            <div className="flex items-center gap-2">
-                              <User size={16} />
-                              Usuário - Acesse conteúdo exclusivo
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="creator">
-                            <div className="flex items-center gap-2">
-                              <UserCheck size={16} />
-                              Criador - Publique conteúdo premium
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="register-username">Nome de usuário</Label>
