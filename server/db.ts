@@ -1,15 +1,7 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { neon, Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import ws from "ws";
 import * as schema from "@shared/schema";
-
-// Configure WebSocket
-neonConfig.webSocketConstructor = ws;
-
-// Disable TLS/SSL checks to handle self-signed certificates
-// This is required for Neon database in development environments
-neonConfig.pipelineTLS = false;
-neonConfig.pipelineConnect = false;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -17,11 +9,18 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
+// Use HTTP connection for main database queries (avoids WebSocket SSL issues)
+const sql = neon(process.env.DATABASE_URL);
+export const db = drizzle(sql, { schema });
+
+// Create Pool for session store with SSL disabled
+neonConfig.webSocketConstructor = ws;
+neonConfig.pipelineTLS = false;
+neonConfig.pipelineConnect = false;
+
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
 });
-
-export const db = drizzle({ client: pool, schema });
