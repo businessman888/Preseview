@@ -170,6 +170,68 @@ export const trendingHashtags = pgTable("trending_hashtags", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Payment methods table
+export const paymentMethods = pgTable("payment_methods", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  type: text("type").notNull(), // 'card', 'bank', 'wallet'
+  last4: text("last4"),
+  brand: text("brand"),
+  expiryMonth: integer("expiry_month"),
+  expiryYear: integer("expiry_year"),
+  isDefault: boolean("is_default").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Transactions table
+export const transactions = pgTable("transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  type: text("type").notNull(), // 'subscription', 'tip', 'withdrawal'
+  amount: real("amount").notNull(),
+  status: text("status").notNull(), // 'pending', 'completed', 'failed'
+  description: text("description"),
+  relatedId: integer("related_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Notification preferences table
+export const notificationPreferences = pgTable("notification_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull().unique(),
+  enableMessages: boolean("enable_messages").default(true),
+  enableNewPosts: boolean("enable_new_posts").default(true),
+  enableLikes: boolean("enable_likes").default(true),
+  enableComments: boolean("enable_comments").default(true),
+  enableFollows: boolean("enable_follows").default(true),
+  enableSubscriptions: boolean("enable_subscriptions").default(true),
+  enableTips: boolean("enable_tips").default(true),
+  enablePlatform: boolean("enable_platform").default(true),
+  muteAll: boolean("mute_all").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Privacy settings table
+export const privacySettings = pgTable("privacy_settings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull().unique(),
+  profileVisibility: text("profile_visibility").default('public').notNull(), // 'public', 'private', 'followers'
+  showOnlineStatus: boolean("show_online_status").default(true),
+  allowMessagesFrom: text("allow_messages_from").default('everyone').notNull(), // 'everyone', 'followers', 'none'
+  showSubscriptions: boolean("show_subscriptions").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Blocked users table
+export const blockedUsers = pgTable("blocked_users", {
+  id: serial("id").primaryKey(),
+  blockerId: integer("blocker_id").references(() => users.id).notNull(),
+  blockedId: integer("blocked_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many, one }) => ({
   creatorProfile: one(creatorProfiles, {
@@ -192,6 +254,18 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   notifications: many(notifications),
   storyViews: many(storyViews),
   searchHistory: many(searchHistory),
+  paymentMethods: many(paymentMethods),
+  transactions: many(transactions),
+  notificationPreferences: one(notificationPreferences, {
+    fields: [users.id],
+    references: [notificationPreferences.userId],
+  }),
+  privacySettings: one(privacySettings, {
+    fields: [users.id],
+    references: [privacySettings.userId],
+  }),
+  blockedAsBlocker: many(blockedUsers, { relationName: "blockerRelation" }),
+  blockedAsBlocked: many(blockedUsers, { relationName: "blockedRelation" }),
 }));
 
 export const creatorProfilesRelations = relations(creatorProfiles, ({ one }) => ({
@@ -338,6 +412,47 @@ export const searchHistoryRelations = relations(searchHistory, ({ one }) => ({
   }),
 }));
 
+export const paymentMethodsRelations = relations(paymentMethods, ({ one }) => ({
+  user: one(users, {
+    fields: [paymentMethods.userId],
+    references: [users.id],
+  }),
+}));
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  user: one(users, {
+    fields: [transactions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const notificationPreferencesRelations = relations(notificationPreferences, ({ one }) => ({
+  user: one(users, {
+    fields: [notificationPreferences.userId],
+    references: [users.id],
+  }),
+}));
+
+export const privacySettingsRelations = relations(privacySettings, ({ one }) => ({
+  user: one(users, {
+    fields: [privacySettings.userId],
+    references: [users.id],
+  }),
+}));
+
+export const blockedUsersRelations = relations(blockedUsers, ({ one }) => ({
+  blocker: one(users, {
+    fields: [blockedUsers.blockerId],
+    references: [users.id],
+    relationName: "blockerRelation",
+  }),
+  blocked: one(users, {
+    fields: [blockedUsers.blockedId],
+    references: [users.id],
+    relationName: "blockedRelation",
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -426,6 +541,33 @@ export const insertTrendingHashtagSchema = createInsertSchema(trendingHashtags).
   updatedAt: true,
 });
 
+export const insertPaymentMethodSchema = createInsertSchema(paymentMethods).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertTransactionSchema = createInsertSchema(transactions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertNotificationPreferencesSchema = createInsertSchema(notificationPreferences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPrivacySettingsSchema = createInsertSchema(privacySettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertBlockedUserSchema = createInsertSchema(blockedUsers).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -457,3 +599,13 @@ export type SearchHistory = typeof searchHistory.$inferSelect;
 export type InsertSearchHistory = z.infer<typeof insertSearchHistorySchema>;
 export type TrendingHashtag = typeof trendingHashtags.$inferSelect;
 export type InsertTrendingHashtag = z.infer<typeof insertTrendingHashtagSchema>;
+export type PaymentMethod = typeof paymentMethods.$inferSelect;
+export type InsertPaymentMethod = z.infer<typeof insertPaymentMethodSchema>;
+export type Transaction = typeof transactions.$inferSelect;
+export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
+export type NotificationPreferences = typeof notificationPreferences.$inferSelect;
+export type InsertNotificationPreferences = z.infer<typeof insertNotificationPreferencesSchema>;
+export type PrivacySettings = typeof privacySettings.$inferSelect;
+export type InsertPrivacySettings = z.infer<typeof insertPrivacySettingsSchema>;
+export type BlockedUser = typeof blockedUsers.$inferSelect;
+export type InsertBlockedUser = z.infer<typeof insertBlockedUserSchema>;
