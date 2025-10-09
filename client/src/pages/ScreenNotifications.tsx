@@ -1,242 +1,178 @@
-import {
-  ArrowLeftIcon,
-  BellIcon,
-  HomeIcon,
-  MessageCircleIcon,
-  SearchIcon,
-  UserIcon,
-  HeartIcon,
-  MessageSquareIcon,
-  DollarSignIcon,
-  UserPlusIcon,
-  Plus,
-} from "lucide-react";
-import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
-import { useAuth } from "@/hooks/use-auth";
-import { CreatePostModal } from "@/components/CreatePostModal";
+import { Notification, User as UserType } from "@shared/schema";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+interface NotificationWithUser extends Notification {
+  triggeredByUser?: UserType;
+}
 
 export const ScreenNotifications = (): JSX.Element => {
-  const { user } = useAuth();
-  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
-  const notifications = [
-    {
-      id: 1,
-      type: "like",
-      user: "Marina Macedo",
-      username: "@marihot_",
-      avatar: "/figmaAssets/ellipse-14.png",
-      action: "curtiu seu post",
-      time: "há 5 min",
-      isNew: true,
-    },
-    {
-      id: 2,
-      type: "follow",
-      user: "Lorena ruiva",
-      username: "@ruivinhaa",
-      avatar: "/figmaAssets/ellipse-13.png",
-      action: "começou a seguir você",
-      time: "há 15 min",
-      isNew: true,
-    },
-    {
-      id: 3,
-      type: "comment",
-      user: "Beatriz Santos",
-      username: "@biasantos",
-      avatar: "/figmaAssets/ellipse-4.png",
-      action: "comentou: 'Que foto linda! ❤️'",
-      time: "há 30 min",
-      isNew: false,
-    },
-    {
-      id: 4,
-      type: "tip",
-      user: "Carolina Lima",
-      username: "@caroli_lima",
-      avatar: "/figmaAssets/ellipse-5.png",
-      action: "enviou uma gorjeta de R$ 10,00",
-      time: "há 1h",
-      isNew: false,
-    },
-    {
-      id: 5,
-      type: "like",
-      user: "Fernanda Costa",
-      username: "@fe_costa",
-      avatar: "/figmaAssets/ellipse-7.png",
-      action: "curtiu seu post",
-      time: "há 2h",
-      isNew: false,
-    },
-    {
-      id: 6,
-      type: "comment",
-      user: "Mariana Cardoso",
-      username: "@marimaricar_",
-      avatar: "/figmaAssets/ellipse-19.png",
-      action: "comentou em seu post",
-      time: "há 3h",
-      isNew: false,
-    },
-  ];
+  const { data: notifications = [], isLoading } = useQuery<NotificationWithUser[]>({
+    queryKey: ["/api/notifications"],
+  });
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case "like":
-        return <HeartIcon className="w-5 h-5 text-[#e71d36]" />;
-      case "comment":
-        return <MessageSquareIcon className="w-5 h-5 text-[#5d5b5b]" />;
-      case "follow":
-        return <UserPlusIcon className="w-5 h-5 text-[#e71d36]" />;
-      case "tip":
-        return <DollarSignIcon className="w-5 h-5 text-green-500" />;
-      default:
-        return <BellIcon className="w-5 h-5 text-[#5d5b5b]" />;
-    }
-  };
+  const followers = notifications.filter(n => n.type === "follow");
+  const subscriptions = notifications.filter(n => n.type === "subscription");
+  const likes = notifications.filter(n => n.type === "like");
+  const comments = notifications.filter(n => n.type === "comment");
+  const tips = notifications.filter(n => n.type === "tip");
+
+  const NotificationItem = ({ notification }: { notification: NotificationWithUser }) => (
+    <div
+      className={`flex items-start gap-3 p-4 border-b dark:border-gray-800 ${
+        !notification.isRead ? "bg-pink-50 dark:bg-pink-950/20" : ""
+      }`}
+      data-testid={`notification-${notification.id}`}
+    >
+      <Avatar>
+        <AvatarImage src={notification.triggeredByUser?.profileImage || undefined} />
+        <AvatarFallback>
+          {notification.triggeredByUser?.displayName[0]?.toUpperCase() || "?"}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1">
+        <p className="text-sm">
+          <span className="font-semibold">{notification.triggeredByUser?.displayName || "Alguém"}</span>
+          {" "}
+          <span className="text-gray-600 dark:text-gray-400">{notification.message}</span>
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: ptBR })}
+        </p>
+      </div>
+      {!notification.isRead && (
+        <div className="w-2 h-2 bg-pink-500 rounded-full mt-2" />
+      )}
+    </div>
+  );
 
   return (
-    <div className="flex flex-col h-screen bg-[#fdfdfa]">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white shadow-sm">
-        <Link href="/">
-          <Button variant="ghost" size="icon" data-testid="button-back">
-            <ArrowLeftIcon className="w-6 h-6 text-[#5d5b5b]" />
-          </Button>
-        </Link>
-        <h1 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-xl">
-          Notificações
-        </h1>
-        <Button variant="ghost" size="icon" data-testid="button-mark-all-read">
-          <BellIcon className="w-6 h-6 text-[#5d5b5b]" />
-        </Button>
-      </div>
-
-      {/* Notifications List */}
-      <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto">
-        {notifications.map((notification) => (
-          <Card
-            key={notification.id}
-            className={`rounded-lg border border-[#cccccc] hover:bg-gray-50 cursor-pointer transition-colors ${
-              notification.isNew ? "bg-blue-50" : "bg-white"
-            }`}
-            onClick={() => {
-              console.log(`Navegando para notificação de ${notification.user}`);
-            }}
-            data-testid={`notification-${notification.id}`}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                <Avatar 
-                  className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log(`Navegando para o perfil de ${notification.user}`);
-                  }}
-                  data-testid={`avatar-${notification.id}`}
-                >
-                  <AvatarImage
-                    src={notification.avatar}
-                    alt={notification.user}
-                    className="object-cover"
-                  />
-                  <AvatarFallback>{notification.user.charAt(0)}</AvatarFallback>
-                </Avatar>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h3 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-sm">
-                      {notification.user}
-                    </h3>
-                    <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#e71d36] text-xs">
-                      {notification.username}
-                    </span>
-                    {notification.isNew && (
-                      <div className="w-2 h-2 bg-[#e71d36] rounded-full" />
-                    )}
-                  </div>
-                  <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
-                    {notification.action}
-                  </p>
-                  <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#8b8585] text-xs">
-                    {notification.time}
-                  </span>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  {getNotificationIcon(notification.type)}
-                  {notification.type === "follow" && (
-                    <Button
-                      className="bg-[#e71d36] hover:bg-[#c41a2f] text-white px-3 py-1 rounded-full text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log(`Seguindo de volta ${notification.user}`);
-                      }}
-                      data-testid={`button-follow-back-${notification.id}`}
-                    >
-                      Seguir
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="flex w-full items-center justify-center gap-[30px] px-[5px] py-2.5 bg-white rounded-[30px_30px_0px_0px] overflow-hidden shadow-[3px_4px_4px_#00000040]">
-        <Link href="/">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-home">
-            <HomeIcon className="w-[43px] h-9 text-[#5d5b5b]" />
-          </Button>
-        </Link>
-
-        <Link href="/messages">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-messages">
-            <MessageCircleIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
-          </Button>
-        </Link>
-
-        {user?.userType === 'creator' ? (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="p-0" 
-            onClick={() => setIsCreatePostModalOpen(true)}
-            data-testid="nav-create-post"
-          >
-            <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
-          </Button>
-        ) : (
-          <Link href="/search">
-            <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
-              <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
+      <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-4 py-3">
+        <div className="flex items-center gap-4 max-w-2xl mx-auto">
+          <Link href="/">
+            <Button variant="ghost" size="icon" data-testid="button-back">
+              <ArrowLeft className="w-6 h-6" />
             </Button>
           </Link>
-        )}
+          <h1 className="text-xl font-bold">Notificações</h1>
+        </div>
+      </header>
 
-        <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
-          <BellIcon className="w-[43px] h-[43px] text-[#e71d36]" />
-        </Button>
+      <main className="max-w-2xl mx-auto w-full">
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
+            <TabsTrigger value="all" className="rounded-none border-b-2 data-[state=active]:border-pink-500" data-testid="tab-all">
+              Todas
+            </TabsTrigger>
+            <TabsTrigger value="followers" className="rounded-none border-b-2 data-[state=active]:border-pink-500" data-testid="tab-followers">
+              Seguidores ({followers.length})
+            </TabsTrigger>
+            <TabsTrigger value="subscriptions" className="rounded-none border-b-2 data-[state=active]:border-pink-500" data-testid="tab-subscriptions">
+              Assinantes ({subscriptions.length})
+            </TabsTrigger>
+            <TabsTrigger value="likes" className="rounded-none border-b-2 data-[state=active]:border-pink-500" data-testid="tab-likes">
+              Curtidas ({likes.length})
+            </TabsTrigger>
+            <TabsTrigger value="comments" className="rounded-none border-b-2 data-[state=active]:border-pink-500" data-testid="tab-comments">
+              Comentários ({comments.length})
+            </TabsTrigger>
+            <TabsTrigger value="tips" className="rounded-none border-b-2 data-[state=active]:border-pink-500" data-testid="tab-tips">
+              Presentes ({tips.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <Link href="/profile">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-profile">
-            <UserIcon className="w-[50px] h-[49px] text-[#5d5b5b]" />
-          </Button>
-        </Link>
-      </div>
+          <TabsContent value="all" className="mt-0">
+            {isLoading ? (
+              <div className="space-y-1">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-start gap-3 p-4 border-b dark:border-gray-800">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4 animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">Nenhuma notificação ainda</p>
+              </div>
+            ) : (
+              notifications.map(notification => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))
+            )}
+          </TabsContent>
 
-      {/* Create Post Modal */}
-      <CreatePostModal
-        isOpen={isCreatePostModalOpen}
-        onClose={() => setIsCreatePostModalOpen(false)}
-      />
+          <TabsContent value="followers" className="mt-0">
+            {followers.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">Nenhum novo seguidor</p>
+              </div>
+            ) : (
+              followers.map(notification => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="subscriptions" className="mt-0">
+            {subscriptions.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">Nenhum novo assinante</p>
+              </div>
+            ) : (
+              subscriptions.map(notification => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="likes" className="mt-0">
+            {likes.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">Nenhuma curtida ainda</p>
+              </div>
+            ) : (
+              likes.map(notification => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="comments" className="mt-0">
+            {comments.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">Nenhum comentário ainda</p>
+              </div>
+            ) : (
+              comments.map(notification => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="tips" className="mt-0">
+            {tips.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">Nenhum presente recebido</p>
+              </div>
+            ) : (
+              tips.map(notification => (
+                <NotificationItem key={notification.id} notification={notification} />
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
+      </main>
     </div>
   );
 };
