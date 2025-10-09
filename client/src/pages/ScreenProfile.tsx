@@ -105,9 +105,11 @@ export const ScreenProfile = (): JSX.Element => {
           <Button variant="ghost" size="icon" data-testid="button-share">
             <ShareIcon className="w-5 h-5 text-[#5d5b5b]" />
           </Button>
-          <Button variant="ghost" size="icon" data-testid="button-settings">
-            <SettingsIcon className="w-5 h-5 text-[#5d5b5b]" />
-          </Button>
+          <Link href="/settings">
+            <Button variant="ghost" size="icon" data-testid="button-settings">
+              <SettingsIcon className="w-5 h-5 text-[#5d5b5b]" />
+            </Button>
+          </Link>
         </div>
       </div>
 

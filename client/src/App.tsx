@@ -12,6 +12,7 @@ import { ScreenMessages } from "@/pages/ScreenMessages";
 import { ScreenSearch } from "@/pages/ScreenSearch";
 import { ScreenNotifications } from "@/pages/ScreenNotifications";
 import { ScreenProfile } from "@/pages/ScreenProfile";
+import { ScreenSettings } from "@/pages/ScreenSettings";
 import AuthPage from "@/pages/AuthPage";
 import BecomeCreatorPage from "@/pages/BecomeCreatorPage";
 
@@ -27,6 +28,7 @@ function Router() {
       <ProtectedRoute path="/search" component={ScreenSearch} />
       <ProtectedRoute path="/notifications" component={ScreenNotifications} />
       <ProtectedRoute path="/profile" component={ScreenProfile} />
+      <ProtectedRoute path="/settings/:rest*" component={ScreenSettings} />
       <ProtectedRoute path="/become-creator" component={BecomeCreatorPage} />
       
       {/* Fallback to 404 */}
