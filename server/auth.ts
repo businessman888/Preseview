@@ -148,9 +148,34 @@ export function setupAuth(app: Express) {
     });
   });
 
-  app.get("/api/user", (req, res) => {
+  app.get("/api/user", async (req, res) => {
     if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Não autenticado" });
+      let guestUser = await storage.getUserByUsername("convidado");
+      
+      if (!guestUser) {
+        guestUser = await storage.createUser({
+          username: "convidado",
+          email: "convidado@app.com",
+          password: await hashPassword("123456"),
+          displayName: "Usuário Convidado",
+          userType: "user",
+        });
+      }
+      
+      req.login(guestUser, (err) => {
+        if (err) {
+          return res.status(500).json({ error: "Erro ao criar sessão" });
+        }
+        res.json({ 
+          id: guestUser.id,
+          username: guestUser.username,
+          email: guestUser.email,
+          displayName: guestUser.displayName,
+          userType: guestUser.userType,
+          isVerified: guestUser.isVerified
+        });
+      });
+      return;
     }
     const user = req.user as SelectUser;
     res.json({ 
