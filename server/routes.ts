@@ -655,6 +655,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Account management routes
+  app.put("/api/user/profile", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { displayName, bio } = req.body;
+      if (!displayName) {
+        return res.status(400).json({ error: "Nome de exibição é obrigatório" });
+      }
+
+      const user = await storage.updateUser(req.user!.id, {
+        displayName,
+        bio: bio || null,
+      });
+      
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ error: error.message || "Erro ao atualizar perfil" });
+    }
+  });
+
   app.put("/api/user/email", async (req, res) => {
     try {
       if (!req.isAuthenticated()) return res.sendStatus(401);

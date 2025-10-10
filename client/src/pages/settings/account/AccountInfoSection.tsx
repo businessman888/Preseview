@@ -17,16 +17,53 @@ const updateEmailSchema = z.object({
   email: z.string().email("Email inválido"),
 });
 
+const updateProfileSchema = z.object({
+  displayName: z.string().min(1, "Nome é obrigatório"),
+  bio: z.string().optional(),
+});
+
 type UpdateEmailForm = z.infer<typeof updateEmailSchema>;
+type UpdateProfileForm = z.infer<typeof updateProfileSchema>;
 
 export const AccountInfoSection = (): JSX.Element => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const form = useForm<UpdateEmailForm>({
+  const profileForm = useForm<UpdateProfileForm>({
+    resolver: zodResolver(updateProfileSchema),
+    defaultValues: {
+      displayName: user?.displayName || "",
+      bio: user?.bio || "",
+    },
+  });
+
+  const emailForm = useForm<UpdateEmailForm>({
     resolver: zodResolver(updateEmailSchema),
     defaultValues: {
       email: user?.email || "",
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: UpdateProfileForm) => {
+      return await apiRequest("/api/user/profile", {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram atualizadas com sucesso",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível atualizar o perfil",
+        variant: "destructive",
+      });
     },
   });
 
@@ -53,7 +90,11 @@ export const AccountInfoSection = (): JSX.Element => {
     },
   });
 
-  const onSubmit = (data: UpdateEmailForm) => {
+  const onSubmitProfile = (data: UpdateProfileForm) => {
+    updateProfileMutation.mutate(data);
+  };
+
+  const onSubmitEmail = (data: UpdateEmailForm) => {
     updateEmailMutation.mutate(data);
   };
 
@@ -76,19 +117,71 @@ export const AccountInfoSection = (): JSX.Element => {
       <div className="flex-1 overflow-y-auto pb-20 p-4 space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Informações básicas</CardTitle>
-            <CardDescription>Veja as informações da sua conta</CardDescription>
+            <CardTitle>Informações do perfil</CardTitle>
+            <CardDescription>Atualize suas informações pessoais</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...profileForm}>
+              <form onSubmit={profileForm.handleSubmit(onSubmitProfile)} className="space-y-4">
+                <FormField
+                  control={profileForm.control}
+                  name="displayName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome de exibição</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Seu nome"
+                          data-testid="input-displayname"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={profileForm.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bio</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Conte algo sobre você"
+                          data-testid="input-bio"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-[#b24592] to-[#f15f79] hover:opacity-90"
+                  disabled={updateProfileMutation.isPending}
+                  data-testid="button-update-profile"
+                >
+                  {updateProfileMutation.isPending ? "Atualizando..." : "Atualizar perfil"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Informações da conta</CardTitle>
+            <CardDescription>Informações imutáveis da sua conta</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <Label>Nome de usuário</Label>
               <Input value={user?.username || ""} disabled className="mt-1" data-testid="input-username" />
               <p className="text-sm text-gray-500 mt-1">O nome de usuário não pode ser alterado</p>
-            </div>
-
-            <div>
-              <Label>Nome de exibição</Label>
-              <Input value={user?.displayName || ""} disabled className="mt-1" data-testid="input-displayname" />
             </div>
 
             <div>
@@ -109,10 +202,10 @@ export const AccountInfoSection = (): JSX.Element => {
             <CardDescription>Atualize o email da sua conta</CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Form {...emailForm}>
+              <form onSubmit={emailForm.handleSubmit(onSubmitEmail)} className="space-y-4">
                 <FormField
-                  control={form.control}
+                  control={emailForm.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
