@@ -12,15 +12,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 export const SubscriptionsManagementSection = (): JSX.Element => {
   const { toast } = useToast();
 
-  const { data: subscriptions, isLoading } = useQuery({
+  const { data: subscriptions, isLoading } = useQuery<any[]>({
     queryKey: ["/api/subscriptions"],
   });
 
   const cancelSubscriptionMutation = useMutation({
     mutationFn: async (subscriptionId: number) => {
-      return await apiRequest(`/api/subscriptions/${subscriptionId}/cancel`, {
-        method: "POST",
-      });
+      return await apiRequest("POST", `/api/subscriptions/${subscriptionId}/cancel`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });

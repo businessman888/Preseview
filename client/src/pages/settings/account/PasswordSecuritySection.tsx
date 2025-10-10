@@ -36,12 +36,9 @@ export const PasswordSecuritySection = (): JSX.Element => {
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: ChangePasswordForm) => {
-      return await apiRequest("/api/user/password", {
-        method: "PUT",
-        body: JSON.stringify({
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-        }),
+      return await apiRequest("PUT", "/api/user/password", {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
       });
     },
     onSuccess: () => {

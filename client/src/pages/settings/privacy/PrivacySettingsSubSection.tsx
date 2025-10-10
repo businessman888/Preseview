@@ -19,10 +19,7 @@ export const PrivacySettingsSubSection = (): JSX.Element => {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: Partial<PrivacySettings>) => {
-      return await apiRequest("/api/privacy-settings", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", "/api/privacy-settings", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/privacy-settings"] });

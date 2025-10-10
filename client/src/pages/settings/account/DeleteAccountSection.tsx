@@ -23,9 +23,7 @@ export const DeleteAccountSection = (): JSX.Element => {
 
   const deleteAccountMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("/api/user", {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", "/api/user");
     },
     onSuccess: () => {
       toast({

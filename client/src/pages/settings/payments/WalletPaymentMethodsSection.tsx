@@ -17,9 +17,7 @@ export const WalletPaymentMethodsSection = (): JSX.Element => {
 
   const deleteMethodMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/payment-methods/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/payment-methods/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/payment-methods"] });
@@ -32,9 +30,7 @@ export const WalletPaymentMethodsSection = (): JSX.Element => {
 
   const setDefaultMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/payment-methods/${id}/default`, {
-        method: "PUT",
-      });
+      return await apiRequest("PUT", `/api/payment-methods/${id}/default`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/payment-methods"] });

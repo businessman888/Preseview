@@ -46,10 +46,7 @@ export const AccountInfoSection = (): JSX.Element => {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: UpdateProfileForm) => {
-      return await apiRequest("/api/user/profile", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", "/api/user/profile", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -69,10 +66,7 @@ export const AccountInfoSection = (): JSX.Element => {
 
   const updateEmailMutation = useMutation({
     mutationFn: async (data: UpdateEmailForm) => {
-      return await apiRequest("/api/user/email", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", "/api/user/email", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
