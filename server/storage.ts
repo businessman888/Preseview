@@ -174,6 +174,21 @@ export interface IStorage {
   // Privacy Settings
   getPrivacySettings(userId: number): Promise<PrivacySettings | undefined>;
   updatePrivacySettings(userId: number, settings: Partial<InsertPrivacySettings>): Promise<PrivacySettings>;
+  
+  // Account Management
+  updateUserEmail(userId: number, email: string): Promise<User | undefined>;
+  updateUserPassword(userId: number, password: string): Promise<void>;
+  deleteUser(userId: number): Promise<boolean>;
+  
+  // Payment Methods
+  getPaymentMethods(userId: number): Promise<PaymentMethod[]>;
+  createPaymentMethod(method: InsertPaymentMethod): Promise<PaymentMethod>;
+  deletePaymentMethod(id: number, userId: number): Promise<boolean>;
+  setDefaultPaymentMethod(id: number, userId: number): Promise<void>;
+  
+  // Transactions
+  getUserTransactions(userId: number, limit?: number): Promise<Transaction[]>;
+  createTransaction(transaction: InsertTransaction): Promise<Transaction>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1023,6 +1038,98 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return updated;
+  }
+
+  // Account Management
+  async updateUserEmail(userId: number, email: string): Promise<User | undefined> {
+    const existingUser = await this.getUserByEmail(email);
+    if (existingUser && existingUser.id !== userId) {
+      throw new Error("Este email já está em uso");
+    }
+
+    const [user] = await db
+      .update(users)
+      .set({ email, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return user || undefined;
+  }
+
+  async updateUserPassword(userId: number, password: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ password, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  }
+
+  async deleteUser(userId: number): Promise<boolean> {
+    try {
+      await db.delete(users).where(eq(users.id, userId));
+      return true;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return false;
+    }
+  }
+
+  // Payment Methods
+  async getPaymentMethods(userId: number): Promise<PaymentMethod[]> {
+    return await db
+      .select()
+      .from(paymentMethods)
+      .where(eq(paymentMethods.userId, userId))
+      .orderBy(desc(paymentMethods.isDefault), desc(paymentMethods.createdAt));
+  }
+
+  async createPaymentMethod(method: InsertPaymentMethod): Promise<PaymentMethod> {
+    const [newMethod] = await db
+      .insert(paymentMethods)
+      .values(method)
+      .returning();
+    return newMethod;
+  }
+
+  async deletePaymentMethod(id: number, userId: number): Promise<boolean> {
+    try {
+      await db
+        .delete(paymentMethods)
+        .where(and(eq(paymentMethods.id, id), eq(paymentMethods.userId, userId)));
+      return true;
+    } catch (error) {
+      console.error("Error deleting payment method:", error);
+      return false;
+    }
+  }
+
+  async setDefaultPaymentMethod(id: number, userId: number): Promise<void> {
+    await db
+      .update(paymentMethods)
+      .set({ isDefault: false })
+      .where(eq(paymentMethods.userId, userId));
+
+    await db
+      .update(paymentMethods)
+      .set({ isDefault: true })
+      .where(and(eq(paymentMethods.id, id), eq(paymentMethods.userId, userId)));
+  }
+
+  // Transactions
+  async getUserTransactions(userId: number, limit = 50): Promise<Transaction[]> {
+    return await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.userId, userId))
+      .orderBy(desc(transactions.createdAt))
+      .limit(limit);
+  }
+
+  async createTransaction(transaction: InsertTransaction): Promise<Transaction> {
+    const [newTransaction] = await db
+      .insert(transactions)
+      .values(transaction)
+      .returning();
+    return newTransaction;
   }
 }
 
