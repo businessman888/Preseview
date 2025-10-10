@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, ChevronRightIcon, WalletIcon, CreditCardIcon, ListIcon, HistoryIcon } from "lucide-react";
-import { Link, useRoute } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { WalletPaymentMethodsSection } from "./payments/WalletPaymentMethodsSection";
@@ -7,14 +7,12 @@ import { SubscriptionsManagementSection } from "./payments/SubscriptionsManageme
 import { TransactionHistorySection } from "./payments/TransactionHistorySection";
 
 export const PaymentsSection = (): JSX.Element => {
-  const [matchWallet] = useRoute("/settings/payments/wallet");
-  const [matchSubscriptions] = useRoute("/settings/payments/subscriptions");
-  const [matchHistory] = useRoute("/settings/payments/history");
+  const [location] = useLocation();
 
   // Se está em uma subseção, renderiza ela
-  if (matchWallet) return <WalletPaymentMethodsSection />;
-  if (matchSubscriptions) return <SubscriptionsManagementSection />;
-  if (matchHistory) return <TransactionHistorySection />;
+  if (location === "/settings/payments/wallet") return <WalletPaymentMethodsSection />;
+  if (location === "/settings/payments/subscriptions") return <SubscriptionsManagementSection />;
+  if (location === "/settings/payments/history") return <TransactionHistorySection />;
 
   const paymentsMenu = [
     {

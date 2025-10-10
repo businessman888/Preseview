@@ -28,21 +28,15 @@ import { HelpSection } from "./settings/HelpSection";
 
 export const ScreenSettings = (): JSX.Element => {
   const { user } = useAuth();
-  const [, setLocation] = useLocation();
-  const [matchBecomeCreator] = useRoute("/settings/become-creator");
-  const [matchAccount] = useRoute("/settings/account");
-  const [matchPayments] = useRoute("/settings/payments");
-  const [matchNotifications] = useRoute("/settings/notifications");
-  const [matchPrivacy] = useRoute("/settings/privacy");
-  const [matchHelp] = useRoute("/settings/help");
+  const [location] = useLocation();
 
-  // Se está em uma subseção, renderiza ela
-  if (matchBecomeCreator) return <BecomeCreatorSection />;
-  if (matchAccount) return <AccountSection />;
-  if (matchPayments) return <PaymentsSection />;
-  if (matchNotifications) return <NotificationsSection />;
-  if (matchPrivacy) return <PrivacySection />;
-  if (matchHelp) return <HelpSection />;
+  // Verifica rotas por prefixo
+  if (location === "/settings/become-creator") return <BecomeCreatorSection />;
+  if (location.startsWith("/settings/account")) return <AccountSection />;
+  if (location.startsWith("/settings/payments")) return <PaymentsSection />;
+  if (location.startsWith("/settings/notifications")) return <NotificationsSection />;
+  if (location.startsWith("/settings/privacy")) return <PrivacySection />;
+  if (location.startsWith("/settings/help")) return <HelpSection />;
 
   // Menu principal de configurações
   const settingsMenu = [

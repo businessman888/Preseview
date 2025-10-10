@@ -1,17 +1,16 @@
 import { ArrowLeftIcon, ChevronRightIcon, ShieldIcon, UserXIcon } from "lucide-react";
-import { Link, useRoute } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PrivacySettingsSubSection } from "./privacy/PrivacySettingsSubSection";
 import { BlockedUsersSection } from "./privacy/BlockedUsersSection";
 
 export const PrivacySection = (): JSX.Element => {
-  const [matchSettings] = useRoute("/settings/privacy/settings");
-  const [matchBlocked] = useRoute("/settings/privacy/blocked");
+  const [location] = useLocation();
 
   // Se está em uma subseção, renderiza ela
-  if (matchSettings) return <PrivacySettingsSubSection />;
-  if (matchBlocked) return <BlockedUsersSection />;
+  if (location === "/settings/privacy/settings") return <PrivacySettingsSubSection />;
+  if (location === "/settings/privacy/blocked") return <BlockedUsersSection />;
 
   const privacyMenu = [
     {

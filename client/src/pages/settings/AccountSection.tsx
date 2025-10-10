@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, ChevronRightIcon, UserIcon, LockIcon, TrashIcon } from "lucide-react";
-import { Link, useRoute } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
@@ -9,14 +9,12 @@ import { DeleteAccountSection } from "./account/DeleteAccountSection";
 
 export const AccountSection = (): JSX.Element => {
   const { user } = useAuth();
-  const [matchInfo] = useRoute("/settings/account/info");
-  const [matchPassword] = useRoute("/settings/account/password");
-  const [matchDelete] = useRoute("/settings/account/delete");
+  const [location] = useLocation();
 
   // Se está em uma subseção, renderiza ela
-  if (matchInfo) return <AccountInfoSection />;
-  if (matchPassword) return <PasswordSecuritySection />;
-  if (matchDelete) return <DeleteAccountSection />;
+  if (location === "/settings/account/info") return <AccountInfoSection />;
+  if (location === "/settings/account/password") return <PasswordSecuritySection />;
+  if (location === "/settings/account/delete") return <DeleteAccountSection />;
 
   const accountMenu = [
     {
