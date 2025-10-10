@@ -654,6 +654,184 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account management routes
+  app.put("/api/user/email", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: "Email é obrigatório" });
+      }
+
+      const user = await storage.updateUserEmail(req.user!.id, email);
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error updating email:", error);
+      res.status(500).json({ error: error.message || "Erro ao atualizar email" });
+    }
+  });
+
+  app.put("/api/user/password", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { currentPassword, newPassword } = req.body;
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ error: "Senha atual e nova senha são obrigatórias" });
+      }
+
+      const user = await storage.getUser(req.user!.id);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      const bcrypt = require("bcryptjs");
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: "Senha atual incorreta" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await storage.updateUserPassword(req.user!.id, hashedPassword);
+      
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error updating password:", error);
+      res.status(500).json({ error: "Erro ao atualizar senha" });
+    }
+  });
+
+  app.delete("/api/user", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const success = await storage.deleteUser(req.user!.id);
+      if (success) {
+        req.logout(() => {
+          res.sendStatus(200);
+        });
+      } else {
+        res.status(500).json({ error: "Erro ao deletar conta" });
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ error: "Erro ao deletar conta" });
+    }
+  });
+
+  // Subscription management routes
+  app.get("/api/subscriptions", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const subscriptions = await storage.getUserSubscriptions(req.user!.id);
+      res.json(subscriptions);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+      res.status(500).json({ error: "Erro ao buscar assinaturas" });
+    }
+  });
+
+  app.post("/api/subscriptions/:id/cancel", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const subscriptionId = parseInt(req.params.id);
+      await storage.updateSubscriptionStatus(subscriptionId, 'cancelled');
+      
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error cancelling subscription:", error);
+      res.status(500).json({ error: "Erro ao cancelar assinatura" });
+    }
+  });
+
+  // Transaction routes
+  app.get("/api/transactions", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const limit = parseInt(req.query.limit as string) || 50;
+      const transactions = await storage.getUserTransactions(req.user!.id, limit);
+      res.json(transactions);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      res.status(500).json({ error: "Erro ao buscar transações" });
+    }
+  });
+
+  // Payment methods routes
+  app.get("/api/payment-methods", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const methods = await storage.getPaymentMethods(req.user!.id);
+      res.json(methods);
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+      res.status(500).json({ error: "Erro ao buscar métodos de pagamento" });
+    }
+  });
+
+  app.post("/api/payment-methods", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { type, last4, brand, expiryMonth, expiryYear } = req.body;
+      if (!type || !last4 || !brand || !expiryMonth || !expiryYear) {
+        return res.status(400).json({ error: "Dados do método de pagamento incompletos" });
+      }
+
+      const method = await storage.createPaymentMethod({
+        userId: req.user!.id,
+        type,
+        last4,
+        brand,
+        expiryMonth,
+        expiryYear,
+        isDefault: false,
+      });
+      
+      res.status(201).json(method);
+    } catch (error) {
+      console.error("Error creating payment method:", error);
+      res.status(500).json({ error: "Erro ao adicionar método de pagamento" });
+    }
+  });
+
+  app.delete("/api/payment-methods/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const id = parseInt(req.params.id);
+      const success = await storage.deletePaymentMethod(id, req.user!.id);
+      
+      if (success) {
+        res.sendStatus(200);
+      } else {
+        res.status(500).json({ error: "Erro ao remover método de pagamento" });
+      }
+    } catch (error) {
+      console.error("Error deleting payment method:", error);
+      res.status(500).json({ error: "Erro ao remover método de pagamento" });
+    }
+  });
+
+  app.put("/api/payment-methods/:id/default", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const id = parseInt(req.params.id);
+      await storage.setDefaultPaymentMethod(id, req.user!.id);
+      
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error setting default payment method:", error);
+      res.status(500).json({ error: "Erro ao definir método padrão" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
