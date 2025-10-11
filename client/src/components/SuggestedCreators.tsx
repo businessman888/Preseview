@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ChevronRight, Check } from "lucide-react";
 import { Link } from "wouter";
 import { User, CreatorProfile } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
 
 interface CreatorWithProfile extends User {
   creatorProfile?: CreatorProfile;
@@ -12,8 +13,10 @@ interface CreatorWithProfile extends User {
 }
 
 export function SuggestedCreators() {
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { data: creators = [], isLoading } = useQuery<CreatorWithProfile[]>({
     queryKey: ["/api/creators/suggested"],
+    enabled: !!user && !isAuthLoading,
   });
 
   if (isLoading) {

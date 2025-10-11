@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Story, User } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
 
 interface StoryWithCreator extends Story {
   creator: User;
@@ -15,8 +16,10 @@ interface StoriesBarProps {
 }
 
 export function StoriesBar({ onAddStory, onViewStory }: StoriesBarProps) {
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { data: stories = [], isLoading } = useQuery<StoryWithCreator[]>({
     queryKey: ["/api/stories"],
+    enabled: !!user && !isAuthLoading,
   });
 
   const groupedStories = stories.reduce((acc, story) => {

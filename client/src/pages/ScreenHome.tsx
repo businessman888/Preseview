@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Plus, Home as HomeIcon, MessageCircle, Bell, User } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { StoriesBar } from "@/components/StoriesBar";
 import { StoryViewer } from "@/components/StoryViewer";
@@ -26,9 +27,11 @@ export const ScreenHome = (): JSX.Element => {
   const [storyStartIndex, setStoryStartIndex] = useState(0);
   const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
   const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false);
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   const { data: posts = [], isLoading: isLoadingPosts } = useQuery<PostWithCreator[]>({
     queryKey: ["/api/posts/feed"],
+    enabled: !!user && !isAuthLoading,
   });
 
   const handleViewStory = (stories: StoryWithCreator[], startIndex: number) => {
