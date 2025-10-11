@@ -160,6 +160,34 @@ Principais tabelas:
 
 ## Mudanças Recentes
 
+### 2025-10-11: Features Visuais do MVP
+- ✅ **Página de Perfil do Criador** (`/creator/:id`)
+  - Layout com cover image e avatar
+  - Estatísticas (posts, seguidores, seguindo)
+  - Botão de seguir/deixar de seguir
+  - Tabs para Fotos, Vídeos e Posts
+  - Galeria de mídia organizada
+  - Modal de assinatura integrado
+- ✅ **Modal de Assinatura**
+  - Planos de assinatura (teste gratuito, 3 meses, 6 meses)
+  - Exibição de benefícios
+  - Gestão de estado de assinatura
+- ✅ **Cards de Criadores Sugeridos**
+  - Exibição horizontal na home
+  - Navegação para perfil do criador
+  - Informações de seguidor e assinantes
+- ✅ **Sistema de Navegação**
+  - Navegação para perfil via click no nome/avatar em posts
+  - Rotas dinâmicas implementadas
+- ✅ **API Backend**
+  - `GET /api/creators/:id` - Buscar perfil do criador
+  - `GET /api/creators/:id/posts` - Buscar posts do criador
+  - `GET /api/creators/suggested` - Buscar criadores sugeridos
+- ✅ **Segurança**
+  - Tipo `PublicUser` para sanitizar respostas da API
+  - Remoção de campo `password` de todas as respostas públicas
+  - Prevenção de vazamento de credenciais
+
 ### 2025-10-10: Sistema Completo de Configurações
 - ✅ Implementada estrutura completa de configurações em português
 - ✅ Gerenciamento de conta com edição de perfil, email e senha
