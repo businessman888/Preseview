@@ -463,7 +463,7 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(bookmarks, and(eq(bookmarks.postId, posts.id), eq(bookmarks.userId, userId)))
       .where(
         or(
-          eq(follows.followerId, userId),
+          sql`${follows.id} IS NOT NULL`,
           and(eq(subscriptions.userId, userId), eq(subscriptions.status, 'active'))
         )
       )

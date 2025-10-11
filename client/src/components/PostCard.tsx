@@ -4,13 +4,13 @@ import { Post, User } from "@shared/schema";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Heart, MessageCircle, Bookmark, DollarSign, UserPlus, Send } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, DollarSign, MoreVertical, Send } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { TipModal } from "./TipModal";
 
 interface PostWithCreator extends Post {
   creator: User;
@@ -89,18 +89,10 @@ export function PostCard({ post }: PostCardProps) {
     },
   });
 
-  const subscribeMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest("POST", "/api/subscriptions", {
-        creatorId: post.creatorId,
-        amount: 9.99,
-      });
-    },
-    onSuccess: () => {
-      toast({ title: "Assinatura realizada com sucesso!" });
-      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
-    },
-  });
+  const handleTipSuccess = () => {
+    toast({ title: "Presente enviado com sucesso! 🎁" });
+    queryClient.invalidateQueries({ queryKey: ["/api/posts/feed"] });
+  };
 
   const handleSendComment = () => {
     if (commentText.trim()) {
@@ -119,124 +111,154 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg border dark:border-gray-800 p-4 space-y-4" data-testid={`post-${post.id}`}>
-      <div className="flex items-start justify-between">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800 overflow-hidden max-w-lg mx-auto" data-testid={`post-${post.id}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4">
         <Link href={`/creator/${post.creatorId}`}>
           <div className="flex items-center gap-3 cursor-pointer" data-testid={`link-creator-${post.creatorId}`}>
-            <Avatar>
+            <Avatar className="w-12 h-12">
               <AvatarImage src={post.creator.profileImage || undefined} />
-              <AvatarFallback>{post.creator.displayName[0]?.toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-600 text-white">
+                {post.creator.displayName[0]?.toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div>
               <p className="font-semibold text-gray-900 dark:text-white hover:text-pink-500 transition-colors">
                 {post.creator.displayName}
               </p>
-              <p className="text-sm text-gray-500">
-                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: ptBR })}
+              <p className="text-sm text-pink-500">
+                @{post.creator.username}
               </p>
             </div>
           </div>
         </Link>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => subscribeMutation.mutate()}
-          disabled={subscribeMutation.isPending}
-          data-testid={`button-subscribe-${post.id}`}
-        >
-          <UserPlus className="w-4 h-4 mr-2" />
-          Assinar
-        </Button>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-gray-500">
+            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: ptBR })}
+          </p>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <MoreVertical className="w-5 h-5 text-gray-500" />
+          </Button>
+        </div>
       </div>
 
-      <div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{post.title}</h3>
-        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{post.content}</p>
-      </div>
-
+      {/* Image */}
       {post.mediaUrls && post.mediaUrls.length > 0 && (
-        <div className="grid grid-cols-2 gap-2">
-          {post.mediaUrls.map((url, index) => (
-            <img
-              key={index}
-              src={url}
-              alt={`Post media ${index + 1}`}
-              className="w-full h-64 object-cover rounded-lg"
-              data-testid={`post-media-${post.id}-${index}`}
-            />
-          ))}
+        <div className="w-full">
+          <img
+            src={post.mediaUrls[0]}
+            alt={post.title}
+            className="w-full h-auto object-cover"
+            data-testid={`post-media-${post.id}-0`}
+          />
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-2 border-t dark:border-gray-800">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => likeMutation.mutate()}
-            className={post.isLiked ? "text-pink-500" : ""}
-            data-testid={`button-like-${post.id}`}
-          >
-            <Heart className={`w-5 h-5 ${post.isLiked ? "fill-current" : ""}`} />
-            <span className="ml-1">{post.likesCount}</span>
-          </Button>
+      {/* Action Buttons */}
+      <div className="px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => likeMutation.mutate()}
+              className={`h-12 w-12 hover:bg-transparent ${post.isLiked ? "text-pink-500" : "text-gray-600"}`}
+              data-testid={`button-like-${post.id}`}
+            >
+              <Heart className={`w-7 h-7 ${post.isLiked ? "fill-current" : ""}`} />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowComments(!showComments)}
+              className="h-12 w-12 hover:bg-transparent text-gray-600"
+              data-testid={`button-comments-${post.id}`}
+            >
+              <MessageCircle className="w-7 h-7" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowTipDialog(true)}
+              className="h-12 w-12 hover:bg-transparent text-gray-600"
+              data-testid={`button-tip-${post.id}`}
+            >
+              <DollarSign className="w-7 h-7" />
+            </Button>
+          </div>
 
           <Button
             variant="ghost"
-            size="sm"
-            onClick={() => setShowComments(!showComments)}
-            data-testid={`button-comments-${post.id}`}
-          >
-            <MessageCircle className="w-5 h-5" />
-            <span className="ml-1">{post.commentsCount}</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => bookmarkMutation.mutate()}
-            className={post.isBookmarked ? "text-blue-500" : ""}
+            className={`h-12 w-12 hover:bg-transparent ${post.isBookmarked ? "text-pink-500" : "text-gray-600"}`}
             data-testid={`button-bookmark-${post.id}`}
           >
-            <Bookmark className={`w-5 h-5 ${post.isBookmarked ? "fill-current" : ""}`} />
+            <Bookmark className={`w-7 h-7 ${post.isBookmarked ? "fill-current" : ""}`} />
           </Button>
+        </div>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowTipDialog(true)}
-            data-testid={`button-tip-${post.id}`}
+        {/* Stats */}
+        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <button 
+            onClick={() => likeMutation.mutate()}
+            className="font-semibold hover:underline"
+            data-testid={`text-likes-${post.id}`}
           >
-            <DollarSign className="w-5 h-5" />
-          </Button>
+            {post.likesCount} curtidas
+          </button>
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="font-semibold hover:underline"
+            data-testid={`text-comments-${post.id}`}
+          >
+            {post.commentsCount} comentários
+          </button>
         </div>
       </div>
 
+      {/* Comments Section */}
       {showComments && (
-        <div className="space-y-3 pt-3 border-t dark:border-gray-800" data-testid={`comments-section-${post.id}`}>
+        <div className="px-4 pb-4 space-y-3 border-t dark:border-gray-800 pt-3" data-testid={`comments-section-${post.id}`}>
           <div className="flex gap-2">
+            <Avatar className="w-8 h-8">
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
             <Input
               placeholder="Adicione um comentário..."
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSendComment()}
+              className="flex-1"
               data-testid={`input-comment-${post.id}`}
             />
-            <Button onClick={handleSendComment} disabled={commentMutation.isPending} data-testid={`button-send-comment-${post.id}`}>
+            <Button 
+              onClick={handleSendComment} 
+              disabled={commentMutation.isPending}
+              size="icon"
+              data-testid={`button-send-comment-${post.id}`}
+            >
               <Send className="w-4 h-4" />
             </Button>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {comments.map((comment) => (
               <div key={comment.id} className="flex gap-2" data-testid={`comment-${comment.id}`}>
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={comment.user.profileImage || undefined} />
                   <AvatarFallback>{comment.user.displayName[0]?.toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-2">
-                  <p className="font-semibold text-sm">{comment.user.displayName}</p>
-                  <p className="text-sm">{comment.content}</p>
+                <div className="flex-1">
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-3 py-2">
+                    <p className="font-semibold text-sm text-gray-900 dark:text-white">{comment.user.displayName}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1 ml-3">
+                    {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: ptBR })}
+                  </p>
                 </div>
               </div>
             ))}
@@ -244,42 +266,13 @@ export function PostCard({ post }: PostCardProps) {
         </div>
       )}
 
-      <Dialog open={showTipDialog} onOpenChange={setShowTipDialog}>
-        <DialogContent data-testid={`dialog-tip-${post.id}`}>
-          <DialogHeader>
-            <DialogTitle>Enviar Presente</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Valor (R$)</label>
-              <Input
-                type="number"
-                placeholder="0.00"
-                value={tipAmount}
-                onChange={(e) => setTipAmount(e.target.value)}
-                data-testid={`input-tip-amount-${post.id}`}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Mensagem (opcional)</label>
-              <Input
-                placeholder="Adicione uma mensagem..."
-                value={tipMessage}
-                onChange={(e) => setTipMessage(e.target.value)}
-                data-testid={`input-tip-message-${post.id}`}
-              />
-            </div>
-            <Button
-              onClick={handleSendTip}
-              disabled={!tipAmount || tipMutation.isPending}
-              className="w-full"
-              data-testid={`button-send-tip-${post.id}`}
-            >
-              Enviar R$ {tipAmount || "0.00"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Tip Modal */}
+      <TipModal
+        isOpen={showTipDialog}
+        onClose={() => setShowTipDialog(false)}
+        creator={post.creator}
+        onSuccess={handleTipSuccess}
+      />
     </div>
   );
 }
