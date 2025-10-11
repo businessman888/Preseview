@@ -33,11 +33,11 @@ export function CreatorProfile() {
   const [activeTab, setActiveTab] = useState("posts");
 
   const { data: creator, isLoading: loadingCreator } = useQuery<CreatorWithProfile>({
-    queryKey: ["/api/creators", id],
+    queryKey: [`/api/creators/${id}`],
   });
 
   const { data: posts = [] } = useQuery<PostWithCreator[]>({
-    queryKey: ["/api/creators", id, "posts"],
+    queryKey: [`/api/creators/${id}/posts`],
   });
 
   if (loadingCreator) {
