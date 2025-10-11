@@ -7,6 +7,7 @@ import { StoriesBar } from "@/components/StoriesBar";
 import { StoryViewer } from "@/components/StoryViewer";
 import { AddContentModal } from "@/components/AddContentModal";
 import { PostCard } from "@/components/PostCard";
+import { SuggestedCreators } from "@/components/SuggestedCreators";
 import { Post, User as UserType, Story } from "@shared/schema";
 
 interface PostWithCreator extends Post {
@@ -50,6 +51,8 @@ export const ScreenHome = (): JSX.Element => {
         onAddStory={() => setIsAddContentModalOpen(true)}
         onViewStory={handleViewStory}
       />
+
+      <SuggestedCreators />
 
       <main className="max-w-2xl mx-auto w-full px-4 py-6 space-y-6">
         {isLoadingPosts ? (

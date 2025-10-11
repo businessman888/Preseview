@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Post, User } from "@shared/schema";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -120,18 +121,22 @@ export function PostCard({ post }: PostCardProps) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg border dark:border-gray-800 p-4 space-y-4" data-testid={`post-${post.id}`}>
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <Avatar>
-            <AvatarImage src={post.creator.profileImage || undefined} />
-            <AvatarFallback>{post.creator.displayName[0]?.toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-semibold text-gray-900 dark:text-white">{post.creator.displayName}</p>
-            <p className="text-sm text-gray-500">
-              {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: ptBR })}
-            </p>
+        <Link href={`/creator/${post.creatorId}`}>
+          <div className="flex items-center gap-3 cursor-pointer" data-testid={`link-creator-${post.creatorId}`}>
+            <Avatar>
+              <AvatarImage src={post.creator.profileImage || undefined} />
+              <AvatarFallback>{post.creator.displayName[0]?.toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white hover:text-pink-500 transition-colors">
+                {post.creator.displayName}
+              </p>
+              <p className="text-sm text-gray-500">
+                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: ptBR })}
+              </p>
+            </div>
           </div>
-        </div>
+        </Link>
         <Button
           variant="outline"
           size="sm"

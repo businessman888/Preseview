@@ -67,6 +67,9 @@ import connectPg from "connect-pg-simple";
 
 const PostgresSessionStore = connectPg(session);
 
+// Public user type without sensitive fields
+export type PublicUser = Omit<User, 'password'>;
+
 export interface IStorage {
   // Session store
   sessionStore: session.Store;
@@ -80,11 +83,12 @@ export interface IStorage {
   upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }>;
   
   // Creator Profiles
-  getCreatorProfile(userId: number): Promise<CreatorProfile | undefined>;
+  getCreatorProfile(userId: number, viewerUserId?: number): Promise<(PublicUser & { creatorProfile?: CreatorProfile, isFollowing: boolean, isSubscribed: boolean }) | undefined>;
   createCreatorProfile(profile: InsertCreatorProfile): Promise<CreatorProfile>;
   updateCreatorProfile(userId: number, profile: Partial<InsertCreatorProfile>): Promise<CreatorProfile | undefined>;
   getCreators(limit?: number, offset?: number): Promise<CreatorProfile[]>;
   searchCreators(query: string, limit?: number): Promise<(CreatorProfile & { user: User })[]>;
+  getSuggestedCreators(viewerUserId: number, limit?: number): Promise<(PublicUser & { creatorProfile?: CreatorProfile, isFollowing: boolean })[]>;
   
   // Posts
   createPost(post: InsertPost): Promise<Post>;
@@ -272,9 +276,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Creator Profiles
-  async getCreatorProfile(userId: number): Promise<CreatorProfile | undefined> {
+  async getCreatorProfile(userId: number, viewerUserId?: number): Promise<(PublicUser & { creatorProfile?: CreatorProfile, isFollowing: boolean, isSubscribed: boolean }) | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    if (!user) return undefined;
+
     const [profile] = await db.select().from(creatorProfiles).where(eq(creatorProfiles.userId, userId));
-    return profile || undefined;
+    
+    let isFollowing = false;
+    let isSubscribed = false;
+
+    if (viewerUserId && viewerUserId !== userId) {
+      isFollowing = await this.isFollowing(viewerUserId, userId);
+      
+      const subscription = await this.getSubscription(viewerUserId, userId);
+      isSubscribed = subscription?.status === 'active' || false;
+    }
+
+    // Return sanitized user object without sensitive fields
+    const { password, ...safeUserData } = user;
+    
+    return {
+      ...safeUserData,
+      creatorProfile: profile || undefined,
+      isFollowing,
+      isSubscribed,
+    };
   }
 
   async createCreatorProfile(profile: InsertCreatorProfile): Promise<CreatorProfile> {
@@ -331,6 +357,38 @@ export class DatabaseStorage implements IStorage {
     return results.map(row => ({
       ...row.creator_profiles,
       user: row.users,
+    }));
+  }
+
+  async getSuggestedCreators(viewerUserId: number, limit = 6): Promise<(PublicUser & { creatorProfile?: CreatorProfile, isFollowing: boolean })[]> {
+    // Get creators that the viewer is not already following
+    const results = await db
+      .select()
+      .from(users)
+      .leftJoin(creatorProfiles, eq(users.id, creatorProfiles.userId))
+      .where(
+        and(
+          eq(users.userType, 'creator'),
+          sql`${users.id} NOT IN (
+            SELECT ${follows.followingId} 
+            FROM ${follows} 
+            WHERE ${follows.followerId} = ${viewerUserId}
+          )`,
+          sql`${users.id} != ${viewerUserId}`
+        )
+      )
+      .orderBy(desc(creatorProfiles.subscriberCount))
+      .limit(limit);
+
+    return Promise.all(results.map(async (row) => {
+      const isFollowing = await this.isFollowing(viewerUserId, row.users.id);
+      // Return sanitized user object without sensitive fields
+      const { password, ...safeUserData } = row.users;
+      return {
+        ...safeUserData,
+        creatorProfile: row.creator_profiles || undefined,
+        isFollowing,
+      };
     }));
   }
 

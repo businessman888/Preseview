@@ -262,6 +262,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/creators/suggested", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const limit = parseInt(req.query.limit as string) || 6;
+      const creators = await storage.getSuggestedCreators(req.user!.id, limit);
+      
+      res.json(creators);
+    } catch (error) {
+      console.error("Error fetching suggested creators:", error);
+      res.status(500).json({ error: "Erro ao buscar criadores sugeridos" });
+    }
+  });
+
+  app.get("/api/creators/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const creatorId = parseInt(req.params.id);
+      const creator = await storage.getCreatorProfile(creatorId, req.user!.id);
+      
+      if (!creator) {
+        return res.status(404).json({ error: "Criador não encontrado" });
+      }
+      
+      res.json(creator);
+    } catch (error) {
+      console.error("Error fetching creator profile:", error);
+      res.status(500).json({ error: "Erro ao buscar perfil do criador" });
+    }
+  });
+
+  app.get("/api/creators/:id/posts", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const creatorId = parseInt(req.params.id);
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const posts = await storage.getPostsByCreator(creatorId, limit, offset);
+      res.json(posts);
+    } catch (error) {
+      console.error("Error fetching creator posts:", error);
+      res.status(500).json({ error: "Erro ao buscar posts do criador" });
+    }
+  });
+
   // Likes routes
   app.post("/api/posts/:id/like", async (req, res) => {
     try {

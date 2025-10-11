@@ -13,6 +13,7 @@ import { ScreenNotifications } from "@/pages/ScreenNotifications";
 import { ScreenProfile } from "@/pages/ScreenProfile";
 import { ScreenSettings } from "@/pages/ScreenSettings";
 import BecomeCreatorPage from "@/pages/BecomeCreatorPage";
+import { CreatorProfile } from "@/pages/CreatorProfile";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/search" component={ScreenSearch} />
       <Route path="/notifications" component={ScreenNotifications} />
       <Route path="/profile" component={ScreenProfile} />
+      <Route path="/creator/:id" component={CreatorProfile} />
       <Route path="/settings" component={ScreenSettings} />
       <Route path="/settings/:rest*" component={ScreenSettings} />
       <Route path="/become-creator" component={BecomeCreatorPage} />
