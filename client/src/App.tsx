@@ -26,7 +26,7 @@ function Router() {
       <Route path="/profile" component={ScreenProfile} />
       <Route path="/creator/:id" component={CreatorProfile} />
       <Route path="/settings" component={ScreenSettings} />
-      <Route path="/settings/:rest*" component={ScreenSettings} />
+      <Route path="/settings/*" component={ScreenSettings} />
       <Route path="/become-creator" component={BecomeCreatorPage} />
       
       {/* Fallback to 404 */}
