@@ -10,15 +10,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export const BlockedUsersSection = (): JSX.Element => {
   const { toast } = useToast();
 
-  const { data: blockedUsers, isLoading } = useQuery({
+  const { data: blockedUsers = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/blocked-users"],
   });
 
   const unblockMutation = useMutation({
     mutationFn: async (userId: number) => {
-      return await apiRequest(`/api/blocked-users/${userId}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/blocked-users/${userId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/blocked-users"] });
