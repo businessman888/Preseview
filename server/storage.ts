@@ -193,6 +193,12 @@ export interface IStorage {
   // Transactions
   getUserTransactions(userId: number, limit?: number): Promise<Transaction[]>;
   createTransaction(transaction: InsertTransaction): Promise<Transaction>;
+  
+  // Blocked Users
+  getBlockedUsers(userId: number): Promise<(BlockedUser & { blocked: User })[]>;
+  blockUser(blockerId: number, blockedId: number): Promise<BlockedUser>;
+  unblockUser(blockerId: number, blockedId: number): Promise<boolean>;
+  isBlocked(blockerId: number, blockedId: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1188,6 +1194,55 @@ export class DatabaseStorage implements IStorage {
       .values(transaction)
       .returning();
     return newTransaction;
+  }
+
+  // Blocked Users
+  async getBlockedUsers(userId: number): Promise<(BlockedUser & { blocked: User })[]> {
+    const results = await db
+      .select()
+      .from(blockedUsers)
+      .leftJoin(users, eq(blockedUsers.blockedId, users.id))
+      .where(eq(blockedUsers.blockerId, userId))
+      .orderBy(desc(blockedUsers.createdAt));
+
+    return results.map(row => ({
+      ...row.blocked_users,
+      blocked: row.users!
+    }));
+  }
+
+  async blockUser(blockerId: number, blockedId: number): Promise<BlockedUser> {
+    const [blocked] = await db
+      .insert(blockedUsers)
+      .values({ blockerId, blockedId })
+      .returning();
+    return blocked;
+  }
+
+  async unblockUser(blockerId: number, blockedId: number): Promise<boolean> {
+    try {
+      await db
+        .delete(blockedUsers)
+        .where(and(
+          eq(blockedUsers.blockerId, blockerId),
+          eq(blockedUsers.blockedId, blockedId)
+        ));
+      return true;
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+      return false;
+    }
+  }
+
+  async isBlocked(blockerId: number, blockedId: number): Promise<boolean> {
+    const [result] = await db
+      .select()
+      .from(blockedUsers)
+      .where(and(
+        eq(blockedUsers.blockerId, blockerId),
+        eq(blockedUsers.blockedId, blockedId)
+      ));
+    return !!result;
   }
 }
 

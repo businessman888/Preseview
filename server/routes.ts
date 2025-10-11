@@ -702,6 +702,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Blocked users routes
+  app.get("/api/blocked-users", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const blockedUsers = await storage.getBlockedUsers(req.user!.id);
+      res.json(blockedUsers);
+    } catch (error) {
+      console.error("Error fetching blocked users:", error);
+      res.status(500).json({ error: "Erro ao buscar usuários bloqueados" });
+    }
+  });
+
+  app.post("/api/blocked-users/:userId", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const blockedId = parseInt(req.params.userId);
+      const blocked = await storage.blockUser(req.user!.id, blockedId);
+      res.status(201).json(blocked);
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      res.status(500).json({ error: "Erro ao bloquear usuário" });
+    }
+  });
+
+  app.delete("/api/blocked-users/:userId", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const blockedId = parseInt(req.params.userId);
+      const success = await storage.unblockUser(req.user!.id, blockedId);
+      
+      if (success) {
+        res.sendStatus(200);
+      } else {
+        res.status(500).json({ error: "Erro ao desbloquear usuário" });
+      }
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+      res.status(500).json({ error: "Erro ao desbloquear usuário" });
+    }
+  });
+
   // Account management routes
   app.put("/api/user/profile", async (req, res) => {
     try {
