@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Plus, Home as HomeIcon, MessageCircle, Bell, User } from "lucide-react";
+import { Plus, Home as HomeIcon, MessageCircle, Bell, User, Search } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { StoriesBar } from "@/components/StoriesBar";
@@ -47,6 +47,11 @@ export const ScreenHome = (): JSX.Element => {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
             FanConnect
           </h1>
+          <Link href="/search">
+            <Button variant="ghost" size="icon" className="h-10 w-10" data-testid="button-search">
+              <Search className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            </Button>
+          </Link>
         </div>
       </header>
 
