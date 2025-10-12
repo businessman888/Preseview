@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 
 import { ScreenHome } from "@/pages/ScreenHome";
 import { ScreenMessages } from "@/pages/ScreenMessages";
+import { ScreenChatConversation } from "@/pages/ScreenChatConversation";
 import { ScreenSearch } from "@/pages/ScreenSearch";
 import { ScreenNotifications } from "@/pages/ScreenNotifications";
 import { ScreenProfile } from "@/pages/ScreenProfile";
@@ -21,6 +22,7 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={ScreenHome} />
       <Route path="/messages" component={ScreenMessages} />
+      <Route path="/messages/:userId" component={ScreenChatConversation} />
       <Route path="/search" component={ScreenSearch} />
       <Route path="/notifications" component={ScreenNotifications} />
       <Route path="/profile" component={ScreenProfile} />
