@@ -214,18 +214,36 @@ export class DatabaseStorage implements IStorage {
 
   // Users
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    try {
+      const result = await db.select().from(users).where(eq(users.id, id));
+      const [user] = result || [];
+      return user || undefined;
+    } catch (error) {
+      console.error("Error in getUser:", error);
+      return undefined;
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
+    try {
+      const result = await db.select().from(users).where(eq(users.username, username));
+      const [user] = result || [];
+      return user || undefined;
+    } catch (error) {
+      console.error("Error in getUserByUsername:", error);
+      return undefined;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user || undefined;
+    try {
+      const result = await db.select().from(users).where(eq(users.email, email));
+      const [user] = result || [];
+      return user || undefined;
+    } catch (error) {
+      console.error("Error in getUserByEmail:", error);
+      return undefined;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {

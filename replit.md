@@ -173,6 +173,26 @@ Principais tabelas:
 
 ## Mudanças Recentes
 
+### 2025-10-12: Sistema de Mensagens de Áudio Otimizado
+- ✅ **Correção Crítica de Persistência de Áudio**:
+  - Problema: URLs `blob:` temporárias não eram acessíveis após recarregar
+  - Solução: Conversão para Base64 para armazenamento permanente
+  - Validação de tamanho máximo de 5MB por mensagem
+  - Tratamento de erros com FileReader.onerror
+  - Cleanup adequado de recursos (blob URLs)
+  - Mensagens de erro específicas para cada caso
+- ✅ **Sistema de Chat Completo Verificado**:
+  - Envio de mensagens de texto com Enter
+  - Envio de imagens com preview
+  - Gravação e envio de áudio persistente
+  - Sistema de presentes/gorjetas
+  - Aba de multimídia funcional
+  - Marcadores de leitura (✓ e ✓✓)
+  - Timestamps em português
+  - Auto-scroll para última mensagem
+  - Dark mode completo
+  - Estados de loading e skeleton screens
+
 ### 2025-10-12: Funcionalidades de Criador Implementadas
 - ✅ **EditProfileModal**: Modal completo para editar perfil
   - Edição de bio, foto de perfil e banner
