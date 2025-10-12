@@ -14,6 +14,8 @@ import {
   Edit2Icon,
   Trash2Icon,
   MoreVerticalIcon,
+  BarChart3Icon,
+  MegaphoneIcon,
 } from "lucide-react";
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -175,35 +177,44 @@ export const ScreenProfile = (): JSX.Element => {
                   </div>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <Button
-                  className="w-full bg-[#e71d36] hover:bg-[#c41a2f] text-white rounded-lg"
-                  onClick={() => {
-                    console.log("Abrindo edição de perfil");
-                  }}
-                  data-testid="button-edit-profile"
-                >
-                  Editar Perfil
-                </Button>
-                
-                {user?.userType !== 'creator' && (
-                  <Link href="/become-creator">
-                    <Button
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg"
-                      data-testid="button-become-creator"
-                    >
-                      ✨ Tornar-se Criador
-                    </Button>
-                  </Link>
-                )}
-              </div>
             </div>
           </div>
 
-          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm mt-4">
+          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm mt-4 mb-4">
             {user?.bio || "Bem-vindo ao meu perfil! Compartilhando momentos especiais da minha vida ✨"}
           </p>
+
+          <div className="flex gap-2">
+            <Button
+              className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
+              onClick={() => {
+                console.log("Abrindo edição de perfil");
+              }}
+              data-testid="button-edit-profile"
+            >
+              Editar perfil
+            </Button>
+            
+            <Button
+              className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
+              onClick={() => {
+                console.log("Abrindo insights");
+              }}
+              data-testid="button-insights"
+            >
+              Insights
+            </Button>
+
+            <Button
+              className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
+              onClick={() => {
+                console.log("Abrindo promotion");
+              }}
+              data-testid="button-promotion"
+            >
+              Promotion
+            </Button>
+          </div>
         </div>
 
         {/* Tab Navigation */}
