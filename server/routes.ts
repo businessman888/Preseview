@@ -7,6 +7,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // sets up /api/register, /api/login, /api/logout, /api/user
   setupAuth(app);
 
+  // Update user profile
+  app.patch("/api/user/profile", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { bio, profileImage, coverImage } = req.body;
+      
+      const updatedUser = await storage.updateUserProfile(req.user!.id, {
+        bio: bio !== undefined ? bio : undefined,
+        profileImage: profileImage !== undefined ? profileImage : undefined,
+        coverImage: coverImage !== undefined ? coverImage : undefined,
+      });
+
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
+  });
+
   // User upgrade to creator
   app.post("/api/user/become-creator", async (req, res) => {
     try {

@@ -25,6 +25,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useCreatorPosts } from "@/hooks/use-creator-posts";
 import { CreatePostModal } from "@/components/CreatePostModal";
+import { EditProfileModal } from "@/components/EditProfileModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,6 +56,7 @@ export const ScreenProfile = (): JSX.Element => {
   const { posts, imagePosts, videoPosts, deletePost, isDeleting } = useCreatorPosts(user?.id);
   const [activeTab, setActiveTab] = useState("posts");
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -179,9 +181,7 @@ export const ScreenProfile = (): JSX.Element => {
           <div className="flex gap-2">
             <Button
               className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
-              onClick={() => {
-                console.log("Abrindo edição de perfil");
-              }}
+              onClick={() => setIsEditProfileModalOpen(true)}
               data-testid="button-edit-profile"
             >
               Editar perfil
@@ -384,6 +384,12 @@ export const ScreenProfile = (): JSX.Element => {
       <CreatePostModal
         isOpen={isCreatePostModalOpen}
         onClose={() => setIsCreatePostModalOpen(false)}
+      />
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditProfileModalOpen}
+        onClose={() => setIsEditProfileModalOpen(false)}
       />
 
       {/* View Post Dialog */}

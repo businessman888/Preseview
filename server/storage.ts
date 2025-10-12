@@ -80,6 +80,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+  updateUserProfile(userId: number, data: { bio?: string; profileImage?: string; coverImage?: string }): Promise<User>;
   upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }>;
   
   // Creator Profiles
@@ -248,6 +249,23 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
+  }
+
+  async updateUserProfile(userId: number, data: { bio?: string; profileImage?: string; coverImage?: string }): Promise<User> {
+    const updateData: any = { updatedAt: new Date() };
+    
+    if (data.bio !== undefined) updateData.bio = data.bio;
+    if (data.profileImage !== undefined) updateData.profileImage = data.profileImage;
+    if (data.coverImage !== undefined) updateData.coverImage = data.coverImage;
+
+    const [user] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!user) throw new Error("Usuário não encontrado");
+    return user;
   }
 
   async upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }> {
