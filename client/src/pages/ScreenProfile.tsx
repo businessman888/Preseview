@@ -110,8 +110,8 @@ export const ScreenProfile = (): JSX.Element => {
 
         {/* Profile Info */}
         <div className="px-6 pb-6 bg-white">
-          {/* Profile Picture - Circular and Centered */}
-          <div className="flex justify-center -mt-16 mb-4">
+          {/* Profile Picture - Circular on Left */}
+          <div className="flex -mt-16 mb-4">
             <Avatar className="w-32 h-32 border-4 border-white">
               <AvatarImage
                 src={user?.profileImage || "/figmaAssets/ellipse-19.png"}
@@ -123,8 +123,8 @@ export const ScreenProfile = (): JSX.Element => {
           </div>
 
           {/* Name and Username */}
-          <div className="text-center mb-3">
-            <div className="flex items-center justify-center space-x-2 mb-1">
+          <div className="mb-3">
+            <div className="flex items-center space-x-2 mb-1">
               <h2 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-xl">
                 {user?.displayName || "Você"}
               </h2>
@@ -142,7 +142,7 @@ export const ScreenProfile = (): JSX.Element => {
           </div>
 
           {/* Stats Icons */}
-          <div className="flex items-center justify-center space-x-6 mb-4">
+          <div className="flex items-center space-x-6 mb-4">
             <div 
               className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
               data-testid="stats-videos"
@@ -172,7 +172,7 @@ export const ScreenProfile = (): JSX.Element => {
             </div>
           </div>
 
-          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm text-center mb-4 px-4">
+          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm mb-4">
             {user?.bio || "Bem-vindo ao meu perfil! Compartilhando momentos especiais da minha vida ✨"}
           </p>
 
