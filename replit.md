@@ -67,6 +67,19 @@ Plataforma de criadores em português (brasileiro) onde usuários podem se conec
 - ✅ Estatísticas (posts, seguidores, seguindo)
 - ✅ Botão para tornar-se criador
 
+### Funcionalidades de Criador
+- ✅ **Edit Profile**: Modal para editar bio, foto de perfil e banner
+- ✅ **Insights Dashboard**: Analytics com métricas do criador
+  - Total de assinantes e crescimento mensal
+  - Total de posts, imagens e vídeos
+  - Curtidas totais e média por post
+  - Receita mensal estimada
+  - Taxa de engajamento
+- ✅ **Promotion Settings**: Gerenciamento de preços e promoções
+  - Atualização do preço de assinatura
+  - Calculadora de descontos promocionais
+  - Visualização de preço atual
+
 ### Monetização
 - ✅ Sistema de assinaturas
 - ✅ Gorjetas/tips em posts
@@ -159,6 +172,27 @@ Principais tabelas:
 - `messages` - Mensagens diretas
 
 ## Mudanças Recentes
+
+### 2025-10-12: Funcionalidades de Criador Implementadas
+- ✅ **EditProfileModal**: Modal completo para editar perfil
+  - Edição de bio, foto de perfil e banner
+  - Validação e feedback ao usuário
+  - Integração com backend via PATCH /api/user/profile
+- ✅ **InsightsModal**: Dashboard de analytics para criadores
+  - Métricas em tempo real (assinantes, posts, curtidas)
+  - Cálculo de receita mensal estimada
+  - Crescimento de assinantes (últimos 30 dias)
+  - Taxa de engajamento
+- ✅ **PromotionModal**: Gerenciamento de preços
+  - Atualização de preço de assinatura
+  - Calculadora de descontos promocionais
+  - Interface para simular promoções
+- ✅ **Endpoints de API**:
+  - PATCH /api/user/profile - Atualizar perfil do usuário
+  - GET /api/creator/insights - Obter métricas do criador
+  - GET /api/creator/profile - Obter perfil do criador
+  - PATCH /api/creator/subscription-price - Atualizar preço de assinatura
+- ✅ Todos os modais integrados ao perfil com botões funcionais
 
 ### 2025-10-11: Features Visuais do MVP
 - ✅ **Página de Perfil do Criador** (`/creator/:id`)
