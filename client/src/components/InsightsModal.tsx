@@ -32,7 +32,7 @@ export function InsightsModal({ isOpen, onClose }: InsightsModalProps) {
 
   const { data: insights, isLoading } = useQuery<InsightsData>({
     queryKey: ["/api/creator/insights"],
-    enabled: isOpen && user?.type === "creator",
+    enabled: isOpen && user?.userType === "creator",
   });
 
   const StatCard = ({ 

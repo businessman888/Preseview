@@ -32,10 +32,7 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: { bio: string; profileImage: string; coverImage: string }) => {
-      return await apiRequest("/api/user/profile", {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PATCH", "/api/user/profile", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });

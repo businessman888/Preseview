@@ -44,10 +44,7 @@ export function PromotionModal({ isOpen, onClose }: PromotionModalProps) {
 
   const updatePriceMutation = useMutation({
     mutationFn: async (data: { subscriptionPrice: number }) => {
-      return await apiRequest("/api/creator/subscription-price", {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PATCH", "/api/creator/subscription-price", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/creator/profile"] });
