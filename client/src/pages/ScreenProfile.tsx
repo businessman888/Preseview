@@ -93,94 +93,86 @@ export const ScreenProfile = (): JSX.Element => {
 
   return (
     <div className="flex flex-col h-screen bg-[#fdfdfa]">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white shadow-sm">
-        <Link href="/">
-          <Button variant="ghost" size="icon" data-testid="button-back">
-            <ArrowLeftIcon className="w-6 h-6 text-[#5d5b5b]" />
-          </Button>
-        </Link>
-        <h1 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-xl">
-          {user?.username || "@seuusername"}
-        </h1>
-        <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" data-testid="button-share">
-            <ShareIcon className="w-5 h-5 text-[#5d5b5b]" />
-          </Button>
+      <div className="flex-1 overflow-y-auto pb-20">
+        {/* Banner with Settings Icon */}
+        <div className="relative h-32 bg-gradient-to-r from-gray-200 to-gray-300">
           <Link href="/settings">
-            <Button variant="ghost" size="icon" data-testid="button-settings">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute top-4 right-4 bg-white/80 hover:bg-white"
+              data-testid="button-settings"
+            >
               <SettingsIcon className="w-5 h-5 text-[#5d5b5b]" />
             </Button>
           </Link>
         </div>
-      </div>
 
-      <div className="flex-1 overflow-y-auto pb-20">
         {/* Profile Info */}
-        <div className="p-6 bg-white">
-          <div className="flex items-start space-x-4">
-            <Avatar className="w-20 h-20">
+        <div className="px-6 pb-6 bg-white">
+          {/* Profile Picture - Circular and Centered */}
+          <div className="flex justify-center -mt-16 mb-4">
+            <Avatar className="w-32 h-32 border-4 border-white">
               <AvatarImage
                 src={user?.profileImage || "/figmaAssets/ellipse-19.png"}
                 alt={user?.displayName || "Você"}
                 className="object-cover"
               />
-              <AvatarFallback>{user?.displayName?.charAt(0) || "V"}</AvatarFallback>
+              <AvatarFallback className="text-2xl">{user?.displayName?.charAt(0) || "V"}</AvatarFallback>
             </Avatar>
+          </div>
 
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h2 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
-                  {user?.displayName || "Você"}
-                </h2>
-                {user?.isVerified && (
-                  <img
-                    className="w-5 h-5"
-                    alt="Verified"
-                    src="/figmaAssets/verified.png"
-                  />
-                )}
-              </div>
-              
-              <div className="flex space-x-6 mb-3">
-                <div 
-                  className="text-center cursor-pointer hover:opacity-80 transition-opacity"
-                  data-testid="stats-posts"
-                >
-                  <div className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
-                    {posts.length}
-                  </div>
-                  <div className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#8b8585] text-sm">
-                    Posts
-                  </div>
-                </div>
-                <div 
-                  className="text-center cursor-pointer hover:opacity-80 transition-opacity"
-                  data-testid="stats-followers"
-                >
-                  <div className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
-                    0
-                  </div>
-                  <div className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#8b8585] text-sm">
-                    Seguidores
-                  </div>
-                </div>
-                <div 
-                  className="text-center cursor-pointer hover:opacity-80 transition-opacity"
-                  data-testid="stats-following"
-                >
-                  <div className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-lg">
-                    0
-                  </div>
-                  <div className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#8b8585] text-sm">
-                    Seguindo
-                  </div>
-                </div>
-              </div>
+          {/* Name and Username */}
+          <div className="text-center mb-3">
+            <div className="flex items-center justify-center space-x-2 mb-1">
+              <h2 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-xl">
+                {user?.displayName || "Você"}
+              </h2>
+              {user?.isVerified && (
+                <img
+                  className="w-5 h-5"
+                  alt="Verified"
+                  src="/figmaAssets/verified.png"
+                />
+              )}
+            </div>
+            <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#8b8585] text-sm">
+              @{user?.username || "seuusername"}
+            </p>
+          </div>
+
+          {/* Stats Icons */}
+          <div className="flex items-center justify-center space-x-6 mb-4">
+            <div 
+              className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
+              data-testid="stats-videos"
+            >
+              <PlayIcon className="w-4 h-4 text-[#5d5b5b]" />
+              <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
+                {videoPosts.length}
+              </span>
+            </div>
+            <div 
+              className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
+              data-testid="stats-images"
+            >
+              <ImageIcon className="w-4 h-4 text-[#5d5b5b]" />
+              <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
+                {imagePosts.length}
+              </span>
+            </div>
+            <div 
+              className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
+              data-testid="stats-likes"
+            >
+              <span className="text-[#5d5b5b] text-sm">❤️</span>
+              <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
+                {posts.reduce((acc, post) => acc + (post.likesCount || 0), 0)}
+              </span>
             </div>
           </div>
 
-          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm mt-4 mb-4">
+          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm text-center mb-4 px-4">
             {user?.bio || "Bem-vindo ao meu perfil! Compartilhando momentos especiais da minha vida ✨"}
           </p>
 
