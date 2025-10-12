@@ -367,23 +367,15 @@ export const ScreenProfile = (): JSX.Element => {
           </Button>
         </Link>
 
-        {user?.userType === 'creator' ? (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="p-0" 
-            onClick={() => setIsCreatePostModalOpen(true)}
-            data-testid="nav-create-post"
-          >
-            <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
-          </Button>
-        ) : (
-          <Link href="/search">
-            <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
-              <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
-            </Button>
-          </Link>
-        )}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="p-0" 
+          onClick={() => setIsCreatePostModalOpen(true)}
+          data-testid="nav-create-post"
+        >
+          <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
+        </Button>
 
         <Link href="/notifications">
           <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
