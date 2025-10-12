@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { ChevronRight, Check } from "lucide-react";
 import { Link } from "wouter";
 import { User, CreatorProfile } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
+import { SubscriptionCheckoutModal } from "@/components/SubscriptionCheckoutModal";
 
 interface CreatorWithProfile extends User {
   creatorProfile?: CreatorProfile;
@@ -14,10 +16,18 @@ interface CreatorWithProfile extends User {
 
 export function SuggestedCreators() {
   const { user, isLoading: isAuthLoading } = useAuth();
+  const [selectedCreator, setSelectedCreator] = useState<CreatorWithProfile | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  
   const { data: creators = [], isLoading } = useQuery<CreatorWithProfile[]>({
     queryKey: ["/api/creators/suggested"],
     enabled: !!user && !isAuthLoading,
   });
+
+  const handleFollowClick = (creator: CreatorWithProfile) => {
+    setSelectedCreator(creator);
+    setIsCheckoutOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -86,7 +96,7 @@ export function SuggestedCreators() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Handle follow action
+                      handleFollowClick(creator);
                     }}
                     data-testid={`button-follow-${creator.id}`}
                   >
@@ -114,6 +124,17 @@ export function SuggestedCreators() {
           </Card>
         ))}
       </div>
+
+      {selectedCreator && (
+        <SubscriptionCheckoutModal
+          open={isCheckoutOpen}
+          onClose={() => {
+            setIsCheckoutOpen(false);
+            setSelectedCreator(null);
+          }}
+          creator={selectedCreator}
+        />
+      )}
     </div>
   );
 }

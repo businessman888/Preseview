@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Post, CreatorProfile as CreatorProfileType } from "@shared/schema";
-import { SubscriptionModal } from "@/components/SubscriptionModal";
+import { SubscriptionCheckoutModal } from "@/components/SubscriptionCheckoutModal";
 
 interface CreatorWithProfile extends User {
   creatorProfile?: CreatorProfileType;
@@ -266,11 +266,13 @@ export function CreatorProfile() {
       </div>
 
       {/* Subscription Modal */}
-      <SubscriptionModal 
-        isOpen={showSubscriptionModal}
-        onClose={() => setShowSubscriptionModal(false)}
-        creator={creator}
-      />
+      {creator && (
+        <SubscriptionCheckoutModal 
+          open={showSubscriptionModal}
+          onClose={() => setShowSubscriptionModal(false)}
+          creator={creator}
+        />
+      )}
     </div>
   );
 }
