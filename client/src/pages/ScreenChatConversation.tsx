@@ -191,26 +191,63 @@ export const ScreenChatConversation = (): JSX.Element => {
     mediaRecorderRef.current = null;
   };
 
-  const handleSendAudio = () => {
-    if (!audioUrl.trim() && !audioBlob) return;
+  const handleSendAudio = async () => {
+    if (!audioBlob) return;
     
-    // In a real app, you would upload the audioBlob to a server and get a URL
-    // For now, we'll use the object URL (this won't persist across page reloads)
-    sendMessageMutation.mutate({
-      receiverId: otherUserId,
-      content: "🎤 Áudio",
-      mediaUrl: audioUrl,
-    });
+    // Validate audio size (max 5MB to avoid payload issues)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (audioBlob.size > maxSize) {
+      toast({
+        title: "Áudio muito grande",
+        description: "O áudio deve ter no máximo 5MB. Grave uma mensagem mais curta.",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    setAudioDialogOpen(false);
-    
-    // Reset state without revoking the URL (it's being used in the message)
-    setIsRecording(false);
-    setAudioUrl("");
-    setAudioBlob(null);
-    audioChunksRef.current = [];
-    mediaRecorderRef.current = null;
-    shouldPersistRecordingRef.current = true;
+    try {
+      // Convert audio blob to base64 for persistent storage
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const base64Audio = reader.result as string;
+        
+        sendMessageMutation.mutate({
+          receiverId: otherUserId,
+          content: "🎤 Áudio",
+          mediaUrl: base64Audio,
+        });
+        
+        setAudioDialogOpen(false);
+        
+        // Clean up
+        if (audioUrl && audioUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(audioUrl);
+        }
+        setIsRecording(false);
+        setAudioUrl("");
+        setAudioBlob(null);
+        audioChunksRef.current = [];
+        mediaRecorderRef.current = null;
+        shouldPersistRecordingRef.current = true;
+      };
+      
+      reader.onerror = () => {
+        toast({
+          title: "Erro ao processar áudio",
+          description: "Não foi possível converter o áudio. Tente gravar novamente.",
+          variant: "destructive",
+        });
+      };
+      
+      reader.readAsDataURL(audioBlob);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível processar o áudio",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSendGift = () => {
@@ -574,7 +611,7 @@ export const ScreenChatConversation = (): JSX.Element => {
               </Button>
               <Button
                 onClick={handleSendAudio}
-                disabled={!audioUrl.trim()}
+                disabled={!audioBlob}
                 className="bg-pink-500 hover:bg-pink-600"
                 data-testid="button-send-audio"
               >
