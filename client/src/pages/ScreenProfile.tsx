@@ -27,6 +27,7 @@ import { useCreatorPosts } from "@/hooks/use-creator-posts";
 import { CreatePostModal } from "@/components/CreatePostModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
 import { InsightsModal } from "@/components/InsightsModal";
+import { PromotionModal } from "@/components/PromotionModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,6 +60,7 @@ export const ScreenProfile = (): JSX.Element => {
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isInsightsModalOpen, setIsInsightsModalOpen] = useState(false);
+  const [isPromotionModalOpen, setIsPromotionModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -199,9 +201,7 @@ export const ScreenProfile = (): JSX.Element => {
 
             <Button
               className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
-              onClick={() => {
-                console.log("Abrindo promotion");
-              }}
+              onClick={() => setIsPromotionModalOpen(true)}
               data-testid="button-promotion"
             >
               Promotion
@@ -396,6 +396,12 @@ export const ScreenProfile = (): JSX.Element => {
       <InsightsModal
         isOpen={isInsightsModalOpen}
         onClose={() => setIsInsightsModalOpen(false)}
+      />
+
+      {/* Promotion Modal */}
+      <PromotionModal
+        isOpen={isPromotionModalOpen}
+        onClose={() => setIsPromotionModalOpen(false)}
       />
 
       {/* View Post Dialog */}

@@ -71,6 +71,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get creator profile
+  app.get("/api/creator/profile", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.userType !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar este recurso" });
+      }
+
+      const profile = await storage.getCreatorProfile(req.user!.id);
+      res.json(profile);
+    } catch (error: any) {
+      console.error("Error fetching creator profile:", error);
+      res.status(500).json({ error: "Erro ao buscar perfil do criador" });
+    }
+  });
+
+  // Update subscription price
+  app.patch("/api/creator/subscription-price", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.userType !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem atualizar preços" });
+      }
+
+      const { subscriptionPrice } = req.body;
+      
+      if (subscriptionPrice === undefined || subscriptionPrice < 0) {
+        return res.status(400).json({ error: "Preço inválido" });
+      }
+
+      const profile = await storage.updateSubscriptionPrice(req.user!.id, subscriptionPrice);
+      res.json(profile);
+    } catch (error: any) {
+      console.error("Error updating subscription price:", error);
+      res.status(500).json({ error: "Erro ao atualizar preço" });
+    }
+  });
+
   // Stories routes
   app.get("/api/stories", async (req, res) => {
     try {

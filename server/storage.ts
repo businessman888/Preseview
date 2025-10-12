@@ -322,6 +322,28 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
+  async getCreatorProfile(userId: number): Promise<CreatorProfile | undefined> {
+    const [profile] = await db
+      .select()
+      .from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId));
+    return profile || undefined;
+  }
+
+  async updateSubscriptionPrice(userId: number, subscriptionPrice: number): Promise<CreatorProfile> {
+    const [profile] = await db
+      .update(creatorProfiles)
+      .set({ 
+        subscriptionPrice,
+        updatedAt: new Date(),
+      })
+      .where(eq(creatorProfiles.userId, userId))
+      .returning();
+    
+    if (!profile) throw new Error("Perfil de criador não encontrado");
+    return profile;
+  }
+
   async upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }> {
     // Update user type to creator
     const [user] = await db
