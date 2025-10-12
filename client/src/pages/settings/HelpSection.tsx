@@ -1,17 +1,23 @@
 import { ArrowLeftIcon, ChevronRightIcon, FileTextIcon, HelpCircleIcon, MessageCircleIcon } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { TermsAndConditionsPage } from "./help/TermsAndConditionsPage";
 
 export const HelpSection = (): JSX.Element => {
+  const [location] = useLocation();
+
+  // Se está na subseção de termos, renderiza ela
+  if (location === "/settings/help/terms") return <TermsAndConditionsPage />;
+
   const helpMenu = [
     {
       id: "terms",
       icon: FileTextIcon,
       title: "Termos e condições",
       description: "Leia nossos termos de uso",
-      href: "#",
-      external: true,
+      href: "/settings/help/terms",
+      external: false,
     },
     {
       id: "help-center",

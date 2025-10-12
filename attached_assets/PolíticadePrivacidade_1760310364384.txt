@@ -1,0 +1,177 @@
+﻿# Política de Privacidade
+
+
+Atualizado: 12 de outubro de 2025
+
+
+Esta Política de Privacidade explica como a Preseview coleta, usa, compartilha e protege seus dados pessoais quando você utiliza nossa Plataforma e Serviços. Estamos comprometidos em proteger sua privacidade e cumprir as leis aplicáveis de proteção de dados, incluindo a Lei Geral de Proteção de Dados (LGPD) brasileira.
+
+
+Esta Política suplementa os Termos e Condições Gerais e outras Políticas Preseview aplicáveis. Se houver qualquer conflito entre esta Política e os Termos Gerais, os termos desta Política prevalecerão para o assunto específico que ela governa.
+
+
+Todos os termos definidos usados aqui terão o significado atribuído nos Termos e Condições Gerais, a menos que declarado de outra forma.
+
+
+A Preseview Ltda. é a controladora de seus dados pessoais para os fins da Plataforma. Nosso contato de proteção de dados é: support@preseview.com
+
+
+## 1. QUAIS DADOS COLETAMOS
+
+
+0. Coletamos e processamos as seguintes categorias de dados pessoais dependendo de como você utiliza a Plataforma:
+
+
+  0. Dados que você fornece diretamente
+
+
+    0. Dados de identidade (ex.: nome, data de nascimento, nacionalidade)
+    1. Dados de contato (ex.: endereço de e-mail, número de telefone)
+    2. Dados de pagamento (ex.: detalhes de cartão ou banco, endereço de cobrança)
+    3. Documentos de verificação de Criadores (ex.: RG, verificações de vivacidade)
+    4. Comunicações (ex.: mensagens de suporte, reclamações)
+  1. Dados que coletamos automaticamente
+
+
+    0. Dados de uso (ex.: horários de login, cliques, Conteúdo visualizado, mensagens)
+    1. Dados técnicos (ex.: endereço IP, tipo de navegador, modelo de dispositivo)
+    2. Dados de localização (baseados em IP ou permissões de dispositivo)
+    3. Atividade de sessão (ex.: navegação, interações)
+  2. Dados de terceiros
+
+
+    0. Informações de indicação
+    1. Serviços de verificação de identidade e prevenção de fraudes
+    2. Plataformas de publicidade ou análise
+1. Podemos combinar esses dados para melhorar nossos serviços, proteger os usuários e detectar uso indevido.
+
+
+## 2. COMO USAMOS SEUS DADOS
+
+
+0. Processamos seus dados pessoais para os seguintes propósitos:
+
+
+| Propósito | Base Legal |
+|-----------|------------|
+| Para criar e gerenciar sua Conta | Necessidade contratual |
+| Para verificar Criadores e garantir conformidade de idade | Obrigação legal e interesse legítimo |
+| Para processar transações e entregar Serviços Pagos | Necessidade contratual |
+| Para fazer cumprir as regras da Plataforma e prevenir abuso | Interesse legítimo e obrigação legal |
+| Para melhorar e personalizar sua experiência | Interesse legítimo e/ou consentimento |
+| Para responder a suporte ou reclamações | Necessidade contratual ou obrigação legal |
+| Para entregar marketing (onde permitido) | Consentimento ou interesse legítimo |
+| Para cumprir leis e responder a autoridades | Obrigação legal |
+
+
+## 3. COOKIES E RASTREAMENTO
+
+
+0. Usamos Cookies e tecnologias semelhantes para operar, proteger e melhorar a Plataforma. Por favor, consulte nossa Política de Cookies para uma explicação detalhada de como os Cookies funcionam e como você pode gerenciar suas preferências.
+
+
+## 4. COM QUEM COMPARTILHAMOS SEUS DADOS
+
+
+0. Compartilhamos seus dados pessoais apenas quando necessário e para propósitos legítimos. Isso inclui compartilhamento com:
+
+
+  0) Processadores de pagamento
+  1) Ferramentas de KYC e prevenção de fraudes
+  2) Provedores de análise
+  3) Plataformas de marketing (somente com seu consentimento)
+  4) Ferramentas de suporte ao cliente
+  5) Autoridades legais, onde exigido por lei ou ordem judicial
+1. Sempre que possível, celebramos acordos de processamento de dados com esses provedores para garantir que seus dados sejam tratados de forma segura.
+2. A Preseview pode conter links para sites ou serviços externos não operados por nós. Não somos responsáveis pelo conteúdo, práticas de privacidade ou políticas de uso de dados dessas terceiras partes. Recomendamos revisar suas notificações de privacidade antes de enviar qualquer dado.
+
+
+## 5. TRANSFERÊNCIAS INTERNACIONAIS
+
+
+0. Alguns de nossos provedores de serviços estão localizados fora do Brasil. Quando dados pessoais são transferidos internacionalmente, garantimos que sejam implementadas salvaguardas apropriadas, como:
+
+
+  0. Decisões de adequação pelo governo brasileiro
+  1. Cláusulas Contratuais Padrão (CCPs)
+  2. Adendo brasileiro às CCPs (se requerido)
+
+
+## 6. RETENÇÃO DE DADOS
+
+
+0. Retemos seus dados pessoais apenas pelo tempo necessário para os propósitos descritos nesta Política, incluindo:
+
+
+  0. Enquanto você mantiver uma Conta ativa
+  1. Para fins legais, regulatórios, fiscais ou de auditoria
+  2. Por um período limitado após o fechamento da conta, conforme exigido por lei
+1. Após esse período, seus dados são excluídos de forma segura ou anonimizados.
+
+
+## 7. SEUS DIREITOS
+
+
+0. Você tem os seguintes direitos sob a lei brasileira de proteção de dados:
+
+
+  0. Direito de acesso – Solicitar uma cópia de seus dados pessoais
+  1. Direito de retificação – Corrigir dados imprecisos ou incompletos
+  2. Direito ao esquecimento – Pedir que excluamos seus dados sob certas condições
+  3. Direito de restringir o processamento – Limitar como usamos seus dados
+  4. Direito à portabilidade de dados – Receber seus dados em formato estruturado
+  5. Direito de oposição – Parar certos tipos de processamento
+  6. Direito de retirar consentimento – Onde o processamento é baseado em consentimento
+  7. Direito de apresentar reclamação – Com a Autoridade Nacional de Proteção de Dados (ANPD)
+1. Para exercer seus direitos, entre em contato com support@preseview.com.
+2. Você pode aprender mais ou registrar uma reclamação com a Autoridade Nacional de Proteção de Dados (ANPD) em https://www.gov.br/anpd/pt-br.
+
+
+## 8. CRIANÇAS
+
+
+0. A Plataforma não é destinada a crianças menores de 18 anos. Não coletamos dados pessoais de crianças intencionalmente. Se você souber de alguém menor de 18 anos usando a Preseview, por favor, notifique-nos imediatamente em support@preseview.com.
+
+
+## 9. DADOS DE VERIFICAÇÃO DE IDADE
+
+
+0. Para cumprir leis globais de verificação de idade, processamos dados adicionais para usuários em jurisdições regulamentadas, conforme detalhado em nossa Política de Verificação de Idade. Isso inclui:
+
+
+  0. Para Visualizadores: Status de confirmação de idade básica e carimbos de tempo de verificação
+  1. Para Usuários Criativos: Detalhes de RG, dados de correspondência biométrica e documentos de verificação
+1. A verificação de idade é realizada por provedores terceirizados aprovados (atualmente Ondato) sob acordos rigorosos de processamento de dados. Armazenamos apenas os dados mínimos necessários para conformidade:
+
+
+  0. Status de verificação (aprovado/reprovado)
+  1. Carimbo de tempo de verificação
+  2. Apenas para Usuários Criativos: Dados de documentos conforme exigências da legislação brasileira
+2. Dados de verificação de idade são:
+
+
+  0. Processados com base em obrigação legal e interesse legítimo
+  1. Retidos pelo período de sua conta
+  2. Sujeitos a medidas de segurança aprimoradas
+  3. Nunca usados para fins de marketing
+
+
+## 10. SEGURANÇA
+
+
+0. Levamos a proteção de seus dados pessoais a sério. Implementamos medidas técnicas e organizacionais apropriadas para evitar perda acidental, acesso não autorizado ou uso indevido de dados pessoais. Essas incluem:
+
+
+  0. Servidores seguros e criptografia de dados sensíveis;
+  1. Restrições de acesso e acordos de confidencialidade para a equipe;
+  2. Procedimentos de detecção e notificação de violações, em linha com obrigações legais.
+1. Você é responsável por manter suas credenciais de conta confidenciais e não deve compartilhá-las com outros.
+
+
+## Precisa de Ajuda?
+
+
+Se você tiver perguntas sobre qualquer de nossas políticas ou precisar de assistência:
+
+
+A Preseview reserva o direito de alterar esta Política de tempos em tempos. A versão mais recente estará sempre acessível em legal.preseview.com, e alterações significativas serão comunicadas onde requerido.

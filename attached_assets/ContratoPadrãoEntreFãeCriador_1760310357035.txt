@@ -1,0 +1,137 @@
+﻿# Contrato Padrão Entre Fã e Criador
+
+
+Atualizado: 12 de outubro de 2025
+
+
+Este Contrato Padrão (o “Acordo”) rege cada transação individual entre um Usuário (“Fã”) e um Usuário Criativo (“Criador”) na plataforma Preseview. Ele delineia os direitos e obrigações mútuos de ambas as partes em conexão com o acesso e a licença de conteúdo do Criador.
+
+
+Este Acordo suplementa os Termos e Condições Gerais, a Política de Uso Aceitável e todas as outras Políticas Preseview aplicáveis. Se surgir um conflito entre este Acordo e os Termos Gerais, os termos deste Acordo prevalecerão para o escopo que ele governa.
+
+
+Todos os termos definidos usados aqui terão o significado atribuído nos Termos e Condições Gerais, a menos que declarado de outra forma.
+
+
+## DEFINIÇÕES
+
+
+- “Fã” significa um Usuário registrado que faz um pagamento à Preseview em troca de uma licença para visualizar conteúdo do Criador.
+- “Criador” significa um Usuário Criativo que faz upload de conteúdo na Plataforma e concede uma licença à Preseview para distribuir esse conteúdo.
+- “Pagamento do Fã” significa o pagamento feito pelo Fã à Preseview para acessar conteúdo licenciado.
+- “Taxa da Preseview” significa a porção do Pagamento do Fã retida pela Preseview por fornecer acesso à Plataforma e serviços associados.
+- “Transação” significa qualquer interação paga entre Fã e Criador que resulte em uma licença de visualização para o Fã da Preseview, incluindo assinaturas, gorjetas, pay-per-view ou outros Serviços Pagos.
+- “Assinatura” significa um Pagamento do Fã recorrente que fornece acesso limitado por tempo a conteúdo licenciado.
+
+
+## 1. ESTRUTURA DE LICENÇA E ESCLARECIMENTO DA RELAÇÃO
+
+
+0. A Preseview não é uma instituição de moeda eletrônica (EMI) ou uma instituição de pagamento (Payment Institution), e não atua como agente dos Fãs ou como intermediária para transferir fundos diretamente dos Fãs para os Criadores.
+1. Em vez disso, os Fãs pagam à Preseview para receber uma licença limitada, apenas para visualização, para acessar conteúdo disponível na Plataforma. Esta licença é concedida pela Preseview sob uma licença de distribuição obtida do Criador quando o Criador faz upload de conteúdo na Preseview.
+2. O Criador concede à Preseview uma licença sublicenciável para usar, hospedar, exibir e distribuir o conteúdo, o que inclui o direito da Preseview de conceder licenças limitadas de uso final a Fãs que comprem acesso.
+3. Os Criadores não são destinatários diretos dos Pagamentos dos Fãs e não têm direito de fazer cumprir este Acordo contra os Fãs.
+4. Para fins fiscais, legais e regulatórios, todos os pagamentos são feitos à Preseview, que determina e paga os ganhos aos Criadores de acordo com a Política de Ganhos e Pagamentos de Criadores.
+5. Mais informações sobre licenças podem ser encontradas na Seção 4 - Licença dos Termos e Condições Gerais.
+
+
+## 2. ESCOPO DA LICENÇA DO FÃ
+
+
+0. Após a conclusão de um Pagamento do Fã, a Preseview concede ao Fã uma licença não exclusiva, não transferível, não sublicenciável e revogável para visualizar o conteúdo específico ao qual a Transação se refere.
+1. Esta licença:
+
+
+  0. É limitada a uso pessoal, não comercial;
+  1. Permite acesso via navegadores padrão ou aplicativos aprovados;
+  2. Permite cache temporário onde tecnicamente necessário.
+2. Nenhum direito de propriedade ou direitos de propriedade intelectual, incluindo direitos morais, se aplicáveis, são transferidos ao Fã sob quaisquer circunstâncias. Todos os direitos permanecem com o Criador e/ou Preseview.
+
+
+## 3. CONDIÇÕES DE EXPIRAÇÃO DA LICENÇA
+
+
+A licença do Fã para visualizar o conteúdo expirará imediatamente, sem aviso, nas seguintes situações:
+
+
+0. O Pagamento do Fã for malsucedido, revertido ou cobrado de volta;
+1. No caso de Assinaturas, ao final do termo da assinatura, a menos que renovada;
+2. A conta do Fã for terminada ou suspensa;
+3. O Fã violar a Política de Uso Aceitável;
+4. O Criador excluir o conteúdo da Plataforma;
+5. O Fã fechar sua conta na Preseview.
+
+
+## 4. OBRIGAÇÕES DO FÃ
+
+
+0. O Fã concorda em:
+
+
+  0. Usar o conteúdo apenas conforme permitido pelos termos da licença;
+  1. Não copiar, compartilhar, gravar a tela ou distribuir o conteúdo em nenhuma forma;
+  2. Não tentar contornar a segurança da Plataforma ou controles de conteúdo;
+  3. Fazer todos os Pagamentos do Fã de boa-fé e não emitir chargebacks injustificados.
+  4. Indenizar a Preseview por qualquer perda resultante da violação destas obrigações, incluindo chargebacks injustificados.
+1. Os Fãs reconhecem que:
+
+
+  0. Os Criadores podem envolver assistentes ou terceiros na operação da Conta dos Criadores e nas Interações Criador-Fã;
+  1. A Preseview tem plena discrição para moderar, remover ou restringir conteúdo.
+
+
+## 5. OBRIGAÇÕES DO CRIADOR
+
+
+0. Ao fazer upload de conteúdo, o Criador:
+
+
+  0. Garante que possui ou controla todos os direitos necessários;
+  1. Concede à Preseview uma licença mundial, sublicenciável para hospedar, exibir e distribuir esse conteúdo aos Fãs;
+  2. Assume a responsabilidade pela precisão, legalidade e disponibilidade contínua do conteúdo.
+1. Os Criadores reconhecem que:
+
+
+  0. A Preseview é a única responsável por conceder licenças de conteúdo aos Fãs;
+  1. Não têm relação contratual direta com os Fãs;
+  2. Seus ganhos são regidos pela Política de Ganhos e Pagamentos de Criadores.
+
+
+## 6. CANCELAMENTO E REEMBOLSOS
+
+
+0. Ao entrar em uma Transação, o Fã consente na oferta imediata de conteúdo digital e renuncia a quaisquer direitos estatutários de cancelamento sob a Lei de Direitos do Consumidor 2015 ou legislação semelhante.
+1. Isso não afeta os direitos do Fã de solicitar um reembolso onde exigido por lei.
+
+
+## 7. SEM GARANTIAS
+
+
+0. A Preseview não faz garantias quanto a:
+
+
+  0. Acesso contínuo ao conteúdo (que pode ser removido a critério do Criador ou conforme exigido por lei);
+  1. A frequência, qualidade ou volume de novos uploads por um Criador;
+  2. A compatibilidade do conteúdo com as preferências ou dispositivos do Fã.
+1. O conteúdo é disponibilizado como está, sem garantia ou direito além da licença de acesso descrita neste Acordo.
+
+
+## 8. DISPUTAS E LEI APLICÁVEL
+
+
+0. Disputas entre Fãs e Preseview serão resolvidas de acordo com a Política de Reclamações.
+1. Se surgirem disputas entre Fãs e Criadores, a Preseview pode, a seu critério, facilitar a comunicação, mas não é obrigada a mediar ou arbitrar.
+2. Este Acordo é regido pela lei brasileira:
+
+
+  0) Para Fãs baseados no Brasil, reivindicações podem ser levadas aos tribunais de São Paulo ou ao país de residência do Fã.
+  1) Para todos os outros Fãs, reivindicações devem ser levadas aos tribunais de São Paulo, a menos que acordado de outra forma.
+
+
+## Precisa de Ajuda?
+
+
+Se você tiver perguntas sobre qualquer de nossas políticas ou precisar de assistência:
+
+
+A Preseview reserva o direito de alterar esta Política de tempos em tempos. A versão mais recente estará sempre acessível em legal.preseview.com, e alterações significativas serão comunicadas onde requerido.

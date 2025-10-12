@@ -1,0 +1,133 @@
+﻿# Política de Moderação e Proteção de Conteúdo
+
+
+Atualizado: 12 de outubro de 2025
+
+
+Esta Política de Moderação e Proteção de Conteúdo delineia os procedimentos da Preseview para moderar conteúdo gerado por usuários, verificar a identidade dos usuários e proteger o conteúdo da plataforma. Seu propósito é garantir a segurança, legalidade e segurança da Plataforma para todos os Usuários.
+
+
+Esta Política suplementa os Termos e Condições Gerais e outras Políticas Preseview aplicáveis. Se houver qualquer conflito entre esta Política e os Termos Gerais, os termos desta Política prevalecerão para o assunto específico que ela governa.
+
+
+Todos os termos definidos usados aqui terão o significado atribuído nos Termos e Condições Gerais, a menos que declarado de outra forma.
+
+
+## DEFINIÇÕES
+
+
+“Criador” significa um Usuário Criativo autorizado a fazer upload e monetizar Conteúdo sob os Termos de Serviço de Criadores.
+
+
+“KYC” (Conheça Seu Cliente) significa o processo de verificar a identidade e idade de um usuário através de um provedor terceirizado aprovado, conforme detalhado em nossa Política de Verificação de Idade.
+
+
+## 1. SEGURANÇA DO USUÁRIO E TRIAGEM DE CONTEÚDO
+
+
+0. Todos os Usuários devem confirmar sua idade como 18 anos ou mais ao primeiro acesso à Plataforma. Se um Usuário confirmar que tem menos de 18 anos, ele será imediatamente redirecionado e negado acesso adicional.
+1. Se a Preseview descobrir que um Usuário misrepresented sua idade e tem menos de 18 anos, sua conta será removida e seu endereço de e-mail será colocado na lista negra.
+2. A Preseview usa ferramentas automatizadas para escanear todo o Conteúdo do Usuário enviado, tanto pré-publicação quanto pós-publicação (ex.: fotos de perfil, banners e vídeos de introdução) para nudez e material sensível que não estejam em conformidade com a Política de Uso Aceitável.
+3. Conteúdo sinalizado é automaticamente desfocado e requer confirmação do Usuário para visualizar Conteúdo sensível.
+4. Os Usuários podem relatar qualquer Conteúdo que acreditam violar a Política de Uso Aceitável ou qualquer outra Política. Todos os relatórios são revisados por moderadores da Preseview sob os procedimentos delineados na Política de Reclamações.
+
+
+## 2. KYC E VERIFICAÇÃO DE IDENTIDADE DO CRIADOR
+
+
+0. Qualquer Usuário que se candidate a se tornar um Criador deve passar por uma verificação completa de KYC através do provedor aprovado pela Preseview (Ondato).
+1. O processo de KYC inclui:
+
+
+  0. Envio de documentos de identificação válidos;
+  1. Uma verificação de vivacidade envolvendo captura de vídeo ou foto em tempo real;
+  2. Confirmação de que o usuário tem pelo menos 18 anos.
+2. Os Criadores devem declarar verdadeiramente se pretendem fazer upload de conteúdo explícito. Esta declaração é travada e não pode ser alterada pelo Usuário após o envio.
+3. Revisões manuais são conduzidas em:
+
+
+  0. Todos os novos Criadores antes de seu primeiro saque;
+  1. Qualquer Criador ganhando mais de R$ 500 em um período de 24 horas;
+  2. Padrões de comportamento suspeitos detectados por ferramentas da plataforma ou relatórios da comunidade.
+4. A Preseview retém documentação de identidade de forma segura via Ondato e vincula a sistemas de moderação interna para conformidade e verificação contínua.
+5. Se surgirem evidências de que um Criador está se passando por outra pessoa ou não tem os direitos de seu Conteúdo enviado, a Preseview pode desativar ou excluir imediatamente o Conteúdo ou conta relevante. Para remoções relacionadas a impersonação, veja nossa Política DMCA.
+6. Para requisitos específicos sobre coberturas faciais e verificação de identidade no conteúdo, veja Política de Uso Aceitável - Seção 2.8.
+
+
+## 3. PROCESSO DE MODERAÇÃO DE CONTEÚDO
+
+
+0. Todo o Conteúdo enviado é automaticamente analisado por meio do HIVE (ferramenta de moderação de conteúdo baseada em IA padrão da indústria), que sinaliza:
+
+
+  0. Nudez ou atos explícitos;
+  1. Armas, drogas ou atividades ilegais;
+  2. Violência ou abuso;
+  3. Classificação de idade baseada em características faciais e corporais visíveis;
+  4. Sinais com as mãos, linguagem escrita (digital ou manuscrita) e contagem de pessoas;
+  5. Conteúdo gerado por IA.
+1. Conteúdo sinalizado pelo HIVE é colocado em fila para revisão por moderadores humanos. Os moderadores podem:
+
+
+  0) Excluir o Conteúdo;
+  1) Escalonar para investigação adicional;
+  2) Contatar o Criador para esclarecimentos ou documentação.
+2. A moderação também é apoiada por:
+
+
+  0. Verificações aleatórias pontuais (para garantir imparcialidade);
+  1. Verificações instrucionais baseadas em padrões de comportamento definidos pelo sistema ou limiares de risco.
+3. Todos os moderadores passam por treinamento regular em conformidade legal, protocolos de segurança e políticas da plataforma, e estão sujeitos a revisão de auditoria para precisão.
+4. A equipe é treinada para identificar e remover Conteúdo que viole os padrões e/ou políticas da Preseview, e está sujeita a procedimentos de revisão de desempenho interno.
+5. Quando o Conteúdo for considerado em violação desta Política, a Preseview pode aplicar uma dedução proporcional ao Saldo do Usuário Criativo, de acordo com a Política de Uso Aceitável (Seção 7.1.2).
+
+
+## 4. APELOS E REVISÃO DE CONTA
+
+
+0. Usuários cujo Conteúdo ou Contas tenham sido restritos, suspensos ou permanentemente removidos como resultado de aplicação de moderação podem solicitar um apelo formal.
+1. Apelos devem ser enviados dentro de 7 dias corridos da aplicação via support@preseview.com ou através do recurso de suporte ao vivo.
+2. A Preseview considerará todas as evidências disponíveis, incluindo novo contexto ou esclarecimentos fornecidos pelo Usuário.
+3. Embora a maioria das decisões de apelo seja emitida dentro de 7 dias, casos complexos podem levar mais tempo.
+4. Este processo de apelo opera em conjunto com, e não substitui, seus direitos sob a Política de Reclamações.
+5. SLAs de Moderação:
+
+
+  0. A Preseview visa revisar todos os relatórios de conteúdo e sinalizações de moderação dentro de 48 horas após o envio. Relatórios são priorizados com base na gravidade e potencial risco para a segurança do usuário.
+  1. Em casos urgentes (ex.: CSAM, impersonação, risco legal sério), a resposta de moderação pode ocorrer dentro de horas.
+
+
+## 5. MEDIDAS DE PROTEÇÃO DE CONTEÚDO
+
+
+0. A Preseview implementou várias funcionalidades para detectar e desencorajar o uso, reprodução ou raspagem não autorizada de Conteúdo do Criador, incluindo:
+
+
+  0. Marca d'água;
+  1. Prevenção de clique direito;
+  2. Detecção de captura de tela (em dispositivos suportados);
+  3. Análises de sessão e travamento de conta para comportamento suspeito.
+1. Qualquer tentativa de acessar, raspar, baixar ou copiar Conteúdo de forma que viole a Política de Uso Aceitável resultará em investigação imediata e possível terminação da conta sob os Termos Gerais – Seção 16 (Suspensão e Terminação da Conta).
+
+
+## 6. PARCERIAS COM APLICADORES DA LEI E INDÚSTRIA
+
+
+0. A Preseview colabora com fornecedores líderes em proteção de conteúdo e anti-pirataria para monitorar a internet pela distribuição não autorizada de Conteúdo do Usuário.
+1. A Preseview coopera com as autoridades de aplicação da lei em todas as jurisdições em resposta a relatórios de:
+
+
+  0. Material de abuso sexual infantil (CSAM);
+  1. Tráfico humano;
+  2. Conteúdo envolvendo atos não consensuais;
+  3. Outros assuntos criminais envolvendo Conteúdo enviado ou comunicações na Plataforma.
+2. A Preseview pode compartilhar informações de usuário de acordo com a Política de Privacidade e em linha com obrigações legais aplicáveis.
+
+
+## Precisa de Ajuda?
+
+
+Se você tiver perguntas sobre qualquer de nossas políticas ou precisar de assistência:
+
+
+A Preseview reserva o direito de alterar esta Política de tempos em tempos. A versão mais recente estará sempre acessível em legal.preseview.com, e alterações significativas serão comunicadas onde requerido.

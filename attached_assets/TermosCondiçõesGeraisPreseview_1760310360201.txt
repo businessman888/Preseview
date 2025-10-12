@@ -1,0 +1,504 @@
+﻿##Termos e Condições Gerais
+
+
+Atualizado: 12 de outubro de 2025
+
+
+ESTE DOCUMENTO É UM ACORDO LEGAL VINCULANTE ENTRE VOCÊ E A PRESEVIEW HOLDINGS LTDA. ESTE ACORDO REGE O SEU USO DA PLATAFORMA E DOS SERVIÇOS. SE VOCÊ PROSSEGUIR COM O USO DA PLATAFORMA OU DOS SERVIÇOS, SERÁ CONSIDERADO QUE VOCÊ LEU, ENTENDEU E ACEITOU OS TERMOS DESTE ACORDO, PORTANTO, POR FAVOR, DEDIQUE TEMPO PARA LÊ-LOS COM ATENÇÃO E NA ÍNTEGRA.
+
+
+Este Acordo (juntamente com as diversas políticas encontradas em legal.preseview.com) estabelece os termos de uso nos quais você pode fazer uso da Plataforma (que inclui acessar, navegar ou usar qualquer funcionalidade oferecida via o Site) e dos Serviços.
+
+
+Por favor, leia este Acordo com atenção antes de começar a usar a Plataforma ou os Serviços, pois eles representam um acordo legal vinculante, e você estará vinculado por eles.
+
+
+Embora a Plataforma seja gratuita para uso, o acesso a Conteúdo premium e certas áreas da Plataforma exigirá que você se registre, pague uma taxa especificada e possivelmente assine uma cobrança recorrente de assinatura. Tais atividades estarão sujeitas a termos e condições adicionais, e estes estão detalhados abaixo na seção Serviços Pagos.
+
+
+Ao usar a Plataforma, você confirma que aceita os termos deste Acordo e concorda em cumpri-los.
+
+
+Se você não concordar com estes termos e condições de uso, você não deve usar a Plataforma.
+
+
+## PALAVRAS E DEFINIÇÕES IMPORTANTES
+
+
+“Conta” significa uma conta de Usuário que é única para um endereço de e-mail e é destinada a ser individual para você, criada para o propósito de usar, receber e fornecer os Serviços.
+
+
+“Termos Ancillares” significa quaisquer outros termos ou políticas que possamos fornecer na Plataforma que regem o seu uso dos Serviços e que podem ser atualizados de tempos em tempos, incluindo, mas não limitado a, as Políticas Preseview e os Termos de Crédito.
+
+
+“Saldo” significa o saldo de Créditos na Conta de um Usuário.
+
+
+“Dia Útil” significa de segunda a sexta-feira das 9:30 às 17:30 e qualquer dia que não seja feriado público ou bancário em São Paulo, Brasil.
+
+
+“Diretrizes da Comunidade” significa nossas diretrizes da comunidade fornecidas aos Usuários via a Plataforma, que podem ser atualizadas de tempos em tempos.
+
+
+“Conteúdo” significa qualquer texto, software, scripts, gráficos, fotos, sons, música, vídeos, combinações audiovisuais, recursos interativos e outros materiais que você possa visualizar ou acessar através dos Serviços, incluindo Conteúdo do Usuário.
+
+
+“Política de Cookies” significa a Política de Cookies da Preseview fornecida aos Usuários via a Plataforma, que pode ser atualizada de tempos em tempos.
+
+
+“Usuário Criativo” significa um Usuário que concluiu o onboarding de Criador e está autorizado a registrar e gerenciar modelos gerados por IA como criadores de conteúdo para enviar Serviços Pagos ou ganhar receita através da Plataforma.
+
+
+“Saldo do Usuário Criativo” significa a soma esperada que a Preseview Holdings Ltda antecipa ser faturada por um Usuário Criativo.
+
+
+“Termos de Crédito” significa os termos que regem a compra e uso de Créditos na Plataforma fornecidos aos Usuários via a Plataforma, que podem ser atualizados de tempos em tempos.
+
+
+“Créditos” significa tokens digitalizados hospedados na Plataforma e que podem ser trocados por certos Serviços especificados.
+
+
+“Legislação de Proteção de Dados” significa, enquanto estiverem em vigor no Brasil, toda a legislação que se relaciona com a proteção dos direitos dos indivíduos em seus Dados Pessoais e a proteção de sua privacidade, incluindo a LGPD (Lei Geral de Proteção de Dados Pessoais) e toda a legislação que possa suplementar, alterar ou substituí-las de tempos em tempos.
+
+
+“Dispositivo” significa um computador desktop, laptop, tablet, telefone celular ou outro dispositivo de computação com funcionalidade de internet.
+
+
+“LGPD” significa a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018) e toda a legislação subordinada a ela.
+
+
+“Preseview LLC” é uma empresa de propriedade e gerenciada inteiramente pela Preseview Holdings Ltda. A Preseview LLC é uma empresa registrada no Estado de Delaware com o número de empresa 7069368, registrada em 701 Tillery Street Unit 12, 1095, Austin, TX 78702.
+
+
+“Políticas Preseview” significa quaisquer políticas ou diretrizes emitidas pela Preseview Holdings Ltda em relação à Plataforma de tempos em tempos, incluindo, mas não limitado a, as Diretrizes da Comunidade, Política de Cookies e Política de Privacidade.
+
+
+“Direitos de Propriedade Intelectual” significa patentes, modelos de utilidade, direitos a invenções, direitos autorais e direitos vizinhos e relacionados, direitos morais, marcas comerciais e marcas de serviço, nomes comerciais e nomes de domínio, direitos em get-up e trade dress, goodwill e o direito de processar por passing off ou concorrência desleal, direitos em designs, direitos em software de computador, direitos de banco de dados, direitos de usar e proteger a confidencialidade de informações confidenciais (incluindo know-how e segredos comerciais) e todos os outros direitos de propriedade intelectual, em cada caso, registrados ou não registrados, incluindo todas as aplicações e direitos de aplicar e ser concedido, renovações ou extensões de, e direitos de reivindicar prioridade de, tais direitos e todos os direitos ou formas de proteção semelhantes ou equivalentes que subsistam ou subsistirão agora ou no futuro em qualquer parte do mundo.
+
+
+“Serviço(s) Pago(s)” significa Serviços que fazem parte de uma área restrita da Plataforma ou considerados Conteúdo premium (incluindo, mas não limitado a, assinaturas com/para modelos gerados por IA gerenciados por Usuários Criativos, Conteúdo pay to view, stories e gorjetas) exigirão pagamento de você para serem acessados/desbloqueados. Nós notificaremos você via a Plataforma se um Serviço for um Serviço Pago, quais são os custos associados e um detalhamento de quaisquer taxas, encargos ou impostos relevantes, e quais métodos de pagamento são aceitos, incluindo onde aceitamos Créditos como pagamento. Apenas Usuários com uma Conta registrada que nos forneçam informações de pagamento precisas (como informações de cartão de crédito/débito ou Pix) poderão acessar Serviço(s) Pago(s) na Plataforma.
+
+
+“Parceiro de Pagamento” significa qualquer terceiro aprovado pela Preseview Holdings que permite que um Usuário faça pagamentos na Plataforma, incluindo, mas não limitado a, Pagar.me para pagamentos divididos.
+
+
+“Dados Pessoais” tem o significado estabelecido na Legislação de Proteção de Dados.
+
+
+“Plataforma” significa a plataforma Preseview fornecida no Site e quaisquer atualizações ou suplementos a ela, incluindo versões mobile-friendly da Plataforma.
+
+
+“Política de Privacidade” significa a Política de Privacidade da Preseview fornecida aos Usuários via a Plataforma, que pode ser atualizada de tempos em tempos.
+
+
+“Serviços” significa o seu uso da Plataforma e os serviços e recursos que tornamos disponíveis como parte da Plataforma.
+
+
+“Preseview Holdings” significa Preseview Holdings Ltda, uma empresa registrada no Brasil com o número de empresa [insira CNPJ se disponível] e seu escritório registrado em [insira endereço brasileiro, ex.: Rua Example, 123, São Paulo, SP, Brasil], os proprietários da Plataforma.
+
+
+“Usuário” significa um usuário dos Serviços; e termos como “Usuários” serão interpretados de acordo.
+
+
+“Saldo do Usuário” significa o saldo de créditos trocáveis na Conta de Usuário para uso em Serviços Pagos.
+
+
+“Conteúdo do Usuário” significa Conteúdo que um Usuário contribui, envia, carrega, publica ou de outra forma torna disponível via o Serviço, incluindo Conteúdo gerado ou gerenciado através de modelos de IA.
+
+
+“Site” significa o site da Preseview, hospedado em preseview.com, ou quaisquer subdomínios do mesmo.
+
+
+Onde este Acordo se refere a “você” ou “seu”, significa a pessoa usando a Plataforma; onde se refere a “nós”, “nosso” ou “nós”, significa Preseview Holdings.
+
+
+Quaisquer palavras seguindo os termos incluindo, incluem, em particular ou por exemplo ou qualquer frase semelhante serão interpretadas como ilustrativas e não limitarão a generalidade das palavras gerais relacionadas.
+
+
+TERMOS ACORDADOS
+
+
+## 1. RECONHECIMENTOS
+
+
+0. A Preseview é de propriedade da Preseview Holdings Ltda, uma sociedade limitada registrada no Brasil, com número de registro de empresa [insira CNPJ]. Nosso endereço de escritório registrado é [insira endereço, ex.: Rua Example, 123, São Paulo, SP, Brasil]. Nosso ID fiscal é [insira se disponível].
+1. Pagamentos no Brasil são processados pela Preseview Holdings Ltda ou suas subsidiárias, usando gateways como Pagar.me.
+2. Podemos alterar estes termos a qualquer momento sem aviso. Quaisquer alterações entrarão em vigor na próxima ocasião em que você usar a Plataforma. Quaisquer novos termos podem ser exibidos na tela quando você usar a Plataforma da próxima vez, e você pode ser obrigado a lê-los e aceitá-los para continuar o uso da Plataforma. No entanto, você deve verificar este Acordo antes de cada uso da Plataforma e se informar de quaisquer alterações. Para facilitar a referência, o topo deste Acordo indica a data em que foi atualizado pela última vez.
+3. Os termos deste Acordo se aplicam a quaisquer Serviços que você possa acessar através da Plataforma e a quaisquer atualizações ou suplementos à Plataforma, a menos que tais adições sejam fornecidas de acordo com termos separados, nesse caso esses termos se aplicarão.
+4. Não garantimos que a Plataforma, ou qualquer Conteúdo, estará sempre disponível ou ininterrupta. Podemos suspender ou retirar ou restringir a disponibilidade de toda ou qualquer parte da Plataforma por razões comerciais e operacionais, incluindo, por exemplo, para atualizar a Plataforma e/ou alterar os Serviços para melhorar o desempenho, aprimorar a funcionalidade, refletir alterações no sistema operacional ou abordar questões de segurança. Você aceita que, dependendo da atualização, você pode não ser capaz de usar os Serviços até ter aceitado as atualizações e aceitado quaisquer novos termos aplicáveis. Tentaremos dar aviso razoável de qualquer suspensão ou retirada. Nosso objetivo é experimentar não mais que 60 minutos de downtime em um período mensal.
+5. Você é responsável por garantir que todas as pessoas que acessam a Plataforma através da sua conexão de internet estejam cientes deste Acordo, destes termos e que os cumpram. O não cumprimento e uma violação subsequente de nossos termos podem resultar na suspensão permanente da sua conta e de outras contas de usuários envolvidos.
+6. Será assumido que você obteve permissão dos proprietários de quaisquer Dispositivos que são controlados, mas não de sua propriedade, que você possa usar para acessar ou usar a Plataforma. Você e eles podem ser cobrados pelos provedores de serviço para acesso à internet nos Dispositivos. Você aceita responsabilidade de acordo com os termos deste Acordo para o uso da Plataforma em qualquer Dispositivo, quer você o possua ou não.
+7. Ao entrar neste Acordo e usar nossos Serviços, você confirma que leu e entendeu as Políticas Preseview. Em particular, você reconhece e concorda que processaremos seus Dados Pessoais com base no estabelecido em nossa Política de Privacidade. Você pode revisar nossa Política de Privacidade e todas as Políticas Preseview a qualquer momento ao usar nossa Plataforma.
+8. Este Acordo inclui os Termos Ancillares que suplementarão os termos do corpo principal deste Acordo. A menos que expressamente declarado de outra forma, qualquer referência a este Acordo também é uma referência aos Termos Ancillares. Onde houver inconsistência entre qualquer das disposições do corpo principal deste Acordo e os Termos Ancillares, as disposições dos Termos Ancillares prevalecerão.
+
+
+## 2. SUA CONTA
+
+
+Para usar a Plataforma, receber os Serviços e se tornar um Usuário, você deve se registrar e criar uma Conta conosco. Para criar uma Conta, siga os passos detalhados na Plataforma e forneça-nos todas as informações solicitadas.
+
+
+0. Ao criar uma Conta, você não deve:
+
+
+  0. Se passar por outro indivíduo;
+  1. Criar Contas 'bot' ou qualquer Conta controlada por outros meios automatizados;
+  2. Compartilhar sua senha ou dar acesso à sua Conta para outros; ou
+  3. Transferir ou de outra forma ceder sua Conta para qualquer outra pessoa.
+1. Você concorda em tomar medidas para manter a segurança e confidencialidade do nome de usuário, senha e informações da sua Conta. Você deve notificar a Preseview Holdings imediatamente de qualquer violação de segurança ou uso não autorizado da sua Conta que você tome conhecimento, contatando-nos em support@preseview.com.
+2. Você concorda que será o único responsável por toda a atividade que ocorrer sob sua Conta. Como tal, você deve fazer log off da Plataforma quando terminar de usá-la para impedir que qualquer outra pessoa acesse sua Conta e use sua identidade de log-on / nome de usuário. Isso é particularmente importante onde outras pessoas possam usar o mesmo Dispositivo que você, como em cafés de internet ou bibliotecas. Se você não fizer log off, será considerado a pessoa visualizando ou postando Conteúdo, a menos que possa provar o contrário.
+3. Você confirma que as informações que fornece ao criar sua Conta, ou ao se comunicar conosco de outra forma, são precisas, verdadeiras e completas, e que você nos atualizará via a Plataforma sempre que suas informações mudarem.
+4. Ao configurar uma Conta, você confirma que tem pelo menos 18 anos de idade, não está impedido por leis domésticas/locais de usar os Serviços e não foi previamente banido de usar a Plataforma e/ou seus Serviços. Usuários em certas jurisdições podem ser obrigados a completar verificação de idade conforme detalhado em nossa Política de Verificação de Idade.
+
+
+## 3. SERVIÇOS PAGOS
+
+
+0. O preço total para qualquer Serviço Pago será sempre mostrado a você antes de você enviar seu pedido ou de outra forma fazer sua compra. O preço listado inclui impostos, taxas de transação ou taxas de adição de cartão que serão adicionadas conforme necessário antes do pagamento ser realizado. Um detalhamento de quaisquer encargos adicionais além do preço do item sendo comprado estará disponível antes da compra.
+1. Ao nos fornecer informações de cartão de crédito/débito ou detalhes de Pix, você nos autoriza a receber pagamento cobrando seu cartão de crédito ou débito ou processando via Pix usando as informações de pagamento fornecidas ou de outra forma vinculadas à sua Conta. Todos os detalhes de pagamento são inseridos em uma página segura e são processados de forma segura via um de nossos Parceiros de Pagamento, como Pagar.me, que estão em conformidade com os padrões de segurança relevantes.
+2. Se a opção de pagar por um Serviço Pago com Créditos estiver disponível e você escolher fazer o pagamento usando Créditos, você nos autoriza a receber pagamento deduzindo Créditos do seu Saldo de Usuário com base no descrito nos Termos de Crédito.
+3. Você concorda em fornecer informações de pagamento atuais, completas e precisas para todas as compras. Você concorda em atualizar prontamente sua Conta e outras informações, incluindo números de cartão de crédito e datas de validade ou detalhes de Pix, para que possamos completar sua transação e contatá-lo conforme necessário. Você expressamente concorda que não somos responsáveis por qualquer perda ou dano decorrente da submissão de informações falsas ou imprecisas.
+4. A menos que notificado de outra forma por escrito, cobraremos você antecipadamente pela prestação do Serviço Pago aplicável.
+5. Se sua transação resultar em um cheque especial ou outra taxa do seu banco, você sozinho é responsável por essa taxa.
+6. Embora a moeda local possa ser exibida para você, você será cobrado em Real Brasileiro (BRL) por padrão, a menos que escolha outra moeda para ser cobrado no ponto do pedido/compra. Quaisquer liquidações de câmbio relevantes serão determinadas por acordos entre você e seu banco e/ou emissor de cartão de crédito/débito.
+7. Se não recebermos o pagamento devido de você, seja do seu banco ou do emissor do seu cartão de crédito/débito ou provedor de Pix, você concorda em pagar todos os valores devidos na sua conta sob demanda.
+8. Se nós ou um Usuário Criativo oferecermos e você comprar uma assinatura para qualquer Serviço Pago (incluindo assinatura ao Conteúdo de um modelo gerado por IA), cobraremos você imediatamente usando as informações de pagamento fornecidas, e então novamente no início de cada período de assinatura. Os seguintes termos se aplicam para assinaturas:
+
+
+  0. Se um período de teste gratuito for oferecido e você não cancelar durante o período de teste gratuito, você será cobrado no final do período de teste gratuito e no início de cada período de assinatura subsequente.
+  1. A taxa de assinatura é determinada pelo Usuário Criativo responsável pelo modelo gerado por IA ao qual você está se inscrevendo e pode ser alterada a qualquer momento a seu exclusivo critério. Caso alterem suas taxas de assinatura, você será notificado de tal alteração via uma notificação na Plataforma. Qualquer aumento ou diminuição na taxa de assinatura se aplicará ao próximo período de cobrança de assinatura, conforme aplicável, e exigirá que você confirme sua assinatura ao novo preço, a menos que você tenha terminado sua assinatura antes da alteração na taxa de assinatura.
+  2. O período de assinatura padrão é definido como mensal, semanal, trimestral, etc., a partir da data e hora do pagamento. Períodos de assinatura promocionais podem variar em duração entre 1 dia e 12 meses.
+  3. A assinatura a Serviço(s) Pago(s) é pessoal para você e não pode ser transferida ou reatribuída.
+  4. Você pode cancelar assinaturas a qualquer momento via a Plataforma ou enviando um e-mail para support@preseview.com.
+  5. Se você cancelar uma assinatura, você ainda terá acesso ao Serviço Pago até o final do período de assinatura.
+9. Sem prejuízo a qualquer outro direito ou remédio que possamos ter, se não recebermos pagamento imediato por todas as taxas, encargos e impostos aplicáveis ou você de outra forma falhar em fazer pagamento pelo Serviço Pago:
+
+
+  0. Podemos sem aviso suspender parte ou todos os Serviços e/ou sua Conta até que o pagamento tenha sido feito na íntegra.
+10. Você pode ser apresentado a termos adicionais do nosso Parceiro de Pagamento ou outros terceiros relevantes em relação a um pagamento específico antes de confirmar a transação. Esses termos adicionais também regerão essa transação e podem ser necessários para serem aceitos antes que uma transação seja confirmada.
+11. Sujeito a quaisquer investigações e decisões discricionárias feitas por nós e qualquer direito de retirada sob a lei aplicável; taxas, encargos e impostos aplicáveis relacionados a Serviço(s) Pago(s) são não reembolsáveis e chargebacks, ou demandas semelhantes, para Serviço(s) Pago(s) não são permitidos.
+12. Reservamos o direito de imediatamente terminar, excluir, suspender ou restringir sua Conta, sem aviso a você, se em nossa opinião razoável você tiver sem mérito tentado buscar um reembolso ou chargeback para Serviço(s) Pago(s) após sua compra.
+13. Operamos uma política de não reembolso, pela qual todas as transações são finais com base no fato de que os Serviços fornecidos em nosso site são consumíveis e de valor não retornável. Entendemos que pode haver isenções limitadas a isso, em que o Serviço fornecido não é como descrito. Se você acreditar que tem direito a um reembolso, por favor, contate nossa equipe de suporte. Reembolsos são concedidos a nosso critério.
+14. Reservamos o direito de emitir, a nosso critério, uma taxa por disputa de R$ 250 (DUZENTOS E CINQUENTA REAIS BRASILEIROS) para Usuários Criativos que ultrapassarem uma taxa de disputa de 1,5%. Esta política é implementada para garantir a estabilidade de nossa plataforma e proteger todos os Usuários da Plataforma de atividades fraudulentas. Disputas não apenas interrompem o fluxo financeiro, mas também indicam problemas potenciais com o Conteúdo ou Serviços fornecidos por um Usuário Criativo. A taxa de R$ 250 é reflexo dos custos administrativos associados ao gerenciamento de disputas e serve como dissuasor contra taxas de disputa excessivas. Além disso, Usuários Criativos são encorajados a monitorar suas taxas de disputa e adotar uma abordagem proativa para prevenir disputas potenciais contra sua conta. Além de Fraude Genuína de Cartão, Usuários Criativos devem ser consideradores de tipos alternativos de fraude que podem mitigar, como Fraude Amigável e Fraude de Tomada de Conta, certificando-se de abordar quaisquer problemas subjacentes e manter relações positivas com sua audiência para manter a integridade da plataforma.
+15. Transações são processadas de forma segura pela Pagar.me. Pagamentos no seu extrato serão debitados pela PRESEVIEW, ou PRESEVIEW HOLDINGS LTDA dependendo do seu método de pagamento e localização geográfica. Se você não reconhecer uma transação, por favor, contate support@preseview.com.
+16. Quaisquer consultas relacionadas a Serviço(s) Pago(s), Créditos, compras ou cobrança na sua Conta devem ser levantadas conosco dentro de 30 dias.
+
+
+## 4. LICENÇA
+
+
+0. Concedemos a você uma licença revogável, não transferível, não exclusiva para usar a Plataforma e receber os Serviços, sujeita aos termos deste Acordo, às Políticas Preseview e a quaisquer outros documentos referenciados neste Acordo.
+1. Você retém todos os seus direitos de propriedade sobre seu Conteúdo do Usuário, mas é obrigado a conceder a nós e, onde relevante, a outros Usuários da Plataforma uma licença para usar, armazenar e copiar esse Conteúdo e distribuí-lo e torná-lo disponível a terceiros. Como tal, e sem prejuízo aos seus direitos, ou aos seus Dados Pessoais conforme estabelecido na Legislação de Proteção de Dados aplicável, você concede a nós uma licença mundial, perpétua, irrevogável, transferível, livre de royalties, com o direito de sublicenciar, para usar, copiar, modificar, criar obras derivadas de, distribuir, exibir publicamente, performar publicamente e de outra forma explorar de qualquer maneira tal Conteúdo do Usuário em todos os formatos e canais de distribuição agora conhecidos ou doravante inventados, sem aviso adicional ou consentimento de você, e sem a exigência de pagamento a você ou a qualquer outra pessoa ou entidade, a fim de fornecer os Serviços a você.
+2. Por favor, note que a licença que você nos concede de acordo com a cláusula 4.2 é necessária para que possamos usar seu Conteúdo do Usuário para fornecer e promover tanto a Plataforma quanto o Conteúdo nela, incluindo, para evitar dúvidas, promoção do seu Conteúdo do Usuário e Usuários Criativos. Não venderemos seu Conteúdo do Usuário para outras plataformas, sites ou provedores de conteúdo e não reivindicaremos propriedade do seu Conteúdo do Usuário nem o exploraremos de maneiras não permitidas sob este Acordo.
+
+
+## 5. CONTEÚDO
+
+
+0. Como Usuário e titular de Conta, você pode acessar Conteúdo ao usar os Serviços. Conteúdo disponibilizado via a Plataforma é Conteúdo do Usuário, incluindo Conteúdo de modelos gerados por IA. Quaisquer visões expressas por Usuários na Plataforma não representam nossas visões ou valores.
+1. Todo Conteúdo carregado na Plataforma está sujeito a procedimentos de moderação, que incluem uma combinação de sistemas automatizados (como ferramentas de moderação impulsionadas por IA) e revisão manual humana. Essas medidas são projetadas para detectar e abordar violações de leis e políticas aplicáveis, incluindo, mas não limitado a, Conteúdo relacionado a CSAM, violência, drogas, armas ou qualquer outro Conteúdo que viole nossos padrões de plataforma. Para mais detalhes sobre nossa abordagem à segurança e conformidade, por favor, consulte nossa Política de Moderação e Proteção de Conteúdo.
+2. Você reconhece e concorda que acessa todo Conteúdo do Usuário por sua própria conta e risco. Renunciamos toda responsabilidade por exposição a qualquer Conteúdo na Plataforma, e você irrevogavelmente renuncia a quaisquer reivindicações legais ou equitativas contra nós em relação a tal exposição.
+3. No caso de você desejar reportar Conteúdo que acredita estar em violação de nossas políticas, você pode fazer isso contatando support@preseview.com, ou seguindo os passos estabelecidos em nossa Política de Reclamações e Política DMCA.
+4. Ao receber uma reclamação, a Preseview Holdings Ltda revisará e, onde apropriado, tomará ação dentro de um prazo alvo de sete (7) dias. No entanto, não garantimos que o Conteúdo será revisado ou removido a menos e até que seja encontrado em violação de nossas políticas.
+
+
+## 6. CONTEÚDO DO USUÁRIO
+
+
+0. Como titular de Conta, você pode enviar Conteúdo do Usuário de acordo com os termos deste Acordo. Esse direito pode ser suspenso por nós, e sua Conta ou seu Conteúdo do Usuário pode ser excluído se determinarmos que você está em violação de qualquer parte destes termos.
+1. Você reconhece e concorda que, a menos que explicitamente declarado de outra forma, qualquer Conteúdo do Usuário que você poste na Plataforma (incluindo, mas não limitado a, imagens de perfil, posts, stories e comentários) não é privado ou confidencial e pode ser visível para outros Usuários. Outros Usuários podem ser capazes de visualizar seu nome de usuário e qualquer informação de perfil pública ou compartilhada seletivamente associada a esse Conteúdo do Usuário.
+2. Embora comunicações e Conteúdo compartilhados via ferramentas de mensagens privadas na Plataforma não sejam exibidos publicamente, eles são visíveis para as partes diretamente envolvidas na comunicação e para nós em nosso papel como provedor de serviço. Cada parte envolvida em uma comunicação privada será identificável pelo nome de usuário, e quaisquer dados de perfil divulgados durante tal comunicação podem ser visualizados pelo destinatário. Reservamos o direito de acessar ou revisar mensagens privadas onde legalmente requerido, ou onde necessário para investigar violações suspeitas deste Acordo ou lei aplicável.
+3. Você reconhece e concorda que é o proprietário e é o único responsável pelo seu Conteúdo do Usuário. Você é o único responsável por proteger e fazer backup do seu Conteúdo do Usuário.
+4. Você reconhece que, se violar qualquer destes termos, pode ser pessoalmente responsável perante qualquer terceiro que sofra dano físico ou psicológico como resultado do seu Conteúdo do Usuário.
+5. Você representa e garante que possui todos os direitos, permissões, licenças e consentimentos necessários para carregar, publicar e distribuir qualquer Conteúdo do Usuário que você envie para a Plataforma. Isso inclui, sem limitação, direitos a imagens, semelhanças, nomes e materiais protegidos por direitos autorais incluídos em tal Conteúdo. Você reconhece e concorda que podemos divulgar sua identidade ou outras informações relevantes a um terceiro que razoavelmente reivindique que seu Conteúdo do Usuário infringe seus direitos de propriedade intelectual, privacidade ou outros direitos legais, ou onde tal divulgação seja necessária para cumprir uma obrigação legal ou regulatória, investigação ou ação de execução.
+6. Levamos a proteção de Direitos de Propriedade Intelectual muito a sério e cumprimos voluntariamente o Digital Millennium Copyright Act (“DMCA”). De acordo com a cláusula 4.3, onde apropriado, removeremos prontamente da Plataforma qualquer Conteúdo do Usuário alegado de infringir Direitos de Propriedade Intelectual pertencentes a um terceiro. Por favor, note que qualquer pessoa encontrada por ter feito alegações falsas, misrepresentações materiais ou reivindicações falsas em relação a uma notificação de alegada infracção ou em uma contra-notificação pode ser responsável por danos e terá, a nosso critério e onde relevante, sua Conta terminada, excluída, suspensa ou restrita. Mais informações podem ser encontradas em nossa Política DMCA e Política de Reclamações.
+7. Você garante que todo Conteúdo do Usuário que você carrega cumpre nossa Política de Uso Aceitável e Diretrizes da Comunidade e concorda em nos indenizar por qualquer violação dessa garantia.
+8. Podemos revisar, monitorar ou remover seu Conteúdo do Usuário, a qualquer momento e por qualquer razão, sem aviso a você.
+9. Você concorda em defender, isentar de responsabilidade, indenizar e manter indenizados nós, nossos sucessores e cessionários, nossos diretores, curadores, oficiais, funcionários e agentes de e contra todas as responsabilidades, reivindicações, perdas, custos, danos e despesas, incluindo honorários legais que sejam razoavelmente incorridos por nós, que nós ou nossas partes conectadas possamos sofrer ou incorrer decorrentes de ou em conexão com seu Conteúdo do Usuário.
+
+
+## 7. USUÁRIOS CRIATIVOS
+
+
+Se você for um Usuário Criativo, por favor, consulte também nossos Termos e Condições de Criador, que se aplicam em adição a estes Termos.
+
+
+0. Qualquer Usuário pode se candidatar a se tornar um “Usuário Criativo” para registrar modelos gerados por IA, publicar e monetizar Conteúdo via a Plataforma. Você deve completar nosso processo de verificação de Usuário Criativo, incluindo verificação de identidade, verificação de vivacidade e submissão de qualquer documentação adicional solicitada.
+1. Por padrão, Usuários Criativos recebem uma porcentagem das receitas geradas por Serviços Pagos de Conteúdo onde o Usuário Criativo possui a licença para o modelo gerado por IA. Retemos uma comissão para cobrir custos operacionais e manutenção da plataforma. Detalhes completos do modelo de ganhos atual são estabelecidos em nossa Política de Ganhos e Pagamentos de Criadores. Pagamentos são divididos via Pagar.me entre o Usuário Criativo, a Plataforma e qualquer afiliado (se configurado pelo Usuário Criativo).
+2. Se um Usuário Criativo tiver sido referido à Plataforma por outro Usuário sob nosso Programa de Afiliados, esse Usuário referente pode receber uma comissão baseada nos ganhos do Usuário Criativo referido, rastreada via links de afiliado. Detalhes e restrições aplicáveis ao Programa de Afiliados são regidos separadamente sob nossos termos do Programa de Afiliados. Comissões são pagas diretamente ao afiliado via Pagar.me.
+3. Usuários Criativos não podem solicitar, anunciar ou receber pagamentos por bens ou serviços prestados fora da Plataforma. Isso inclui, sem limitação, bens físicos, encontros presenciais ou entrega de Conteúdo fora da plataforma. Violações podem resultar em terminação imediata da conta.
+4. No caso de um reembolso ou chargeback ser emitido a um Usuário para um Serviço Pago, reservamos o direito de reclamar o valor correspondente previamente pago ao Usuário Criativo relevante. Você concorda que tais valores serão uma dívida devida a nós e podem ser recuperados sem aviso do Saldo do Usuário Criativo.
+5. A Preseview Holdings reserva o direito de compensar qualquer responsabilidade que você nos deva contra quaisquer valores devidos a você, sejam atuais ou futuros. Podemos converter moedas a nosso critério para o propósito de exercer esse direito.
+
+
+## 8. LINKANDO À PLATAFORMA E MÍDIA COMPARTILHADA
+
+
+0. Você pode linkar à Plataforma desde que:
+
+
+  0. O link seja estabelecido de forma justa, legal e não enganosa;
+  1. Não sugira qualquer forma de associação, aprovação ou endosso pela Preseview a menos que tal relacionamento tenha sido expressamente acordado;
+  2. Não danifique ou tire vantagem injusta da reputação da Preseview.
+1. Você não deve:
+
+
+  0. Enquadrar ou incorporar a Plataforma ou qualquer de suas páginas dentro de outro site ou serviço sem nossa permissão expressa prévia por escrito;
+  1. Linkar à Plataforma de qualquer site que você não possua ou controle;
+  2. Usar a marca Preseview, logos ou ativos de interface sem uma licença ou aprovação escrita.
+2. Onde a Plataforma permite que você compartilhe um Link de Mídia para Conteúdo do Usuário específico (como mídia pay-per-view vendida através de um link autônomo), você concorda que:
+
+
+  0. Tais links devem ser usados apenas conforme permitido via a Plataforma;
+  1. A Preseview retém discrição total para revogar ou desabilitar Links de Mídia a qualquer momento;
+  2. Qualquer uso indevido de mídia compartilhada, incluindo tentativas de baixar, redistribuir ou raspar Conteúdo sem autorização, pode resultar em ação legal e/ou terminação permanente da conta.
+3. Reservamos o direito de revogar permissões de link ou compartilhamento a qualquer momento, sem aviso, incluindo onde links são usados de forma que viole nossos Termos, políticas ou lei aplicável.
+
+
+## 9. LINKS E RECURSOS DE TERCEIROS
+
+
+0. Os Serviços (incluindo o Conteúdo) podem incluir links para, ou integrações com, Conteúdo de terceiros, sites ou serviços (“Conteúdo de Terceiros”) que não são de propriedade ou controlados pela Preseview. Você acessa tal Conteúdo por sua própria conta e risco. Não endossamos, monitoramos ou assumimos responsabilidade por qualquer Conteúdo de Terceiros, incluindo sua precisão, legalidade ou disponibilidade.
+1. A Preseview pode, no futuro, permitir que desenvolvedores aprovados enviem apps ou extensões (a “Preseview App Store”) para aprimorar a experiência do Usuário. Esses apps estarão sujeitos a revisão, moderação e critérios de aprovação específicos da plataforma. Apps não devem interferir na integridade da Plataforma, segurança do usuário ou privacidade de dados.
+2. Quando tal funcionalidade for disponibilizada:
+
+
+  0. Seu uso de apps de terceiros na Preseview será regido tanto por estes Termos quanto por quaisquer termos emitidos pelo desenvolvedor do app;
+  1. A Preseview reservará o direito de moderar, suspender ou remover qualquer app a seu exclusivo critério;
+  2. Usuários não devem instalar ou usar qualquer software, scripts ou extensões não aprovados para alterar, raspar ou interagir com a Preseview ou seus serviços.
+3. A Preseview não é responsável pelo comportamento, precisão ou segurança de plugins, APIs ou ferramentas de terceiros não explicitamente autorizados ou integrados através de canais oficiais.
+4. Você reconhece e concorda que a Preseview não é responsável pela disponibilidade de quaisquer sites ou recursos externos, e não endossa qualquer publicidade, produtos ou outros materiais em ou disponíveis a partir de tais sites ou recursos.
+5. Você reconhece e concorda que a Preseview não é responsável por qualquer perda ou dano que possa ser incorrido por você como resultado da disponibilidade desses sites ou recursos externos, ou como resultado de qualquer confiança colocada por você na completude, precisão ou existência de qualquer publicidade, produtos ou outros materiais em, ou disponíveis a partir de, tais sites ou recursos.
+
+
+## 10. PROPRIEDADE INTELECTUAL
+
+
+0. Todos os Direitos de Propriedade Intelectual na Plataforma, incluindo seu software, branding, infraestrutura, interface e recursos proprietários, e os Serviços em todo o mundo pertencem a nós ou a nossos licenciadores, e os direitos na Plataforma e nos Serviços são licenciados (não vendidos) a você. Você não tem Direitos de Propriedade Intelectual na, ou para, a Plataforma ou os Serviços além do direito de usá-los de acordo com estes termos. Você recebe uma licença limitada, não exclusiva, não transferível para usar a Plataforma unicamente de acordo com estes Termos.
+1. Você retém a propriedade do seu Conteúdo do Usuário. No entanto, você nos concede uma licença para usar, distribuir e exibir seu Conteúdo conforme delineado na Seção 4 - Licença, incluindo para moderação, entrega de Conteúdo e propósitos promocionais.
+2. Conteúdo gerado pelas ferramentas de IA integradas da Preseview ou modelos gerados por IA é considerado Conteúdo do Usuário uma vez gerado e é tratado como tal sob todas as políticas aplicáveis da Plataforma. No entanto, a Preseview retém responsabilidade por moderar todo Conteúdo gerado por IA antes de ser disponibilizado na Plataforma, como publicador e host legal.
+3. Você não pode:
+
+
+  0. Usar, reproduzir, baixar, compartilhar ou de outra forma explorar Conteúdo ou recursos da Plataforma a menos que tenha sido expressamente autorizado a fazê-lo;
+  1. Remover avisos de direitos autorais ou proprietários;
+  2. Usar qualquer parte da Plataforma ou seu Conteúdo para propósitos comerciais, derivados ou competitivos.
+4. Se você acreditar que seus direitos de propriedade intelectual foram infringidos, por favor, consulte nossa Política DMCA para instruções sobre submissão de uma solicitação de remoção.
+
+
+## 11. RESTRIÇÕES DE LICENÇA
+
+
+Exceto conforme expressamente estabelecido neste Acordo ou especificamente permitido por lei, você concorda:
+
+
+0. Não copiar, duplicar ou armazenar qualquer parte da Plataforma ou Serviços, exceto onde necessário para uso legal, pessoal em um Dispositivo;
+1. Não alugar, arrendar, sublicenciar, atribuir, vender ou de outra forma explorar comercialmente a Plataforma ou Serviços no todo ou em parte sem nossa permissão prévia por escrito;
+2. Não traduzir, modificar, adaptar, fundir ou criar obras derivadas baseadas na Plataforma ou Serviços, nem incorporar qualquer porção em outro software ou sistemas;
+3. Não desmontar, descompilar, fazer engenharia reversa ou extrair código fonte da Plataforma ou tentar fazê-lo, a menos que permitido sob a lei aplicável unicamente para propósitos de interoperabilidade. Se tal atividade for realizada:
+
+
+  0. Qualquer informação resultante deve ser mantida segura;
+  1. Não deve ser usada para desenvolver produtos competitivos ou derivados;
+  2. Não deve ser divulgada a terceiros sem nosso consentimento escrito;
+4. Não usar bots, scrapers ou scripts automatizados para acessar ou interagir com a Plataforma, ou para contornar moderação, precificação ou controles de acesso;
+5. Não fornecer acesso à Plataforma ou seu código fonte/objeto (no todo ou em parte) a qualquer terceiro, exceto com nossa autorização escrita;
+6. Não exportar, reexportar ou transferir a Plataforma ou tecnologias relacionadas em violação de quaisquer leis aplicáveis, embargos ou sanções.
+
+
+## 12. USO ACEITÁVEL
+
+
+0. Todos os usuários são obrigados a aderir à Política de Uso Aceitável da Preseview, que delineia os padrões para uso legal e apropriado da plataforma. A Política de Uso Aceitável faz parte integrante destes Termos e está acessível em https://legal.preseview.com/acceptable-use-policy.
+1. Ao usar a Preseview, você concorda em cumprir a Política de Uso Aceitável. O não cumprimento pode resultar em ações de execução, incluindo, mas não limitado a, suspensão ou terminação da sua conta.
+2. Ao usar a Preseview, você concorda em cumprir as Diretrizes da Comunidade, que delineiam padrões para interação do usuário, comunicação e conduta dentro da comunidade Preseview.
+
+
+## 13. GARANTIAS E ISENÇÕES DE RESPONSABILIDADE
+
+
+0. Forneceremos os Serviços com cuidado razoável, habilidade e esforços comercialmente razoáveis, incluindo acesso a suporte ao cliente e suporte à plataforma.
+1. A Plataforma e os Serviços são fornecidos apenas para propósitos informacionais gerais e de entretenimento. Eles não constituem aconselhamento legal, financeiro, médico ou outro profissional. Você deve obter seu próprio aconselhamento profissional antes de tomar ou abster-se de qualquer ação baseada na Plataforma.
+2. A Plataforma e os Serviços não foram desenvolvidos para atender aos seus requisitos individuais. Você é responsável por confirmar que os recursos e funcionalidade da Plataforma são adequados para o seu uso. Não garantimos qualquer resultado ou resultado específico do uso da Plataforma.
+3. Você concorda que os Serviços (ou qualquer parte deles) podem estar indisponíveis durante manutenção planejada ou de emergência, seja realizada pela Preseview Holdings ou provedores de hospedagem de terceiros. Faremos esforços razoáveis para fornecer aviso prévio de downtime planejado. Recomendamos que você faça backup do seu próprio Conteúdo (onde permitido) para evitar perda de dados.
+4. Não somos responsáveis por quaisquer atrasos, falhas de transmissão ou perda de dados resultantes de redes de terceiros, infraestrutura de internet ou ambientes de hospedagem. Você reconhece que tais sistemas podem introduzir limitações ou atrasos além do nosso controle.
+5. Não garantimos que a Plataforma será segura, livre de vírus ou bugs, ou continuamente disponível. Você é responsável por configurar seus dispositivos e usar ferramentas de cibersegurança apropriadas.
+6. Não somos responsáveis por qualquer Conteúdo, serviços ou sites de terceiros linkados de ou integrados com a Plataforma.
+7. Exceto conforme expressamente declarado neste Acordo, nenhuma garantia, garantia ou condição se aplica à Plataforma ou Serviços, seja implícita ou estatutária, na medida máxima permitida por lei.
+
+
+## 14. LIMITAÇÕES DE RESPONSABILIDADE
+
+
+0. Referências a “responsabilidade” nesta cláusula incluem todo tipo de responsabilidade decorrente sob ou em conexão com este Acordo, incluindo, mas não limitado a, responsabilidade em contrato, delito (incluindo negligência), deturpação, restituição ou de outra forma.
+1. Nada neste Acordo afetará seus direitos legais ou limitará ou excluirá nossa responsabilidade por:
+
+
+  0. Morte ou lesão pessoal resultante de nossa negligência;
+  1. Fraude ou deturpação fraudulenta; ou
+  2. Qualquer outra responsabilidade que não possa ser excluída ou limitada pela lei aplicável.
+2. Na medida permitida pela lei aplicável, a Preseview Holdings não será responsável por:
+
+
+  0. Qualquer perda ou dano causado por outros Usuários, incluindo qualquer perda em conexão com a conduta de outros Usuários ou Conteúdo do Usuário;
+  1. Qualquer perda ou dano que não foi diretamente causado pela violação da Preseview Holdings deste Acordo;
+  2. Qualquer perda ou dano resultante da sua falha em fornecer informações precisas de Conta ou manter a segurança das credenciais da sua Conta;
+  3. Qualquer acesso não autorizado à sua Conta, exclusão de dados ou interrupção dos Serviços causada por suas ações ou por sistemas de terceiros fora do nosso controle;
+  4. Qualquer perda ou dano que não fosse, no momento em que este Acordo foi formado entre você e a Preseview Holdings, uma consequência razoavelmente previsível da violação da Preseview Holdings deste Acordo.
+3. Se você for um Usuário Criativo, não seremos responsáveis por:
+
+
+  0. Perda de lucros, renda ou receita;
+  1. Perda de oportunidade de negócio, contratos ou economias antecipadas;
+  2. Interrupção de negócios ou dano reputacional;
+  3. Perda ou corrupção de dados ou ativos digitais;
+  4. Qualquer perda indireta, especial ou consequencial, seja previsível ou não.
+4. Sujeito à cláusula 14.2, a responsabilidade agregada total da Preseview Holdings para com você por todas as reivindicações decorrentes deste Acordo não excederá o maior de:
+
+
+  0. Três (3) vezes o valor total pago por você por qualquer Serviço Pago durante o período de doze (12) meses imediatamente anterior ao evento que deu origem à responsabilidade da Preseview Holdings; ou
+  1. Mil Reais Brasileiros (R$ 1.000). Esse limite se aplica a todas as reivindicações, seja decorrentes deste Acordo ou em conexão com o seu uso da Plataforma, e é o valor máximo recuperável em agregado, não por incidente.
+
+
+## 15. EVENTOS FORA DO NOSSO CONTROLE
+
+
+0. Não seremos responsáveis ou responsáveis por qualquer falha ou atraso no desempenho de nossas obrigações sob este Acordo causado por um ato, evento, omissão ou circunstância além do nosso controle razoável (um “Evento Fora do Nosso Controle”). Tais eventos incluem, mas não se limitam a:
+
+
+  0. Desastres naturais (ex.: terremotos, inundações, incêndios);
+  1. Guerras, ataques terroristas, invasões ou ameaças disso;
+  2. Agitação civil, greves, lockouts ou outras disputas industriais (seja envolvendo nossa força de trabalho ou de terceiros);
+  3. Falhas de telecomunicações públicas ou privadas, hospedagem ou infraestrutura de internet;
+  4. Ações governamentais, restrições de exportação, sanções ou intervenção regulatória;
+  5. Pandemias, epidemias ou emergências de saúde pública;
+  6. Suspensão ou falha de processadores de pagamento de terceiros, provedores de serviços em nuvem ou fornecedores de infraestrutura.
+1. Se um Evento Fora do Nosso Controle ocorrer, nossas obrigações sob este Acordo serão suspensas pela duração do evento, e o tempo para desempenho será estendido de acordo.
+2. Tomaremos passos razoáveis para mitigar o impacto de qualquer Evento Fora do Nosso Controle, incluindo buscar arranjos ou provedores de serviço alternativos onde prático. No entanto, não garantimos a continuação ou restauração dos Serviços durante tais eventos.
+
+
+## 16. SUSPENSÃO E TERMINAÇÃO DA CONTA
+
+
+0. Este Acordo começa quando você começa a usar a Plataforma e permanece em vigor até:
+
+
+  0. Você parar de usar os Serviços ou excluir sua Conta; ou
+  1. Nós suspendermos ou terminarmos seu acesso à Plataforma.
+1. Você pode parar de usar os Serviços a qualquer momento. Você pode excluir sua Conta via as configurações da Plataforma. Para propósitos de segurança, se você contatar nossa equipe de suporte para solicitar exclusão de conta, podemos exigir verificação adicional (que pode incluir confirmação de identidade) para proteger contra remoção não autorizada de conta. Após a exclusão:
+
+
+  0. Você não será mais capaz de acessar sua Conta ou qualquer Conteúdo associado;
+  1. Você tem 30 dias para solicitar uma cópia dos seus dados pessoais ou Conteúdo exportável;
+  2. Após 30 dias, podemos excluir permanentemente seus dados, a menos que sejamos legalmente obrigados a retê-los.
+2. Reservamos o direito de suspender, restringir ou terminar permanentemente sua Conta — com ou sem aviso — se, em nossa opinião razoável:
+
+
+  0. Você viole este Acordo, incluindo quaisquer Políticas Preseview, como a Política de Uso Aceitável, Diretrizes da Comunidade, Termos de Criador ou Termos Ancillares;
+  1. Você se envolva em abuso de pagamento, reembolso ou chargeback;
+  2. Seu comportamento represente um risco para outros Usuários, nossos sistemas ou o público (ex.: fraude, assédio, violação de Conteúdo ou dano à plataforma);
+  3. Sejamos obrigados a fazê-lo por lei, regulação ou ordem judicial;
+  4. Descontinuemos os Serviços ou qualquer parte deles.
+3. Após terminação por qualquer razão:
+
+
+  0. Seu acesso a Serviços Pagos, Conteúdo e recursos é imediatamente revogado;
+  1. Quaisquer Créditos não usados ou Saldo do Usuário Criativo podem ser perdidos, a menos que um reembolso seja requerido por lei;
+  2. Podemos excluir seu Conteúdo do Usuário, sujeito a obrigações de retenção legal.
+4. Se sua Conta for suspensa ou terminada, você não pode:
+
+
+  0. Registrar uma nova Conta;
+  1. Usar credenciais ou métodos de pagamento de outro Usuário;
+  2. Tentar contornar a execução via métodos técnicos ou sociais. Podemos implementar medidas técnicas ou investigativas para detectar e bloquear tal comportamento.
+5. Se você acreditar que sua Conta foi suspensa ou terminada por erro, você pode submeter uma solicitação de restabelecimento:
+
+
+  0. Envie uma solicitação escrita dentro de 14 dias do aviso para support@preseview.com;
+  1. Inclua uma explicação clara e qualquer evidência de suporte;
+  2. Revisaremos a solicitação de boa fé e podemos solicitar informações adicionais;
+  3. Uma resposta será tipicamente emitida dentro de 10 Dias Úteis, embora isso não seja garantido;
+  4. O restabelecimento é a nosso exclusivo critério. Submeter uma solicitação não garante restabelecimento, e submissões duplicadas ou abusivas podem ser desconsideradas;
+  5. Se restabelecida, sua Conta pode estar sujeita a monitoramento adicional ou limitações.
+6. Você reconhece e concorda que não somos obrigados — e podemos não ser permitidos — a divulgar as razões específicas para qualquer suspensão, restrição ou terminação. Podemos optar por fornecer orientação geral, mas não somos obrigados a fazê-lo. Isso inclui casos onde a divulgação poderia:
+
+
+  0. Comprometer investigações ou integridade da plataforma;
+  1. Violar a privacidade de outro Usuário;
+  2. Violar obrigações legais ou regulatórias;
+  3. Revelar mecanismos de execução que poderiam ser explorados.
+7. As seguintes disposições sobrevivem à terminação da sua Conta ou deste Acordo:
+
+
+  0. Seções relacionadas a Garantias e Isenções de Responsabilidade (Seção 13), Limitações de Responsabilidade (Seção 14), Força Maior (Seção 15) e Propriedade Intelectual (Seção 10);
+  1. Quaisquer direitos, obrigações ou políticas que por sua natureza sejam destinadas a sobreviver à terminação, incluindo aquelas relacionadas a reembolsos, moderação, resolução de disputas e proteção de dados.
+
+
+## 17. COMUNICAÇÕES
+
+
+0. Se você quiser aprender mais sobre a Plataforma ou o Serviço ou tiver problemas ao usá-los, recomendamos que, em primeiro lugar, dê uma olhada em nossos recursos de suporte em help.preseview.com.
+1. Se você achar que a Plataforma ou os Serviços estão defeituosos ou mal descritos ou desejar nos contatar por qualquer outra razão, por favor, contate nossa equipe de atendimento ao cliente usando nosso chat ao vivo em help.preseview.com, ou e-mail em support@preseview.com.
+2. Se você tiver qualquer reclamação relacionada ao serviço, por favor, consulte os processos e procedimentos detalhados em nossa Política de Reclamações.
+3. Se você tiver qualquer solicitação de remoção de Conteúdo, por favor, consulte os processos e procedimentos detalhados em nossa política DMCA.
+4. Se tivermos que contatá-lo, faremos isso por e-mail usando os detalhes de contato que você nos forneceu.
+
+
+## 18. OUTROS TERMOS IMPORTANTES
+
+
+0. Podemos transferir nossos direitos e obrigações sob estes termos para outra organização. Sempre lhe diremos por escrito se isso acontecer.
+1. Sua Conta é pessoal para você. Você pode apenas transferir ou de outra forma ceder sua Conta ou seus direitos ou obrigações sob estes termos para outra pessoa se concordarmos por escrito.
+2. Todas as contas de Usuário na Plataforma são operadas sob e regidas pela Preseview Holdings Ltda, uma empresa incorporada no Brasil. Nenhum relacionamento contratual é formado entre Usuários e qualquer subsidiária, afiliada ou entidade de pagamento, incluindo Preseview LLC. Seu acordo legal é unicamente com a Preseview Holdings Ltda.
+3. Este Acordo não dá origem a quaisquer direitos sob a lei brasileira aplicável para fazer cumprir qualquer termo deste Acordo por terceiros.
+4. Cada um dos parágrafos destes termos opera separadamente. Se qualquer tribunal ou autoridade relevante decidir que qualquer deles é ilegal, os parágrafos restantes permanecerão em pleno vigor e efeito.
+5. Se falharmos em insistir que você cumpra qualquer de suas obrigações sob este Acordo, ou se não fizermos cumprir nossos direitos contra você, ou se atrasarmos em fazê-lo, isso não significará que renunciamos aos nossos direitos contra você e não significará que você não tem que cumprir essas obrigações. Se renunciarmos a uma inadimplência sua, faremos isso apenas por escrito, e isso não significará que automaticamente renunciaremos a qualquer inadimplência posterior sua.
+6. Este Acordo e qualquer disputa ou reivindicação (incluindo disputas ou reivindicações não contratuais) decorrentes de ou em conexão com ele serão regidos e interpretados de acordo com as leis do Brasil.
+7. Você concorda que os tribunais de São Paulo, Brasil terão jurisdição exclusiva sobre quaisquer disputas ou reivindicações (incluindo disputas ou reivindicações não contratuais) decorrentes sob ou em conexão com este Acordo.
+8. Este Acordo está escrito em Português e Inglês, mas a versão em Português prevalecerá sobre qualquer tradução. Quaisquer versões traduzidas são fornecidas apenas para conveniência e não serão legalmente vinculantes.
+
+
+## 19. AVISO DE ARBITRAGEM E RENÚNCIA A AÇÃO COLETIVA (APENAS USUÁRIOS DOS EUA)
+
+
+Se você residir nos Estados Unidos, você concorda com os seguintes termos de resolução de disputas:
+
+
+0. Arbitragem Obrigatória
+
+
+  0. Você e a Preseview Holdings concordam que qualquer disputa, reivindicação ou controvérsia decorrente de ou em conexão com estes Termos, a Plataforma ou os Serviços será resolvida por arbitragem individual final e vinculante, em vez de no tribunal.
+1. Renúncia a Ação Coletiva
+
+
+  0. Você concorda em renunciar a qualquer direito de:
+
+
+    0. Participar em uma ação coletiva ou arbitragem coletiva;
+    1. Apresentar uma reivindicação como representante ou membro em qualquer ação coletiva ou consolidada.
+  1. O árbitro não consolidará reivindicações de mais de uma pessoa e não pode de outra forma presidir qualquer forma de procedimento representativo ou coletivo.
+2. Exceções
+
+
+  0. Este acordo de arbitragem não se aplica a:
+
+
+    0. Quaisquer reivindicações que se qualifiquem para tribunal de pequenas causas;
+    1. Reivindicações por alívio injuntivo ou equitativo quanto a infracção ou uso indevido de propriedade intelectual.
+3. Fórum de Arbitragem
+
+
+  0. A arbitragem será administrada pela American Arbitration Association (“AAA”) de acordo com suas regras, incluindo as Regras de Arbitragem do Consumidor da AAA. Você pode obter cópias em www.adr.org ou ligando para 1-800-778-7879.
+4. Jurisdição para Usuários Não-EUA
+
+
+  0. Se você não residir nos Estados Unidos, esta cláusula não se aplica. Por favor, consulte a Seção 18 – Lei Aplicável e Jurisdição.
+
+
+## Precisa de Ajuda?
+
+
+Se você tiver perguntas sobre qualquer de nossas políticas ou precisar de assistência:
+
+
+A Preseview reserva o direito de alterar esta Política de tempos em tempos. A versão mais recente estará sempre acessível em legal.preseview.com, e alterações significativas serão comunicadas onde requerido.
