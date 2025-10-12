@@ -55,6 +55,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Creator insights
+  app.get("/api/creator/insights", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.userType !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar insights" });
+      }
+
+      const insights = await storage.getCreatorInsights(req.user!.id);
+      res.json(insights);
+    } catch (error: any) {
+      console.error("Error fetching creator insights:", error);
+      res.status(500).json({ error: "Erro ao buscar insights" });
+    }
+  });
+
   // Stories routes
   app.get("/api/stories", async (req, res) => {
     try {

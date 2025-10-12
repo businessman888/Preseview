@@ -268,6 +268,60 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getCreatorInsights(creatorId: number) {
+    // Get all posts by creator
+    const creatorPosts = await db
+      .select()
+      .from(posts)
+      .where(eq(posts.userId, creatorId));
+
+    // Count subscribers
+    const subscriptions = await db
+      .select()
+      .from(subscriptionsTable)
+      .where(eq(subscriptionsTable.creatorId, creatorId));
+
+    // Count likes
+    const likes = await db
+      .select()
+      .from(postLikes)
+      .innerJoin(posts, eq(posts.id, postLikes.postId))
+      .where(eq(posts.userId, creatorId));
+
+    // Get creator profile for subscription price
+    const [creatorProfile] = await db
+      .select()
+      .from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, creatorId));
+
+    const totalPosts = creatorPosts.length;
+    const totalImages = creatorPosts.filter(p => p.mediaType === 'image').length;
+    const totalVideos = creatorPosts.filter(p => p.mediaType === 'video').length;
+    const totalLikes = likes.length;
+    const totalSubscribers = subscriptions.filter(s => s.status === 'active').length;
+
+    // Calculate subscribers growth (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recentSubscribers = subscriptions.filter(
+      s => s.status === 'active' && new Date(s.createdAt) >= thirtyDaysAgo
+    ).length;
+
+    // Calculate monthly revenue
+    const monthlyRevenue = totalSubscribers * (creatorProfile?.subscriptionPrice || 0);
+
+    return {
+      totalSubscribers,
+      totalPosts,
+      totalLikes,
+      totalImages,
+      totalVideos,
+      avgLikesPerPost: totalPosts > 0 ? totalLikes / totalPosts : 0,
+      subscribersGrowth: recentSubscribers,
+      monthlyRevenue,
+    };
+  }
+
   async upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }> {
     // Update user type to creator
     const [user] = await db

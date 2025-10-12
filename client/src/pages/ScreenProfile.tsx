@@ -26,6 +26,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useCreatorPosts } from "@/hooks/use-creator-posts";
 import { CreatePostModal } from "@/components/CreatePostModal";
 import { EditProfileModal } from "@/components/EditProfileModal";
+import { InsightsModal } from "@/components/InsightsModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +58,7 @@ export const ScreenProfile = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("posts");
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isInsightsModalOpen, setIsInsightsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -189,9 +191,7 @@ export const ScreenProfile = (): JSX.Element => {
             
             <Button
               className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
-              onClick={() => {
-                console.log("Abrindo insights");
-              }}
+              onClick={() => setIsInsightsModalOpen(true)}
               data-testid="button-insights"
             >
               Insights
@@ -390,6 +390,12 @@ export const ScreenProfile = (): JSX.Element => {
       <EditProfileModal
         isOpen={isEditProfileModalOpen}
         onClose={() => setIsEditProfileModalOpen(false)}
+      />
+
+      {/* Insights Modal */}
+      <InsightsModal
+        isOpen={isInsightsModalOpen}
+        onClose={() => setIsInsightsModalOpen(false)}
       />
 
       {/* View Post Dialog */}
