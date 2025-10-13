@@ -75,10 +75,16 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      // Validate request body with Zod schema
-      const validationResult = insertUserSchema.extend({
+      // Custom schema that accepts displayName (camelCase) from frontend
+      const registerSchema = z.object({
+        username: z.string().min(1, "Nome de usuário é obrigatório"),
+        email: z.string().email("Email inválido"),
         password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
-      }).safeParse(req.body);
+        displayName: z.string().min(1, "Nome de exibição é obrigatório"),
+        userType: z.enum(['user', 'creator']).optional(),
+      });
+
+      const validationResult = registerSchema.safeParse(req.body);
 
       if (!validationResult.success) {
         return res.status(400).json({ 
@@ -105,8 +111,8 @@ export function setupAuth(app: Express) {
         username: username.trim(),
         email: email.trim().toLowerCase(),
         password: await hashPassword(password),
-        displayName: displayName.trim(),
-        userType: userType || 'user',
+        display_name: displayName.trim(),
+        // user_type: userType || 'user', // Comentado temporariamente até a coluna ser criada no Supabase
       };
 
       const user = await storage.createUser(sanitizedUserData);
@@ -117,8 +123,8 @@ export function setupAuth(app: Express) {
           id: user.id,
           username: user.username,
           email: user.email,
-          displayName: user.displayName,
-          userType: user.userType,
+          displayName: user.display_name,
+          userType: user.user_type,
           isVerified: user.isVerified
         });
       });
@@ -135,8 +141,8 @@ export function setupAuth(app: Express) {
       id: user.id,
       username: user.username,
       email: user.email,
-      displayName: user.displayName,
-      userType: user.userType,
+      displayName: user.display_name,
+      userType: user.user_type,
       isVerified: user.isVerified
     });
   });
@@ -173,8 +179,8 @@ export function setupAuth(app: Express) {
               id: guestUser!.id,
               username: guestUser!.username,
               email: guestUser!.email,
-              displayName: guestUser!.displayName,
-              userType: guestUser!.userType,
+              displayName: guestUser!.display_name,
+              userType: guestUser!.user_type,
               isVerified: guestUser!.isVerified
             });
             resolve();
@@ -186,8 +192,8 @@ export function setupAuth(app: Express) {
         id: user.id,
         username: user.username,
         email: user.email,
-        displayName: user.displayName,
-        userType: user.userType,
+        displayName: user.display_name,
+        userType: user.user_type,
         isVerified: user.isVerified
       });
     } catch (error) {

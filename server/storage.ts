@@ -60,7 +60,7 @@ import {
   type BlockedUser,
   type InsertBlockedUser
 } from "@shared/schema";
-import { db, pool } from "./db";
+import { supabase } from "./supabaseClient";
 import { eq, desc, asc, and, or, like, sql, gte, lte, count } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -206,11 +206,13 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
   
   constructor() {
-    this.sessionStore = new PostgresSessionStore({ 
-      pool, 
-      createTableIfMissing: true 
+    // ⚠️ Desativando session store local (pool) temporariamente
+    this.sessionStore = new PostgresSessionStore({
+      conString: process.env.DATABASE_URL || "",
+      createTableIfMissing: true,
     });
   }
+  
 
   // Users
   async getUser(id: number): Promise<User | undefined> {
@@ -243,6 +245,16 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error in getUserByEmail:", error);
       return undefined;
+    }
+  }
+  // 📌 Função para listar todos os usuários
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const result = await db.select().from(users);
+      return result;
+    } catch (error) {
+      console.error("❌ Erro ao buscar todos os usuários:", error);
+      throw new Error("Erro ao buscar usuários");
     }
   }
 
@@ -455,21 +467,21 @@ export class DatabaseStorage implements IStorage {
       .offset(offset);
   }
 
-  async searchCreators(query: string, limit = 20): Promise<(CreatorProfile & { user: User })[]> {
-    const results = await db
-      .select()
-      .from(creatorProfiles)
-      .innerJoin(users, eq(creatorProfiles.userId, users.id))
-      .where(
-        and(
-          eq(creatorProfiles.isActive, true),
-          or(
-            like(users.displayName, `%${query}%`),
-            like(users.username, `%${query}%`),
-            like(creatorProfiles.description, `%${query}%`)
-          )
-        )
-      )
+  async searchCreators(query: string, limit = 20): 
+  Promise<(CreatorProfile & { user: User })[]> { 
+    const results = await db 
+    .select() 
+    .from(creatorProfiles) 
+    .innerJoin(users, eq(creatorProfiles.userId, users.id)) 
+    .where( 
+      and( 
+        eq(creatorProfiles.isActive, true), 
+        or( like(users.display_name, `%${query}%`),
+        like(users.username, `%${query}%`),
+        like(creatorProfiles.description, `%${query}%`)        
+         ) 
+        ) 
+      ) 
       .limit(limit);
 
     return results.map(row => ({
@@ -486,7 +498,7 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(creatorProfiles, eq(users.id, creatorProfiles.userId))
       .where(
         and(
-          eq(users.userType, 'creator'),
+          eq(users.user_type, 'creator'),
           sql`${users.id} NOT IN (
             SELECT ${follows.followingId} 
             FROM ${follows} 
@@ -1357,5 +1369,52 @@ export class DatabaseStorage implements IStorage {
     return !!result;
   }
 }
+// ⚡ Override temporário dos métodos de usuário para usar Supabase direto
+DatabaseStorage.prototype.getAllUsers = async function () {
+  const { data, error } = await supabase.from('users').select('*');
+  if (error) {
+    console.error('❌ Erro ao buscar usuários no Supabase:', error);
+    throw error;
+  }
+  return data;
+};
+
+DatabaseStorage.prototype.getUserByUsername = async function (username: string) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('username', username)
+    .single();
+  if (error) return undefined;
+  return data;
+};
+
+DatabaseStorage.prototype.getUserByEmail = async function (email: string) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .single();
+  if (error) return undefined;
+  return data;
+};
+
+DatabaseStorage.prototype.createUser = async function (userData: any) {
+  const userDataWithTimestamp = {
+    ...userData,
+    created_at: new Date().toISOString()
+  };
+  
+  const { data, error } = await supabase
+    .from('users')
+    .insert(userDataWithTimestamp)
+    .select()
+    .single();
+  if (error) {
+    console.error('❌ Erro ao criar usuário no Supabase:', error);
+    throw error;
+  }
+  return data;
+};
 
 export const storage = new DatabaseStorage();

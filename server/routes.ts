@@ -6,6 +6,19 @@ import { setupAuth } from "./auth";
 export async function registerRoutes(app: Express): Promise<Server> {
   // sets up /api/register, /api/login, /api/logout, /api/user
   setupAuth(app);
+// ✅ Rota para listar todos os usuários cadastrados
+app.get("/api/users", async (req, res) => {
+  try {
+    // Opcional: proteger a rota com autenticação
+    // if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const users = await storage.getAllUsers();  // você criará esta função no storage
+    res.json(users);
+  } catch (error) {
+    console.error("Erro ao listar usuários:", error);
+    res.status(500).json({ error: "Erro ao listar usuários" });
+  }
+});
 
   // Update user profile
   app.patch("/api/user/profile", async (req, res) => {
@@ -33,7 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
       // Check if user is already a creator
-      if (req.user!.userType === 'creator') {
+      if (req.user!.user_type === 'creator') {
         return res.status(400).json({ error: "Você já é um criador" });
       }
 
@@ -59,7 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/creator/insights", async (req, res) => {
     try {
       if (!req.isAuthenticated()) return res.sendStatus(401);
-      if (req.user!.userType !== 'creator') {
+      if (req.user!.user_type !== 'creator') {
         return res.status(403).json({ error: "Apenas criadores podem acessar insights" });
       }
 
@@ -75,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/creator/profile", async (req, res) => {
     try {
       if (!req.isAuthenticated()) return res.sendStatus(401);
-      if (req.user!.userType !== 'creator') {
+      if (req.user!.user_type !== 'creator') {
         return res.status(403).json({ error: "Apenas criadores podem acessar este recurso" });
       }
 
@@ -91,7 +104,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/creator/subscription-price", async (req, res) => {
     try {
       if (!req.isAuthenticated()) return res.sendStatus(401);
-      if (req.user!.userType !== 'creator') {
+      if (req.user!.user_type !== 'creator') {
         return res.status(403).json({ error: "Apenas criadores podem atualizar preços" });
       }
 
@@ -127,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
       // Only creators can create stories
-      if (req.user!.userType !== 'creator') {
+      if (req.user!.user_type !== 'creator') {
         return res.status(403).json({ error: "Apenas criadores podem publicar stories" });
       }
 
@@ -203,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
       // Only creators can create posts
-      if (req.user!.userType !== 'creator') {
+      if (req.user!.user_type !== 'creator') {
         return res.status(403).json({ error: "Apenas criadores podem publicar posts" });
       }
 
@@ -831,7 +844,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.updateUser(req.user!.id, {
-        displayName,
+        display_name: displayName,
         bio: bio || null,
       });
       

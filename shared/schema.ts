@@ -14,14 +14,14 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  displayName: text("display_name").notNull(),
+  display_name: text("display_name").notNull(),
   bio: text("bio"),
-  profileImage: text("profile_image"),
-  coverImage: text("cover_image"),
-  userType: userTypeEnum("user_type").default('user').notNull(),
-  isVerified: boolean("is_verified").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  profile_image: text("profile_image"),
+  cover_image: text("cover_image"),
+  user_type: userTypeEnum("user_type").default('user').notNull(),
+  is_verified: boolean("is_verified").default(false),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Creator profiles (additional info for creators)
