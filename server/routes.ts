@@ -131,7 +131,8 @@ app.get("/api/users", async (req, res) => {
       res.json(stories);
     } catch (error) {
       console.error("Error fetching stories:", error);
-      res.status(500).json({ error: "Erro ao buscar stories" });
+      // Temporário: evitar quebrar a home
+      res.json([]);
     }
   });
 
@@ -207,7 +208,8 @@ app.get("/api/users", async (req, res) => {
       res.json(posts);
     } catch (error) {
       console.error("Error fetching feed posts:", error);
-      res.status(500).json({ error: "Erro ao buscar feed" });
+      // Temporário: evitar quebrar a home
+      res.json([]);
     }
   });
 
@@ -245,7 +247,8 @@ app.get("/api/users", async (req, res) => {
     try {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
-      const creatorId = parseInt(req.params.creatorId);
+      // creatorId pode ser UUID no Supabase; não faça parseInt
+      const creatorId = req.params.creatorId;
       const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
       
@@ -359,7 +362,8 @@ app.get("/api/users", async (req, res) => {
       res.json(creators);
     } catch (error) {
       console.error("Error fetching suggested creators:", error);
-      res.status(500).json({ error: "Erro ao buscar criadores sugeridos" });
+      // Temporário: evitar quebrar a home
+      res.json([]);
     }
   });
 
@@ -1029,6 +1033,52 @@ app.get("/api/users", async (req, res) => {
     } catch (error) {
       console.error("Error setting default payment method:", error);
       res.status(500).json({ error: "Erro ao definir método padrão" });
+    }
+  });
+
+  // Creator Dashboard Endpoints
+  app.get("/api/creator/stats", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar estatísticas" });
+      }
+
+      const stats = await storage.getCreatorStats(req.user!.id);
+      res.json(stats);
+    } catch (error: any) {
+      console.error("Error fetching creator stats:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar estatísticas" });
+    }
+  });
+
+  app.get("/api/creator/progress", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar progresso" });
+      }
+
+      const progress = await storage.getCreatorProgress(req.user!.id);
+      res.json(progress);
+    } catch (error: any) {
+      console.error("Error fetching creator progress:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar progresso" });
+    }
+  });
+
+  app.get("/api/creator/badges", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar badges" });
+      }
+
+      const badges = await storage.getCreatorBadges(req.user!.id);
+      res.json(badges);
+    } catch (error: any) {
+      console.error("Error fetching creator badges:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar badges" });
     }
   });
 

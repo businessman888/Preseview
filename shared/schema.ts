@@ -456,13 +456,13 @@ export const blockedUsersRelations = relations(blockedUsers, ({ one }) => ({
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
 });
 
 export const insertCreatorProfileSchema = createInsertSchema(creatorProfiles).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
   totalEarnings: true,
   subscriberCount: true,
   postCount: true,
@@ -470,8 +470,8 @@ export const insertCreatorProfileSchema = createInsertSchema(creatorProfiles).om
 
 export const insertPostSchema = createInsertSchema(posts).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
   likesCount: true,
   commentsCount: true,
   viewsCount: true,
@@ -479,50 +479,50 @@ export const insertPostSchema = createInsertSchema(posts).omit({
 
 export const insertStorySchema = createInsertSchema(stories).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
   viewsCount: true,
 });
 
 export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
   startDate: true,
 });
 
 export const insertFollowSchema = createInsertSchema(follows).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertLikeSchema = createInsertSchema(likes).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertBookmarkSchema = createInsertSchema(bookmarks).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertCommentSchema = createInsertSchema(comments).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertMessageSchema = createInsertSchema(messages).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
   isRead: true,
 });
 
 export const insertTipSchema = createInsertSchema(tips).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertNotificationSchema = createInsertSchema(notifications).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
   isRead: true,
 });
 
@@ -533,39 +533,39 @@ export const insertStoryViewSchema = createInsertSchema(storyViews).omit({
 
 export const insertSearchHistorySchema = createInsertSchema(searchHistory).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertTrendingHashtagSchema = createInsertSchema(trendingHashtags).omit({
   id: true,
-  updatedAt: true,
+  updated_at: true,
 });
 
 export const insertPaymentMethodSchema = createInsertSchema(paymentMethods).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertTransactionSchema = createInsertSchema(transactions).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertNotificationPreferencesSchema = createInsertSchema(notificationPreferences).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
 });
 
 export const insertPrivacySettingsSchema = createInsertSchema(privacySettings).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
 });
 
 export const insertBlockedUserSchema = createInsertSchema(blockedUsers).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 // Types
@@ -609,3 +609,25 @@ export type PrivacySettings = typeof privacySettings.$inferSelect;
 export type InsertPrivacySettings = z.infer<typeof insertPrivacySettingsSchema>;
 export type BlockedUser = typeof blockedUsers.$inferSelect;
 export type InsertBlockedUser = z.infer<typeof insertBlockedUserSchema>;
+
+// Creator Dashboard Types
+export type CreatorStats = {
+  subscriberCount: number;
+  postCount: number;
+  likesCount: number;
+  totalEarnings: number;
+};
+
+export type CreatorProgress = {
+  current: number;
+  goal: number;
+  percentage: number;
+};
+
+export type Badge = {
+  id: number;
+  name: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+};

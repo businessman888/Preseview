@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Heart, Star, Sparkles } from "lucide-react";
 
 export default function AuthPage() {
-  const { user, loginMutation, registerMutation } = useAuth();
+  const { user, isLoading, loginMutation, registerMutation, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ username: "", password: "" });
@@ -23,10 +23,14 @@ export default function AuthPage() {
 
   // Redirecionar se já estiver logado
   useEffect(() => {
-    if (user) {
+    const search = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const force = search?.get('force') === 'true';
+    const isGuest = !!user && ((user as any).username === 'convidado' || (user as any).email === 'convidado@app.com');
+
+    if (!isLoading && user && !isGuest && !force) {
       setLocation("/");
     }
-  }, [user, setLocation]);
+  }, [user, isLoading, setLocation]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

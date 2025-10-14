@@ -61,6 +61,7 @@ import {
   type InsertBlockedUser
 } from "@shared/schema";
 import { supabase } from "./supabaseClient";
+import { db } from "./db";
 import { eq, desc, asc, and, or, like, sql, gte, lte, count } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -185,6 +186,11 @@ export interface IStorage {
   updateUserPassword(userId: number, password: string): Promise<void>;
   deleteUser(userId: number): Promise<boolean>;
   
+  // Creator Dashboard
+  getCreatorStats(creatorId: number): Promise<{ subscriberCount: number; postCount: number; likesCount: number; totalEarnings: number }>;
+  getCreatorProgress(creatorId: number): Promise<{ current: number; goal: number; percentage: number }>;
+  getCreatorBadges(creatorId: number): Promise<Array<{ id: number; name: string; description: string; icon: string; unlocked: boolean }>>;
+  
   // Payment Methods
   getPaymentMethods(userId: number): Promise<PaymentMethod[]>;
   createPaymentMethod(method: InsertPaymentMethod): Promise<PaymentMethod>;
@@ -217,20 +223,34 @@ export class DatabaseStorage implements IStorage {
   // Users
   async getUser(id: number): Promise<User | undefined> {
     try {
-      const result = await db.select().from(users).where(eq(users.id, id));
-      const [user] = result || [];
-      return user || undefined;
+      // Migrado para Supabase para evitar dependência de "db" no deserialize do passport
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error in getUser:', error);
+        return undefined;
+      }
+
+      return (data as unknown) as User;
     } catch (error) {
-      console.error("Error in getUser:", error);
+      console.error('Error in getUser:', error);
       return undefined;
     }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const result = await db.select().from(users).where(eq(users.username, username));
-      const [user] = result || [];
-      return user || undefined;
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .single();
+      if (error) return undefined;
+      return (data as unknown) as User;
     } catch (error) {
       console.error("Error in getUserByUsername:", error);
       return undefined;
@@ -239,9 +259,13 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     try {
-      const result = await db.select().from(users).where(eq(users.email, email));
-      const [user] = result || [];
-      return user || undefined;
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+      if (error) return undefined;
+      return (data as unknown) as User;
     } catch (error) {
       console.error("Error in getUserByEmail:", error);
       return undefined;
@@ -259,14 +283,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values({
-        ...insertUser,
-        updatedAt: new Date(),
-      })
-      .returning();
-    return user;
+    const payload: any = {
+      ...insertUser,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    const { data, error } = await supabase
+      .from('users')
+      .insert(payload)
+      .select()
+      .single();
+    if (error) {
+      console.error('❌ Erro ao criar usuário no Supabase:', error);
+      throw error;
+    }
+    return (data as unknown) as User;
   }
 
   async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User | undefined> {
@@ -375,32 +406,41 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }> {
-    // Update user type to creator
-    const [user] = await db
-      .update(users)
-      .set({ 
-        userType: 'creator',
-        updatedAt: new Date()
+    // Update user type to creator using Supabase
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .update({ 
+        user_type: 'creator',
+        updated_at: new Date().toISOString()
       })
-      .where(eq(users.id, userId))
-      .returning();
+      .eq('id', userId)
+      .select()
+      .single();
 
-    if (!user) {
+    if (userError || !user) {
+      console.error('Error updating user to creator:', userError);
       throw new Error("Usuário não encontrado");
     }
 
-    // Create creator profile
-    const [profile] = await db
-      .insert(creatorProfiles)
-      .values({
-        userId,
-        subscriptionPrice: profileData?.subscriptionPrice || 0,
+    // Create creator profile using Supabase
+    const { data: profile, error: profileError } = await supabase
+      .from('creator_profiles')
+      .insert({
+        user_id: userId,
+        subscription_price: profileData?.subscriptionPrice || 0,
         description: profileData?.description || null,
         categories: profileData?.categories || [],
-        socialLinks: profileData?.socialLinks || [],
-        isActive: profileData?.isActive ?? true,
+        social_links: profileData?.socialLinks || [],
+        is_active: profileData?.isActive ?? true,
+        created_at: new Date().toISOString()
       })
-      .returning();
+      .select()
+      .single();
+
+    if (profileError || !profile) {
+      console.error('Error creating creator profile:', profileError);
+      throw new Error("Erro ao criar perfil de criador");
+    }
 
     return { user, profile };
   }
@@ -566,14 +606,18 @@ export class DatabaseStorage implements IStorage {
     return updatedPost || undefined;
   }
 
-  async getPostsByCreator(creatorId: number, limit = 20, offset = 0): Promise<Post[]> {
-    return await db
-      .select()
-      .from(posts)
-      .where(eq(posts.creatorId, creatorId))
-      .orderBy(desc(posts.createdAt))
-      .limit(limit)
-      .offset(offset);
+  async getPostsByCreator(creatorId: any, limit = 20, offset = 0): Promise<Post[]> {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('creator_id', creatorId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+    if (error) {
+      console.error('Error fetching posts by creator:', error);
+      return [];
+    }
+    return (data as unknown) as Post[];
   }
 
   async getFeedPosts(userId: number, limit = 20, offset = 0): Promise<(Post & { creator: User, isLiked: boolean, isBookmarked: boolean })[]> {
@@ -1259,6 +1303,82 @@ export class DatabaseStorage implements IStorage {
       console.error("Error deleting user:", error);
       return false;
     }
+  }
+
+  // Creator Dashboard
+  async getCreatorStats(creatorId: any): Promise<{ subscriberCount: number; postCount: number; likesCount: number; totalEarnings: number }> {
+    const { data: profile, error: profileError } = await supabase
+      .from('creator_profiles')
+      .select('subscriber_count, post_count, total_earnings')
+      .eq('user_id', creatorId)
+      .single();
+
+    if (profileError || !profile) {
+      return { subscriberCount: 0, postCount: 0, likesCount: 0, totalEarnings: 0 };
+    }
+
+    const { data: postsData } = await supabase
+      .from('posts')
+      .select('likes_count')
+      .eq('creator_id', creatorId);
+
+    const totalLikes = (postsData || []).reduce((sum: number, p: any) => sum + (p.likes_count ?? p.likesCount ?? 0), 0);
+
+    return {
+      subscriberCount: (profile as any).subscriber_count || 0,
+      postCount: (profile as any).post_count || 0,
+      likesCount: totalLikes,
+      totalEarnings: Number((profile as any).total_earnings || 0),
+    };
+  }
+
+  async getCreatorProgress(creatorId: any): Promise<{ current: number; goal: number; percentage: number }> {
+    const { data: profile } = await supabase
+      .from('creator_profiles')
+      .select('total_earnings')
+      .eq('user_id', creatorId)
+      .single();
+
+    const current = Number((profile as any)?.total_earnings || 0);
+    const goal = 100;
+    const percentage = Math.min((current / goal) * 100, 100);
+
+    return { current, goal, percentage };
+  }
+
+  async getCreatorBadges(creatorId: any): Promise<Array<{ id: number; name: string; description: string; icon: string; unlocked: boolean }>> {
+    const { data: profile } = await supabase
+      .from('creator_profiles')
+      .select('subscriber_count, post_count, total_earnings')
+      .eq('user_id', creatorId)
+      .single();
+
+    const p: any = profile || {};
+    const badges = [
+      {
+        id: 1,
+        name: "Estrela em Ascensão",
+        description: "Alcance 100 assinantes",
+        icon: "⭐",
+        unlocked: (p.subscriber_count || 0) >= 100,
+      },
+      {
+        id: 2,
+        name: "Criador Ativo",
+        description: "Publique 10 posts",
+        icon: "📝",
+        unlocked: (p.post_count || 0) >= 10,
+      },
+      {
+        id: 3,
+        name: "Primeiro Ganho",
+        description: "Ganhe seus primeiros $100",
+        icon: "💰",
+        unlocked: Number(p.total_earnings || 0) >= 100,
+      },
+    ];
+
+    return badges;
   }
 
   // Payment Methods

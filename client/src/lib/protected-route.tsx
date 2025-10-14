@@ -10,6 +10,7 @@ export function ProtectedRoute({
   component: () => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
+  const isGuest = !!user && ((user as any).username === 'convidado' || (user as any).email === 'convidado@app.com');
 
   if (isLoading) {
     return (
@@ -21,7 +22,7 @@ export function ProtectedRoute({
     );
   }
 
-  if (!user) {
+  if (!user || isGuest) {
     return (
       <Route path={path}>
         <Redirect to="/auth" />

@@ -112,7 +112,7 @@ export function setupAuth(app: Express) {
         email: email.trim().toLowerCase(),
         password: await hashPassword(password),
         display_name: displayName.trim(),
-        // user_type: userType || 'user', // Comentado temporariamente até a coluna ser criada no Supabase
+        user_type: userType || 'user',
       };
 
       const user = await storage.createUser(sanitizedUserData);
@@ -125,7 +125,7 @@ export function setupAuth(app: Express) {
           email: user.email,
           displayName: user.display_name,
           userType: user.user_type,
-          isVerified: user.isVerified
+          isVerified: user.is_verified
         });
       });
     } catch (error) {
@@ -143,7 +143,7 @@ export function setupAuth(app: Express) {
       email: user.email,
       displayName: user.display_name,
       userType: user.user_type,
-      isVerified: user.isVerified
+      isVerified: user.is_verified
     });
   });
 
@@ -164,8 +164,8 @@ export function setupAuth(app: Express) {
             username: "convidado",
             email: "convidado@app.com",
             password: await hashPassword("123456"),
-            displayName: "Usuário Convidado",
-            userType: "user",
+            display_name: "Usuário Convidado",
+            user_type: "user",
           });
         }
         
@@ -181,7 +181,7 @@ export function setupAuth(app: Express) {
               email: guestUser!.email,
               displayName: guestUser!.display_name,
               userType: guestUser!.user_type,
-              isVerified: guestUser!.isVerified
+              isVerified: guestUser!.is_verified
             });
             resolve();
           });
@@ -194,7 +194,7 @@ export function setupAuth(app: Express) {
         email: user.email,
         displayName: user.display_name,
         userType: user.user_type,
-        isVerified: user.isVerified
+        isVerified: user.is_verified
       });
     } catch (error) {
       console.error("Error in /api/user:", error);
