@@ -39,6 +39,14 @@ export const creatorProfiles = pgTable("creator_profiles", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Vault folders table
+export const vaultFolders = pgTable("vault_folders", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Posts table
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
@@ -51,6 +59,7 @@ export const posts = pgTable("posts", {
   likesCount: integer("likes_count").default(0),
   commentsCount: integer("comments_count").default(0),
   viewsCount: integer("views_count").default(0),
+  folderId: integer("folder_id").references(() => vaultFolders.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -631,3 +640,7 @@ export type Badge = {
   icon: string;
   unlocked: boolean;
 };
+
+// Vault Types
+export type VaultFolder = typeof vaultFolders.$inferSelect;
+export type InsertVaultFolder = typeof vaultFolders.$inferInsert;

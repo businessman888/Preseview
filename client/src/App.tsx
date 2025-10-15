@@ -19,6 +19,23 @@ import { CreatorDashboard } from "@/pages/CreatorDashboard";
 import { useAuth } from "@/hooks/use-auth";
 import AuthPage from "@/pages/AuthPage";
 
+// Creator Tools Pages
+import { StatisticsPage } from "@/pages/creator/tools/StatisticsPage";
+import { VaultPage } from "@/pages/creator/tools/VaultPage";
+import { QueuePage } from "@/pages/creator/tools/QueuePage";
+import { PaidMediaLinksPage } from "@/pages/creator/tools/PaidMediaLinksPage";
+import { TrackingLinksPage } from "@/pages/creator/tools/TrackingLinksPage";
+import { PromotionsPage } from "@/pages/creator/tools/PromotionsPage";
+import { AutoMessagesPage } from "@/pages/creator/tools/AutoMessagesPage";
+import { ListsPage } from "@/pages/creator/tools/ListsPage";
+import { AIToolsPage } from "@/pages/creator/tools/AIToolsPage";
+import { ManagementPage } from "@/pages/creator/tools/ManagementPage";
+
+// Creator Additional Pages
+import { FinancesPage } from "@/pages/creator/FinancesPage";
+import { WalletPage } from "@/pages/creator/WalletPage";
+import { FavoritesPage } from "@/pages/creator/FavoritesPage";
+
 function HomeRoute() {
   const { user, isLoading } = useAuth();
 
@@ -55,6 +72,23 @@ function Router() {
       <Route path="/settings/*" component={ScreenSettings} />
       <Route path="/become-creator" component={BecomeCreatorPage} />
       <Route path="/auth" component={AuthPage} />
+      
+      {/* Creator Tools Routes */}
+      <Route path="/creator/tools/statistics" component={StatisticsPage} />
+      <Route path="/creator/tools/vault" component={VaultPage} />
+      <Route path="/creator/tools/queue" component={QueuePage} />
+      <Route path="/creator/tools/paid-media-links" component={PaidMediaLinksPage} />
+      <Route path="/creator/tools/tracking-links" component={TrackingLinksPage} />
+      <Route path="/creator/tools/promotions" component={PromotionsPage} />
+      <Route path="/creator/tools/auto-messages" component={AutoMessagesPage} />
+      <Route path="/creator/tools/lists" component={ListsPage} />
+      <Route path="/creator/tools/ai-tools" component={AIToolsPage} />
+      <Route path="/creator/tools/management" component={ManagementPage} />
+      
+      {/* Creator Additional Routes */}
+      <Route path="/creator/finances" component={FinancesPage} />
+      <Route path="/creator/wallet" component={WalletPage} />
+      <Route path="/creator/favorites" component={FavoritesPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

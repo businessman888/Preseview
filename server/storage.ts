@@ -191,6 +191,106 @@ export interface IStorage {
   getCreatorProgress(creatorId: number): Promise<{ current: number; goal: number; percentage: number }>;
   getCreatorBadges(creatorId: number): Promise<Array<{ id: number; name: string; description: string; icon: string; unlocked: boolean }>>;
   
+  // Statistics
+  getCreatorEarnings(creatorId: number, period?: string, type?: string): Promise<{
+    total: number;
+    thisMonth: number;
+    topPercentage: number;
+    data: Array<{ date: string; amount: number }>;
+    period: string;
+    type: string;
+  }>;
+  getTopSpenders(creatorId: number, limit?: number): Promise<Array<{
+    userId: number;
+    username: string;
+    displayName: string;
+    avatar: string;
+    totalSpent: number;
+    lastTransaction: string;
+  }>>;
+  getRecentTransactions(creatorId: number, limit?: number): Promise<Array<{
+    id: number;
+    userId: number;
+    username: string;
+    displayName: string;
+    amount: number;
+    type: string;
+    createdAt: string;
+    isLive: boolean;
+  }>>;
+  getMonthlyEarnings(creatorId: number, year?: number): Promise<Array<{
+    month: string;
+    monthNumber: number;
+    amount: number;
+    subscribers: number;
+    posts: number;
+  }>>;
+  getSubscribersStats(creatorId: number, period?: string): Promise<{
+    total: number;
+    active: number;
+    new: number;
+    churned: number;
+    data: Array<{ date: string; count: number; new: number; churned: number }>;
+  }>;
+  getContentStats(creatorId: number, period?: string): Promise<{
+    totalPosts: number;
+    totalViews: number;
+    totalLikes: number;
+    totalComments: number;
+    averageViews: number;
+    data: Array<{ date: string; posts: number; views: number; likes: number; comments: number }>;
+  }>;
+  getSubscribersList(creatorId: number, page?: number, limit?: number): Promise<{
+    subscribers: Array<{
+      id: number;
+      userId: number;
+      username: string;
+      displayName: string;
+      avatar: string;
+      subscriptionDate: string;
+      amount: number;
+      status: 'active' | 'cancelled';
+    }>;
+    total: number;
+    page: number;
+    totalPages: number;
+  }>;
+  
+  // Vault functions
+  getCreatorVaultContent(creatorId: number, filters?: {
+    type?: 'all' | 'images' | 'videos' | 'audios',
+    folderId?: number | null,
+    search?: string,
+    page?: number,
+    limit?: number
+  }): Promise<{
+    content: Array<{
+      id: number,
+      title: string,
+      mediaUrl: string,
+      mediaType: 'image' | 'video' | 'audio',
+      thumbnail: string,
+      views: number,
+      likes: number,
+      comments: number,
+      gifts: number,
+      createdAt: string,
+      folderId: number | null
+    }>,
+    total: number,
+    page: number,
+    totalPages: number
+  }>;
+  getCreatorFolders(creatorId: number): Promise<Array<{
+    id: number,
+    name: string,
+    contentCount: number,
+    createdAt: string
+  }>>;
+  createFolder(creatorId: number, name: string): Promise<any>;
+  moveContentToFolder(contentId: number, folderId: number | null): Promise<void>;
+  deleteContent(contentId: number, creatorId: number): Promise<boolean>;
+  
   // Payment Methods
   getPaymentMethods(userId: number): Promise<PaymentMethod[]>;
   createPaymentMethod(method: InsertPaymentMethod): Promise<PaymentMethod>;
@@ -1379,6 +1479,406 @@ export class DatabaseStorage implements IStorage {
     ];
 
     return badges;
+  }
+
+  // Statistics endpoints
+  async getCreatorEarnings(creatorId: any, period: string = 'all', type: string = 'net'): Promise<{
+    total: number;
+    thisMonth: number;
+    topPercentage: number;
+    data: Array<{ date: string; amount: number }>;
+    period: string;
+    type: string;
+  }> {
+    // Mock data for development - in production, replace with real queries
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Generate mock data based on period
+    const daysInPeriod = period === 'day' ? 1 : period === 'week' ? 7 : period === 'month' ? 30 : 365;
+    const data = [];
+    
+    for (let i = daysInPeriod - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const amount = i === 0 ? 9.90 : 0; // Only last day has earnings
+      data.push({
+        date: date.toISOString().split('T')[0],
+        amount
+      });
+    }
+
+    return {
+      total: 9.90,
+      thisMonth: currentMonth === 9 ? 9.90 : 0, // October 2025
+      topPercentage: 99.49,
+      data,
+      period,
+      type
+    };
+  }
+
+  async getTopSpenders(creatorId: any, limit: number = 10): Promise<Array<{
+    userId: number;
+    username: string;
+    displayName: string;
+    avatar: string;
+    totalSpent: number;
+    lastTransaction: string;
+  }>> {
+    // Mock data - replace with real query
+    return [
+      {
+        userId: 1,
+        username: 'mature_catfish',
+        displayName: 'Mature Catfish',
+        avatar: '',
+        totalSpent: 9.90,
+        lastTransaction: '2025-10-10T15:30:00Z'
+      }
+    ];
+  }
+
+  async getRecentTransactions(creatorId: any, limit: number = 20): Promise<Array<{
+    id: number;
+    userId: number;
+    username: string;
+    displayName: string;
+    amount: number;
+    type: string;
+    createdAt: string;
+    isLive: boolean;
+  }>> {
+    // Mock data - replace with real query
+    return [
+      {
+        id: 1,
+        userId: 1,
+        username: 'mature_catfish',
+        displayName: 'Mature Catfish',
+        amount: 9.90,
+        type: 'subscription',
+        createdAt: '2025-10-10T15:30:00Z',
+        isLive: true
+      }
+    ];
+  }
+
+  async getMonthlyEarnings(creatorId: any, year: number = 2025): Promise<Array<{
+    month: string;
+    monthNumber: number;
+    amount: number;
+    subscribers: number;
+    posts: number;
+  }>> {
+    // Mock data for 2025
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    return months.map((month, index) => ({
+      month,
+      monthNumber: index + 1,
+      amount: index === 9 ? 9.90 : 0, // Only October has earnings
+      subscribers: index === 9 ? 1 : 0,
+      posts: index === 9 ? 1 : 0
+    }));
+  }
+
+  async getSubscribersStats(creatorId: any, period: string = 'all'): Promise<{
+    total: number;
+    active: number;
+    new: number;
+    churned: number;
+    data: Array<{ date: string; count: number; new: number; churned: number }>;
+  }> {
+    // Mock data
+    const daysInPeriod = period === 'day' ? 1 : period === 'week' ? 7 : period === 'month' ? 30 : 365;
+    const data = [];
+    
+    for (let i = daysInPeriod - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const count = i === 0 ? 1 : 0; // Only today has subscribers
+      data.push({
+        date: date.toISOString().split('T')[0],
+        count,
+        new: count,
+        churned: 0
+      });
+    }
+
+    return {
+      total: 1,
+      active: 1,
+      new: 1,
+      churned: 0,
+      data
+    };
+  }
+
+  async getContentStats(creatorId: any, period: string = 'all'): Promise<{
+    totalPosts: number;
+    totalViews: number;
+    totalLikes: number;
+    totalComments: number;
+    averageViews: number;
+    data: Array<{ date: string; posts: number; views: number; likes: number; comments: number }>;
+  }> {
+    // Mock data
+    const daysInPeriod = period === 'day' ? 1 : period === 'week' ? 7 : period === 'month' ? 30 : 365;
+    const data = [];
+    
+    for (let i = daysInPeriod - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const posts = i === 0 ? 1 : 0; // Only today has posts
+      data.push({
+        date: date.toISOString().split('T')[0],
+        posts,
+        views: posts * 1250, // Mock views per post
+        likes: posts * 234, // Mock likes per post
+        comments: posts * 18 // Mock comments per post
+      });
+    }
+
+    return {
+      totalPosts: 1,
+      totalViews: 1250,
+      totalLikes: 234,
+      totalComments: 18,
+      averageViews: 1250,
+      data
+    };
+  }
+
+  async getSubscribersList(creatorId: any, page: number = 1, limit: number = 20): Promise<{
+    subscribers: Array<{
+      id: number;
+      userId: number;
+      username: string;
+      displayName: string;
+      avatar: string;
+      subscriptionDate: string;
+      amount: number;
+      status: 'active' | 'cancelled';
+    }>;
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    // Mock data - replace with real query
+    const mockSubscribers = [
+      {
+        id: 1,
+        userId: 2,
+        username: 'mature_catfish',
+        displayName: 'Mature Catfish',
+        avatar: '',
+        subscriptionDate: '2025-10-01T00:00:00Z',
+        amount: 9.90,
+        status: 'active' as const
+      },
+      {
+        id: 2,
+        userId: 3,
+        username: 'fitness_fan',
+        displayName: 'Fitness Fan',
+        avatar: '',
+        subscriptionDate: '2025-09-15T00:00:00Z',
+        amount: 9.90,
+        status: 'active' as const
+      },
+      {
+        id: 3,
+        userId: 4,
+        username: 'photo_lover',
+        displayName: 'Photo Lover',
+        avatar: '',
+        subscriptionDate: '2025-08-20T00:00:00Z',
+        amount: 9.90,
+        status: 'cancelled' as const
+      }
+    ];
+
+    const total = mockSubscribers.length;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedSubscribers = mockSubscribers.slice(startIndex, endIndex);
+
+    return {
+      subscribers: paginatedSubscribers,
+      total,
+      page,
+      totalPages
+    };
+  }
+
+  // Vault functions
+  async getCreatorVaultContent(creatorId: any, filters: {
+    type?: 'all' | 'images' | 'videos' | 'audios',
+    folderId?: number | null,
+    search?: string,
+    page?: number,
+    limit?: number
+  }): Promise<{
+    content: Array<{
+      id: number,
+      title: string,
+      mediaUrl: string,
+      mediaType: 'image' | 'video' | 'audio',
+      thumbnail: string,
+      views: number,
+      likes: number,
+      comments: number,
+      gifts: number,
+      createdAt: string,
+      folderId: number | null
+    }>,
+    total: number,
+    page: number,
+    totalPages: number
+  }> {
+    // Mock data - replace with real query
+    const mockContent = [
+      {
+        id: 1,
+        title: "Meu treino de hoje",
+        mediaUrl: "https://example.com/video1.mp4",
+        mediaType: "video" as const,
+        thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=225&fit=crop",
+        views: 1250,
+        likes: 234,
+        comments: 18,
+        gifts: 5,
+        createdAt: "2025-10-10T10:30:00Z",
+        folderId: null
+      },
+      {
+        id: 2,
+        title: "Sessão de fotos na praia",
+        mediaUrl: "https://example.com/image1.jpg",
+        mediaType: "image" as const,
+        thumbnail: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=225&fit=crop",
+        views: 890,
+        likes: 156,
+        comments: 12,
+        gifts: 3,
+        createdAt: "2025-10-09T15:45:00Z",
+        folderId: 1
+      },
+      {
+        id: 3,
+        title: "Workout intenso",
+        mediaUrl: "https://example.com/video2.mp4",
+        mediaType: "video" as const,
+        thumbnail: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=225&fit=crop",
+        views: 2100,
+        likes: 445,
+        comments: 32,
+        gifts: 12,
+        createdAt: "2025-10-08T08:20:00Z",
+        folderId: null
+      },
+      {
+        id: 4,
+        title: "Receita saudável",
+        mediaUrl: "https://example.com/image2.jpg",
+        mediaType: "image" as const,
+        thumbnail: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=225&fit=crop",
+        views: 675,
+        likes: 98,
+        comments: 8,
+        gifts: 2,
+        createdAt: "2025-10-07T12:15:00Z",
+        folderId: 2
+      }
+    ];
+
+    // Apply filters
+    let filteredContent = mockContent;
+
+    if (filters.type && filters.type !== 'all') {
+      filteredContent = filteredContent.filter(item => {
+        if (filters.type === 'images') return item.mediaType === 'image';
+        if (filters.type === 'videos') return item.mediaType === 'video';
+        if (filters.type === 'audios') return item.mediaType === 'audio';
+        return true;
+      });
+    }
+
+    if (filters.folderId !== undefined) {
+      filteredContent = filteredContent.filter(item => item.folderId === filters.folderId);
+    }
+
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filteredContent = filteredContent.filter(item => 
+        item.title.toLowerCase().includes(searchLower)
+      );
+    }
+
+    const total = filteredContent.length;
+    const page = filters.page || 1;
+    const limit = filters.limit || 20;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedContent = filteredContent.slice(startIndex, endIndex);
+
+    return {
+      content: paginatedContent,
+      total,
+      page,
+      totalPages
+    };
+  }
+
+  async getCreatorFolders(creatorId: any): Promise<Array<{
+    id: number,
+    name: string,
+    contentCount: number,
+    createdAt: string
+  }>> {
+    // Mock data - replace with real query
+    return [
+      {
+        id: 1,
+        name: "Fotos da Praia",
+        contentCount: 1,
+        createdAt: "2025-10-01T00:00:00Z"
+      },
+      {
+        id: 2,
+        name: "Receitas",
+        contentCount: 1,
+        createdAt: "2025-10-02T00:00:00Z"
+      }
+    ];
+  }
+
+  async createFolder(creatorId: any, name: string): Promise<any> {
+    // Mock data - replace with real insert
+    return {
+      id: Date.now(),
+      creatorId,
+      name,
+      createdAt: new Date().toISOString()
+    };
+  }
+
+  async moveContentToFolder(contentId: number, folderId: number | null): Promise<void> {
+    // Mock implementation - replace with real update
+    console.log(`Moving content ${contentId} to folder ${folderId}`);
+  }
+
+  async deleteContent(contentId: number, creatorId: number): Promise<boolean> {
+    // Mock implementation - replace with real delete
+    console.log(`Deleting content ${contentId} for creator ${creatorId}`);
+    return true;
   }
 
   // Payment Methods

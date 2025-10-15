@@ -117,6 +117,21 @@ export function setupAuth(app: Express) {
 
       const user = await storage.createUser(sanitizedUserData);
 
+      // Se registrou como criador, criar perfil automaticamente
+      if (userType === 'creator') {
+        try {
+          await storage.createCreatorProfile({
+            userId: user.id,
+            subscriptionPrice: 0,
+            description: null,
+            categories: [],
+          });
+        } catch (error) {
+          console.error('Erro ao criar perfil de criador:', error);
+          // Continua o registro mesmo se falhar a criação do perfil
+        }
+      }
+
       req.login(user, (err) => {
         if (err) return next(err);
         res.status(201).json({ 

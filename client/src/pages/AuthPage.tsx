@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Eye, EyeOff, Heart, Star, Sparkles } from "lucide-react";
 
 export default function AuthPage() {
@@ -216,6 +217,32 @@ export default function AuthPage() {
                           {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </Button>
                       </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <Label>Tipo de conta</Label>
+                      <RadioGroup
+                        value={registerData.userType}
+                        onValueChange={(value) => 
+                          setRegisterData({ ...registerData, userType: value as "user" | "creator" })
+                        }
+                        className="space-y-2"
+                      >
+                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                          <RadioGroupItem value="user" id="user" data-testid="radio-user" />
+                          <Label htmlFor="user" className="flex-1 cursor-pointer">
+                            <div className="font-medium">Usuário</div>
+                            <div className="text-sm text-gray-500">Quero consumir conteúdo exclusivo</div>
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                          <RadioGroupItem value="creator" id="creator" data-testid="radio-creator" />
+                          <Label htmlFor="creator" className="flex-1 cursor-pointer">
+                            <div className="font-medium">Criador</div>
+                            <div className="text-sm text-gray-500">Quero criar e monetizar conteúdo</div>
+                          </Label>
+                        </div>
+                      </RadioGroup>
                     </div>
                     
                     <Button 

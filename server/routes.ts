@@ -1082,6 +1082,227 @@ app.get("/api/users", async (req, res) => {
     }
   });
 
+  // Statistics endpoints
+  app.get("/api/creator/earnings", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar earnings" });
+      }
+
+      const period = req.query.period as string || 'all';
+      const type = req.query.type as string || 'net';
+      const earnings = await storage.getCreatorEarnings(req.user!.id, period, type);
+      res.json(earnings);
+    } catch (error: any) {
+      console.error("Error fetching creator earnings:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar earnings" });
+    }
+  });
+
+  app.get("/api/creator/top-spenders", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar top spenders" });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 10;
+      const topSpenders = await storage.getTopSpenders(req.user!.id, limit);
+      res.json(topSpenders);
+    } catch (error: any) {
+      console.error("Error fetching top spenders:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar top spenders" });
+    }
+  });
+
+  app.get("/api/creator/transactions", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar transações" });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 20;
+      const transactions = await storage.getRecentTransactions(req.user!.id, limit);
+      res.json(transactions);
+    } catch (error: any) {
+      console.error("Error fetching recent transactions:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar transações" });
+    }
+  });
+
+  app.get("/api/creator/monthly-earnings", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar ganhos mensais" });
+      }
+
+      const year = parseInt(req.query.year as string) || new Date().getFullYear();
+      const monthlyEarnings = await storage.getMonthlyEarnings(req.user!.id, year);
+      res.json(monthlyEarnings);
+    } catch (error: any) {
+      console.error("Error fetching monthly earnings:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar ganhos mensais" });
+    }
+  });
+
+  app.get("/api/creator/subscribers-stats", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar estatísticas de assinantes" });
+      }
+
+      const period = req.query.period as string || 'all';
+      const subscribersStats = await storage.getSubscribersStats(req.user!.id, period);
+      res.json(subscribersStats);
+    } catch (error: any) {
+      console.error("Error fetching subscribers stats:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar estatísticas de assinantes" });
+    }
+  });
+
+  app.get("/api/creator/content-stats", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar estatísticas de conteúdo" });
+      }
+
+      const period = req.query.period as string || 'all';
+      const contentStats = await storage.getContentStats(req.user!.id, period);
+      res.json(contentStats);
+    } catch (error: any) {
+      console.error("Error fetching content stats:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar estatísticas de conteúdo" });
+    }
+  });
+
+  app.get("/api/creator/subscribers-list", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar lista de assinantes" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const subscribersList = await storage.getSubscribersList(req.user!.id, page, limit);
+      res.json(subscribersList);
+    } catch (error: any) {
+      console.error("Error fetching subscribers list:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar lista de assinantes" });
+    }
+  });
+
+  // Vault endpoints
+  app.get("/api/creator/vault/content", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar cofre" });
+      }
+
+      const filters = {
+        type: req.query.type as string || 'all',
+        folderId: req.query.folderId ? parseInt(req.query.folderId as string) : null,
+        search: req.query.search as string || '',
+        page: parseInt(req.query.page as string) || 1,
+        limit: parseInt(req.query.limit as string) || 20
+      };
+
+      const vaultContent = await storage.getCreatorVaultContent(req.user!.id, filters);
+      res.json(vaultContent);
+    } catch (error: any) {
+      console.error("Error fetching vault content:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar conteúdo do cofre" });
+    }
+  });
+
+  app.get("/api/creator/vault/folders", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem acessar pastas do cofre" });
+      }
+
+      const folders = await storage.getCreatorFolders(req.user!.id);
+      res.json(folders);
+    } catch (error: any) {
+      console.error("Error fetching vault folders:", error);
+      res.status(500).json({ error: error.message || "Erro ao buscar pastas do cofre" });
+    }
+  });
+
+  app.post("/api/creator/vault/folders", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem criar pastas" });
+      }
+
+      const { name } = req.body;
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: "Nome da pasta é obrigatório" });
+      }
+
+      const newFolder = await storage.createFolder(req.user!.id, name.trim());
+      res.status(201).json(newFolder);
+    } catch (error: any) {
+      console.error("Error creating vault folder:", error);
+      res.status(500).json({ error: error.message || "Erro ao criar pasta" });
+    }
+  });
+
+  app.patch("/api/creator/vault/content/:id/move", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem mover conteúdo" });
+      }
+
+      const contentId = parseInt(req.params.id);
+      const { folderId } = req.body;
+
+      if (isNaN(contentId)) {
+        return res.status(400).json({ error: "ID do conteúdo inválido" });
+      }
+
+      await storage.moveContentToFolder(contentId, folderId);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error moving content:", error);
+      res.status(500).json({ error: error.message || "Erro ao mover conteúdo" });
+    }
+  });
+
+  app.delete("/api/creator/vault/content/:id", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      if (req.user!.user_type !== 'creator') {
+        return res.status(403).json({ error: "Apenas criadores podem excluir conteúdo" });
+      }
+
+      const contentId = parseInt(req.params.id);
+
+      if (isNaN(contentId)) {
+        return res.status(400).json({ error: "ID do conteúdo inválido" });
+      }
+
+      const success = await storage.deleteContent(contentId, req.user!.id);
+      if (success) {
+        res.json({ success: true });
+      } else {
+        res.status(404).json({ error: "Conteúdo não encontrado" });
+      }
+    } catch (error: any) {
+      console.error("Error deleting content:", error);
+      res.status(500).json({ error: error.message || "Erro ao excluir conteúdo" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
