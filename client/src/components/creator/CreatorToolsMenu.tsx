@@ -8,8 +8,6 @@ import {
   Tag,
   MessageSquare,
   List,
-  Sparkles,
-  Settings,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -54,29 +52,16 @@ export function CreatorToolsMenu() {
       href: "/creator/tools/promotions",
     },
     {
-      id: "auto-messages",
+      id: "automatic-messages",
       icon: MessageSquare,
       label: "Mensagens automáticas",
-      href: "/creator/tools/auto-messages",
+      href: "/creator/tools/automatic-messages",
     },
     {
       id: "lists",
       icon: List,
       label: "Listas",
       href: "/creator/tools/lists",
-    },
-    {
-      id: "ai-tools",
-      icon: Sparkles,
-      label: "Ferramentas IA",
-      href: "/creator/tools/ai-tools",
-    },
-    {
-      id: "management",
-      icon: Settings,
-      label: "Gestão",
-      href: "/creator/tools/management",
-      badge: "Beta",
     },
   ];
 

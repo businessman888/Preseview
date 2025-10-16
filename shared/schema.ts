@@ -36,6 +36,7 @@ export const creatorProfiles = pgTable("creator_profiles", {
   totalEarnings: real("total_earnings").default(0),
   subscriberCount: integer("subscriber_count").default(0),
   postCount: integer("post_count").default(0),
+  allowFreeTrialWithoutPayment: boolean("allow_free_trial_without_payment").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -44,6 +45,35 @@ export const vaultFolders = pgTable("vault_folders", {
   id: serial("id").primaryKey(),
   creatorId: integer("creator_id").references(() => users.id).notNull(),
   name: text("name").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Scheduled posts table
+export const scheduledPosts = pgTable("scheduled_posts", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  scheduledDate: timestamp("scheduled_date").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  mediaUrls: text("media_urls").array(),
+  tags: text("tags").array(),
+  isExclusive: boolean("is_exclusive").default(false),
+  folderId: integer("folder_id").references(() => vaultFolders.id),
+  status: text("status").default("pending"), // pending, published, cancelled
+  publishedPostId: integer("published_post_id").references(() => posts.id),
+  notificationEnabled: boolean("notification_enabled").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Reminders table
+export const reminders = pgTable("reminders", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  reminderDate: timestamp("reminder_date").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  notificationEnabled: boolean("notification_enabled").default(true),
+  isCompleted: boolean("is_completed").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -275,6 +305,9 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   }),
   blockedAsBlocker: many(blockedUsers, { relationName: "blockerRelation" }),
   blockedAsBlocked: many(blockedUsers, { relationName: "blockedRelation" }),
+  // Novas relações para listas
+  createdLists: many(subscriberLists),
+  listMemberships: many(listMembers),
 }));
 
 export const creatorProfilesRelations = relations(creatorProfiles, ({ one }) => ({
@@ -644,3 +677,203 @@ export type Badge = {
 // Vault Types
 export type VaultFolder = typeof vaultFolders.$inferSelect;
 export type InsertVaultFolder = typeof vaultFolders.$inferInsert;
+
+// Scheduled Posts Types
+export type ScheduledPost = typeof scheduledPosts.$inferSelect;
+export type InsertScheduledPost = typeof scheduledPosts.$inferInsert;
+
+// Reminders Types
+export type Reminder = typeof reminders.$inferSelect;
+export type InsertReminder = typeof reminders.$inferInsert;
+
+// Paid Media Links table
+export const paidMediaLinks = pgTable("paid_media_links", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  slug: text("slug").notNull().unique(), // URL amigável: abc123xyz
+  title: text("title").notNull(),
+  description: text("description"),
+  mediaUrl: text("media_url").notNull(),
+  mediaType: text("media_type").notNull(), // image, video, audio
+  thumbnailUrl: text("thumbnail_url"),
+  price: real("price").notNull(), // preço em reais
+  
+  // Opções de origem
+  sourceType: text("source_type").notNull(), // post, vault, upload
+  sourceId: integer("source_id"), // ID do post ou vault item
+  
+  // Estatísticas
+  viewsCount: integer("views_count").default(0),
+  purchasesCount: integer("purchases_count").default(0),
+  totalEarnings: real("total_earnings").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Paid Media Purchases table
+export const paidMediaPurchases = pgTable("paid_media_purchases", {
+  id: serial("id").primaryKey(),
+  linkId: integer("link_id").references(() => paidMediaLinks.id).notNull(),
+  userId: integer("user_id").references(() => users.id), // null se compra anônima
+  amount: real("amount").notNull(),
+  paymentStatus: text("payment_status").default("pending"), // pending, completed, failed
+  accessToken: text("access_token").notNull().unique(), // token único para acesso
+  expiresAt: timestamp("expires_at"), // null = permanente
+  purchasedAt: timestamp("purchased_at").defaultNow().notNull(),
+});
+
+// Paid Media Links Types
+export type PaidMediaLink = typeof paidMediaLinks.$inferSelect;
+export type InsertPaidMediaLink = typeof paidMediaLinks.$inferInsert;
+
+// Paid Media Purchases Types
+export type PaidMediaPurchase = typeof paidMediaPurchases.$inferSelect;
+export type InsertPaidMediaPurchase = typeof paidMediaPurchases.$inferInsert;
+
+// Subscription Packages table (pacotes de múltiplos meses com desconto)
+export const subscriptionPackages = pgTable("subscription_packages", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  durationMonths: integer("duration_months").notNull(), // 3, 6, 12
+  discountPercent: real("discount_percent").notNull(), // 10, 15, 25
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Promotional Offers table (ofertas especiais com período de teste ou desconto)
+export const promotionalOffers = pgTable("promotional_offers", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  offerType: text("offer_type").notNull(), // trial, discount
+  
+  // Para trial
+  trialDays: integer("trial_days"), // 3, 7, 14, 30
+  
+  // Para discount
+  discountPercent: real("discount_percent"),
+  discountDurationMonths: integer("discount_duration_months"),
+  
+  // Configurações
+  targetAudience: text("target_audience").notNull(), // new, existing, all
+  targetListId: integer("target_list_id").references(() => subscriberLists.id), // lista específica (opcional)
+  notifyFollowers: boolean("notify_followers").default(false),
+  
+  // Status e datas
+  isActive: boolean("is_active").default(true),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  
+  // Estatísticas
+  usageCount: integer("usage_count").default(0),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Subscription Packages Types
+export type SubscriptionPackage = typeof subscriptionPackages.$inferSelect;
+export type InsertSubscriptionPackage = typeof subscriptionPackages.$inferInsert;
+
+// Promotional Offers Types
+export type PromotionalOffer = typeof promotionalOffers.$inferSelect;
+export type InsertPromotionalOffer = typeof promotionalOffers.$inferInsert;
+
+// Automatic Messages table (mensagens automáticas para eventos específicos)
+export const automaticMessages = pgTable("automatic_messages", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  eventType: text("event_type").notNull(), // new_subscriber, new_follower, subscriber_canceled, re_subscribed, subscription_renewed, new_purchase, first_message_reply
+  isEnabled: boolean("is_enabled").default(true).notNull(),
+  messageText: text("message_text").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Automatic Messages Types
+export type AutomaticMessage = typeof automaticMessages.$inferSelect;
+export type InsertAutomaticMessage = typeof automaticMessages.$inferInsert;
+
+// ===== SUBSCRIBER LISTS =====
+
+// Subscriber Lists table
+export const subscriberLists = pgTable("subscriber_lists", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  listType: text("list_type").notNull(), // 'smart' ou 'custom'
+  filters: text("filters"), // JSONB string para filtros de listas inteligentes
+  memberCount: integer("member_count").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// List Members table
+export const listMembers = pgTable("list_members", {
+  id: serial("id").primaryKey(),
+  listId: integer("list_id").references(() => subscriberLists.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  addedAt: timestamp("added_at").defaultNow().notNull(),
+  addedBy: text("added_by").default('manual'), // 'auto' ou 'manual'
+});
+
+// Subscriber Lists Relations
+export const subscriberListsRelations = relations(subscriberLists, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [subscriberLists.creatorId],
+    references: [users.id],
+  }),
+  members: many(listMembers),
+}));
+
+// List Members Relations
+export const listMembersRelations = relations(listMembers, ({ one }) => ({
+  list: one(subscriberLists, {
+    fields: [listMembers.listId],
+    references: [subscriberLists.id],
+  }),
+  user: one(users, {
+    fields: [listMembers.userId],
+    references: [users.id],
+  }),
+}));
+
+
+// Insert Schemas
+export const insertSubscriberListSchema = createInsertSchema(subscriberLists).omit({
+  id: true,
+  memberCount: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertListMemberSchema = createInsertSchema(listMembers).omit({
+  id: true,
+  addedAt: true,
+});
+
+// Subscriber Lists Types
+export type SubscriberList = typeof subscriberLists.$inferSelect;
+export type InsertSubscriberList = typeof subscriberLists.$inferInsert;
+export type ListMember = typeof listMembers.$inferSelect;
+export type InsertListMember = typeof listMembers.$inferInsert;
+
+// Smart List Filters Interface
+export interface SmartListFilters {
+  subscriptionStatus?: 'active' | 'expired' | 'cancelled';
+  relationshipType?: 'subscriber' | 'follower' | 'both';
+  autoRenewal?: 'auto_renewing' | 'non_renewing';
+  spending?: {
+    type: 'spent_more_than' | 'purchased_paid_media' | 'sent_tips';
+    value?: number; // para spent_more_than
+  };
+  period?: 'new_subscribers' | 'long_term' | 'this_month';
+}

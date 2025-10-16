@@ -19,6 +19,16 @@ import {
   notificationPreferences,
   privacySettings,
   blockedUsers,
+  vaultFolders,
+  scheduledPosts,
+  reminders,
+  paidMediaLinks,
+  paidMediaPurchases,
+  subscriptionPackages,
+  promotionalOffers,
+  automaticMessages,
+  subscriberLists,
+  listMembers,
   type User, 
   type InsertUser,
   type CreatorProfile,
@@ -58,11 +68,32 @@ import {
   type PrivacySettings,
   type InsertPrivacySettings,
   type BlockedUser,
-  type InsertBlockedUser
+  type InsertBlockedUser,
+  type VaultFolder,
+  type InsertVaultFolder,
+  type ScheduledPost,
+  type InsertScheduledPost,
+  type Reminder,
+  type InsertReminder,
+  type PaidMediaLink,
+  type InsertPaidMediaLink,
+  type PaidMediaPurchase,
+  type InsertPaidMediaPurchase,
+  type SubscriptionPackage,
+  type InsertSubscriptionPackage,
+  type PromotionalOffer,
+  type InsertPromotionalOffer,
+  type AutomaticMessage,
+  type InsertAutomaticMessage,
+  type SubscriberList,
+  type InsertSubscriberList,
+  type ListMember,
+  type InsertListMember,
+  type SmartListFilters
 } from "@shared/schema";
 import { supabase } from "./supabaseClient";
 import { db } from "./db";
-import { eq, desc, asc, and, or, like, sql, gte, lte, count } from "drizzle-orm";
+import { eq, desc, asc, and, or, like, sql, gte, lte, count, not, ne, inArray } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 
@@ -256,6 +287,26 @@ export interface IStorage {
     totalPages: number;
   }>;
   
+  // Queue/Calendar functions
+  getScheduledPostsByMonth(creatorId: number, year: number, month: number): Promise<ScheduledPost[]>;
+  getScheduledPostsByDate(creatorId: number, date: Date): Promise<ScheduledPost[]>;
+  createScheduledPost(post: InsertScheduledPost): Promise<ScheduledPost>;
+  updateScheduledPost(id: number, creatorId: number, data: Partial<InsertScheduledPost>): Promise<ScheduledPost>;
+  deleteScheduledPost(id: number, creatorId: number): Promise<boolean>;
+  publishScheduledPost(id: number): Promise<Post>;
+
+  getRemindersByMonth(creatorId: number, year: number, month: number): Promise<Reminder[]>;
+  getRemindersByDate(creatorId: number, date: Date): Promise<Reminder[]>;
+  createReminder(reminder: InsertReminder): Promise<Reminder>;
+  updateReminder(id: number, creatorId: number, data: Partial<InsertReminder>): Promise<Reminder>;
+  deleteReminder(id: number, creatorId: number): Promise<boolean>;
+
+  getCalendarData(creatorId: number, year: number, month: number): Promise<{
+    scheduledPosts: ScheduledPost[];
+    reminders: Reminder[];
+    publishedPosts: Post[];
+  }>;
+
   // Vault functions
   getCreatorVaultContent(creatorId: number, filters?: {
     type?: 'all' | 'images' | 'videos' | 'audios',
@@ -881,6 +932,30 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(creatorProfiles.userId, subscription.creatorId));
     
+    // 🔥 ENVIAR MENSAGEM AUTOMÁTICA: new_subscriber
+    try {
+      const subscriber = await this.getUser(subscription.userId);
+      const creator = await this.getUser(subscription.creatorId);
+      const creatorProfile = await this.getCreatorProfile(subscription.creatorId);
+      
+      if (subscriber && creator && creatorProfile?.creatorProfile) {
+        await this.sendAutomaticMessage(
+          subscription.creatorId,
+          'new_subscriber',
+          subscription.userId,
+          {
+            user_name: subscriber.display_name || subscriber.username,
+            creator_name: creator.display_name || creator.username,
+            subscription_price: `R$ ${creatorProfile.creatorProfile.subscriptionPrice.toFixed(2)}`,
+            date: new Date().toLocaleDateString('pt-BR')
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Error sending new_subscriber automatic message:', error);
+      // Não falhar a operação principal se a mensagem automática falhar
+    }
+    
     return newSubscription;
   }
 
@@ -923,10 +998,78 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateSubscriptionStatus(id: number, status: 'active' | 'expired' | 'cancelled'): Promise<void> {
+    // Buscar assinatura antes de atualizar
+    const [subscription] = await db
+      .select()
+      .from(subscriptions)
+      .where(eq(subscriptions.id, id))
+      .limit(1);
+    
+    if (!subscription) {
+      throw new Error('Subscription not found');
+    }
+
+    const previousStatus = subscription.status;
+
+    // Atualizar status
     await db
       .update(subscriptions)
       .set({ status })
       .where(eq(subscriptions.id, id));
+    
+    // 🔥 ENVIAR MENSAGENS AUTOMÁTICAS baseadas na mudança de status
+    try {
+      const subscriber = await this.getUser(subscription.userId);
+      const creator = await this.getUser(subscription.creatorId);
+      
+      if (!subscriber || !creator) return;
+
+      const variables = {
+        user_name: subscriber.display_name || subscriber.username,
+        creator_name: creator.display_name || creator.username,
+        date: new Date().toLocaleDateString('pt-BR')
+      };
+
+      // Assinatura cancelada
+      if (status === 'cancelled' && previousStatus !== 'cancelled') {
+        await this.sendAutomaticMessage(
+          subscription.creatorId,
+          'subscriber_canceled',
+          subscription.userId,
+          variables
+        );
+      }
+
+      // Assinatura renovada (voltou de cancelled/expired para active)
+      if (status === 'active' && (previousStatus === 'cancelled' || previousStatus === 'expired')) {
+        const isResubscribe = previousStatus === 'cancelled';
+        
+        if (isResubscribe) {
+          await this.sendAutomaticMessage(
+            subscription.creatorId,
+            're_subscribed',
+            subscription.userId,
+            variables
+          );
+        } else {
+          // Renovação normal
+          const renewalDate = new Date();
+          renewalDate.setMonth(renewalDate.getMonth() + 1);
+          
+          await this.sendAutomaticMessage(
+            subscription.creatorId,
+            'subscription_renewed',
+            subscription.userId,
+            {
+              ...variables,
+              renewal_date: renewalDate.toLocaleDateString('pt-BR')
+            }
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error sending subscription status automatic message:', error);
+    }
   }
 
   // Follows
@@ -935,6 +1078,31 @@ export class DatabaseStorage implements IStorage {
       .insert(follows)
       .values(follow)
       .returning();
+    
+    // 🔥 ENVIAR MENSAGEM AUTOMÁTICA: new_follower (se o seguido for criador)
+    try {
+      const followedUser = await this.getUser(follow.followingId);
+      
+      if (followedUser && followedUser.user_type === 'creator') {
+        const follower = await this.getUser(follow.followerId);
+        
+        if (follower) {
+          await this.sendAutomaticMessage(
+            follow.followingId,
+            'new_follower',
+            follow.followerId,
+            {
+              user_name: follower.display_name || follower.username,
+              creator_name: followedUser.display_name || followedUser.username,
+              date: new Date().toLocaleDateString('pt-BR')
+            }
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error sending new_follower automatic message:', error);
+    }
+    
     return newFollow;
   }
 
@@ -1987,6 +2155,1709 @@ export class DatabaseStorage implements IStorage {
         eq(blockedUsers.blockedId, blockedId)
       ));
     return !!result;
+  }
+
+  // Queue/Calendar implementations
+  async getScheduledPostsByMonth(creatorId: number, year: number, month: number): Promise<ScheduledPost[]> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+    
+    return await db
+      .select()
+      .from(scheduledPosts)
+      .where(and(
+        eq(scheduledPosts.creatorId, creatorId),
+        gte(scheduledPosts.scheduledDate, startDate),
+        lte(scheduledPosts.scheduledDate, endDate)
+      ))
+      .orderBy(asc(scheduledPosts.scheduledDate));
+  }
+
+  async getScheduledPostsByDate(creatorId: number, date: Date): Promise<ScheduledPost[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    return await db
+      .select()
+      .from(scheduledPosts)
+      .where(and(
+        eq(scheduledPosts.creatorId, creatorId),
+        gte(scheduledPosts.scheduledDate, startOfDay),
+        lte(scheduledPosts.scheduledDate, endOfDay)
+      ))
+      .orderBy(asc(scheduledPosts.scheduledDate));
+  }
+
+  async createScheduledPost(post: InsertScheduledPost): Promise<ScheduledPost> {
+    const [result] = await db
+      .insert(scheduledPosts)
+      .values(post)
+      .returning();
+    return result;
+  }
+
+  async updateScheduledPost(id: number, creatorId: number, data: Partial<InsertScheduledPost>): Promise<ScheduledPost> {
+    const [result] = await db
+      .update(scheduledPosts)
+      .set(data)
+      .where(and(
+        eq(scheduledPosts.id, id),
+        eq(scheduledPosts.creatorId, creatorId)
+      ))
+      .returning();
+    
+    if (!result) {
+      throw new Error("Scheduled post not found or unauthorized");
+    }
+    return result;
+  }
+
+  async deleteScheduledPost(id: number, creatorId: number): Promise<boolean> {
+    const result = await db
+      .delete(scheduledPosts)
+      .where(and(
+        eq(scheduledPosts.id, id),
+        eq(scheduledPosts.creatorId, creatorId)
+      ));
+    return result.rowCount > 0;
+  }
+
+  async publishScheduledPost(id: number): Promise<Post> {
+    // Get the scheduled post
+    const [scheduledPost] = await db
+      .select()
+      .from(scheduledPosts)
+      .where(eq(scheduledPosts.id, id));
+    
+    if (!scheduledPost) {
+      throw new Error("Scheduled post not found");
+    }
+
+    // Create the actual post
+    const [newPost] = await db
+      .insert(posts)
+      .values({
+        creatorId: scheduledPost.creatorId,
+        title: scheduledPost.title,
+        content: scheduledPost.content,
+        mediaUrls: scheduledPost.mediaUrls,
+        tags: scheduledPost.tags,
+        isExclusive: scheduledPost.isExclusive,
+        folderId: scheduledPost.folderId,
+      })
+      .returning();
+
+    // Update scheduled post status
+    await db
+      .update(scheduledPosts)
+      .set({
+        status: "published",
+        publishedPostId: newPost.id
+      })
+      .where(eq(scheduledPosts.id, id));
+
+    return newPost;
+  }
+
+  async getRemindersByMonth(creatorId: number, year: number, month: number): Promise<Reminder[]> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+    
+    return await db
+      .select()
+      .from(reminders)
+      .where(and(
+        eq(reminders.creatorId, creatorId),
+        gte(reminders.reminderDate, startDate),
+        lte(reminders.reminderDate, endDate)
+      ))
+      .orderBy(asc(reminders.reminderDate));
+  }
+
+  async getRemindersByDate(creatorId: number, date: Date): Promise<Reminder[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    return await db
+      .select()
+      .from(reminders)
+      .where(and(
+        eq(reminders.creatorId, creatorId),
+        gte(reminders.reminderDate, startOfDay),
+        lte(reminders.reminderDate, endOfDay)
+      ))
+      .orderBy(asc(reminders.reminderDate));
+  }
+
+  async createReminder(reminder: InsertReminder): Promise<Reminder> {
+    const [result] = await db
+      .insert(reminders)
+      .values(reminder)
+      .returning();
+    return result;
+  }
+
+  async updateReminder(id: number, creatorId: number, data: Partial<InsertReminder>): Promise<Reminder> {
+    const [result] = await db
+      .update(reminders)
+      .set(data)
+      .where(and(
+        eq(reminders.id, id),
+        eq(reminders.creatorId, creatorId)
+      ))
+      .returning();
+    
+    if (!result) {
+      throw new Error("Reminder not found or unauthorized");
+    }
+    return result;
+  }
+
+  async deleteReminder(id: number, creatorId: number): Promise<boolean> {
+    const result = await db
+      .delete(reminders)
+      .where(and(
+        eq(reminders.id, id),
+        eq(reminders.creatorId, creatorId)
+      ));
+    return result.rowCount > 0;
+  }
+
+  async getCalendarData(creatorId: number, year: number, month: number): Promise<{
+    scheduledPosts: ScheduledPost[];
+    reminders: Reminder[];
+    publishedPosts: Post[];
+  }> {
+    // For development, return mock data if no real data exists
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+
+    const [scheduledPostsResult, remindersResult, publishedPostsResult] = await Promise.all([
+      this.getScheduledPostsByMonth(creatorId, year, month),
+      this.getRemindersByMonth(creatorId, year, month),
+      db
+        .select()
+        .from(posts)
+        .where(and(
+          eq(posts.creatorId, creatorId),
+          gte(posts.createdAt, startDate),
+          lte(posts.createdAt, endDate)
+        ))
+        .orderBy(desc(posts.createdAt))
+    ]);
+
+    // If no data exists, return mock data for October 2025
+    if (scheduledPostsResult.length === 0 && remindersResult.length === 0 && year === 2025 && month === 10) {
+      const mockScheduledPosts: ScheduledPost[] = [
+        {
+          id: 1,
+          creatorId,
+          scheduledDate: new Date(2025, 9, 15, 14, 0), // Oct 15, 2 PM
+          title: "Treino de pernas",
+          content: "Hoje foi dia de pernas! 💪 #fitness #treino",
+          mediaUrls: ["https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800"],
+          tags: ["fitness", "treino"],
+          isExclusive: false,
+          folderId: null,
+          status: "pending",
+          publishedPostId: null,
+          notificationEnabled: true,
+          createdAt: new Date()
+        },
+        {
+          id: 2,
+          creatorId,
+          scheduledDate: new Date(2025, 9, 20, 18, 0), // Oct 20, 6 PM
+          title: "Receita saudável",
+          content: "Nova receita de salada super nutritiva! 🥗",
+          mediaUrls: ["https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"],
+          tags: ["culinaria", "saudavel"],
+          isExclusive: true,
+          folderId: null,
+          status: "pending",
+          publishedPostId: null,
+          notificationEnabled: true,
+          createdAt: new Date()
+        },
+        {
+          id: 3,
+          creatorId,
+          scheduledDate: new Date(2025, 9, 25, 10, 0), // Oct 25, 10 AM
+          title: "Dica de skincare",
+          content: "Rotina matinal de skincare que está funcionando! ✨",
+          mediaUrls: [],
+          tags: ["skincare", "beauty"],
+          isExclusive: false,
+          folderId: null,
+          status: "pending",
+          publishedPostId: null,
+          notificationEnabled: false,
+          createdAt: new Date()
+        }
+      ];
+
+      const mockReminders: Reminder[] = [
+        {
+          id: 1,
+          creatorId,
+          reminderDate: new Date(2025, 9, 16, 9, 0), // Oct 16, 9 AM
+          title: "Gravar vídeo para YouTube",
+          description: "Preparar script e equipamentos para gravação",
+          notificationEnabled: true,
+          isCompleted: false,
+          createdAt: new Date()
+        },
+        {
+          id: 2,
+          creatorId,
+          reminderDate: new Date(2025, 9, 22, 15, 30), // Oct 22, 3:30 PM
+          title: "Revisar posts da semana",
+          description: "Analisar performance dos posts e planejar conteúdo",
+          notificationEnabled: true,
+          isCompleted: true,
+          createdAt: new Date()
+        },
+        {
+          id: 3,
+          creatorId,
+          reminderDate: new Date(2025, 9, 28, 11, 0), // Oct 28, 11 AM
+          title: "Agendar posts de novembro",
+          description: "Preparar calendário de conteúdo para o próximo mês",
+          notificationEnabled: false,
+          isCompleted: false,
+          createdAt: new Date()
+        }
+      ];
+
+      return {
+        scheduledPosts: mockScheduledPosts,
+        reminders: mockReminders,
+        publishedPosts: publishedPostsResult
+      };
+    }
+
+    return {
+      scheduledPosts: scheduledPostsResult,
+      reminders: remindersResult,
+      publishedPosts: publishedPostsResult
+    };
+  }
+
+  // ===== PAID MEDIA LINKS =====
+  
+  async getPaidMediaLinks(creatorId: number, filters?: { isActive?: boolean }): Promise<PaidMediaLink[]> {
+    try {
+      let query = db.select().from(paidMediaLinks).where(eq(paidMediaLinks.creatorId, creatorId));
+      
+      if (filters?.isActive !== undefined) {
+        query = query.where(and(eq(paidMediaLinks.creatorId, creatorId), eq(paidMediaLinks.isActive, filters.isActive)));
+      }
+      
+      const result = await query.orderBy(desc(paidMediaLinks.createdAt));
+      
+      // Se não há dados reais, retorna dados mock para desenvolvimento
+      if (result.length === 0) {
+        const mockLinks: PaidMediaLink[] = [
+          {
+            id: 1,
+            creatorId,
+            slug: "abc123xyz",
+            title: "Treino de pernas exclusivo",
+            description: "Exercícios avançados para definir as pernas com técnicas profissionais",
+            mediaUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800",
+            mediaType: "video",
+            thumbnailUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
+            price: 19.90,
+            sourceType: "upload",
+            sourceId: null,
+            viewsCount: 245,
+            purchasesCount: 12,
+            totalEarnings: 238.80,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: 2,
+            creatorId,
+            slug: "def456ghi",
+            title: "Receita secreta do bolo",
+            description: "Minha receita especial de bolo de chocolate que todo mundo pede",
+            mediaUrl: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800",
+            mediaType: "image",
+            thumbnailUrl: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400",
+            price: 9.90,
+            sourceType: "upload",
+            sourceId: null,
+            viewsCount: 156,
+            purchasesCount: 8,
+            totalEarnings: 79.20,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: 3,
+            creatorId,
+            slug: "jkl789mno",
+            title: "Podcast sobre investimentos",
+            description: "Dicas valiosas sobre como investir seu dinheiro e fazer render",
+            mediaUrl: "https://example.com/audio.mp3",
+            mediaType: "audio",
+            thumbnailUrl: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400",
+            price: 4.90,
+            sourceType: "upload",
+            sourceId: null,
+            viewsCount: 89,
+            purchasesCount: 5,
+            totalEarnings: 24.50,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: 4,
+            creatorId,
+            slug: "pqr012stu",
+            title: "Aula de maquiagem",
+            description: "Tutorial completo de maquiagem para iniciantes",
+            mediaUrl: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800",
+            mediaType: "video",
+            thumbnailUrl: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400",
+            price: 15.90,
+            sourceType: "upload",
+            sourceId: null,
+            viewsCount: 78,
+            purchasesCount: 3,
+            totalEarnings: 47.70,
+            isActive: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ];
+        
+        // Aplica filtros aos dados mock se necessário
+        if (filters?.isActive !== undefined) {
+          return mockLinks.filter(link => link.isActive === filters.isActive);
+        }
+        
+        return mockLinks;
+      }
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching paid media links:", error);
+      throw error;
+    }
+  }
+
+  async getPaidMediaLinkBySlug(slug: string): Promise<PaidMediaLink | undefined> {
+    try {
+      const result = await db.select().from(paidMediaLinks).where(eq(paidMediaLinks.slug, slug));
+      return result[0];
+    } catch (error) {
+      console.error("Error fetching paid media link by slug:", error);
+      throw error;
+    }
+  }
+
+  async createPaidMediaLink(link: InsertPaidMediaLink): Promise<PaidMediaLink> {
+    try {
+      const result = await db.insert(paidMediaLinks).values(link).returning();
+      return result[0];
+    } catch (error) {
+      console.error("Error creating paid media link:", error);
+      throw error;
+    }
+  }
+
+  async updatePaidMediaLink(id: number, creatorId: number, data: Partial<InsertPaidMediaLink>): Promise<PaidMediaLink> {
+    try {
+      const result = await db
+        .update(paidMediaLinks)
+        .set({ ...data, updatedAt: new Date() })
+        .where(and(eq(paidMediaLinks.id, id), eq(paidMediaLinks.creatorId, creatorId)))
+        .returning();
+      
+      if (result.length === 0) {
+        throw new Error("Paid media link not found or unauthorized");
+      }
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error updating paid media link:", error);
+      throw error;
+    }
+  }
+
+  async deletePaidMediaLink(id: number, creatorId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .delete(paidMediaLinks)
+        .where(and(eq(paidMediaLinks.id, id), eq(paidMediaLinks.creatorId, creatorId)))
+        .returning();
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting paid media link:", error);
+      throw error;
+    }
+  }
+
+  async togglePaidMediaLinkStatus(id: number, creatorId: number): Promise<PaidMediaLink> {
+    try {
+      // First get current status
+      const current = await db
+        .select()
+        .from(paidMediaLinks)
+        .where(and(eq(paidMediaLinks.id, id), eq(paidMediaLinks.creatorId, creatorId)));
+      
+      if (current.length === 0) {
+        throw new Error("Paid media link not found or unauthorized");
+      }
+      
+      const newStatus = !current[0].isActive;
+      
+      const result = await db
+        .update(paidMediaLinks)
+        .set({ isActive: newStatus, updatedAt: new Date() })
+        .where(and(eq(paidMediaLinks.id, id), eq(paidMediaLinks.creatorId, creatorId)))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error toggling paid media link status:", error);
+      throw error;
+    }
+  }
+
+  // ===== PAID MEDIA PURCHASES =====
+
+  async createPurchase(purchase: InsertPaidMediaPurchase): Promise<PaidMediaPurchase> {
+    try {
+      const result = await db.insert(paidMediaPurchases).values(purchase).returning();
+      const newPurchase = result[0];
+      
+      // 🔥 ENVIAR MENSAGEM AUTOMÁTICA: new_purchase
+      try {
+        const paidLink = await this.getPaidMediaLink(purchase.linkId);
+        
+        if (paidLink) {
+          const buyer = await this.getUser(purchase.buyerId);
+          const creator = await this.getUser(paidLink.creatorId);
+          
+          if (buyer && creator) {
+            await this.sendAutomaticMessage(
+              paidLink.creatorId,
+              'new_purchase',
+              purchase.buyerId,
+              {
+                user_name: buyer.display_name || buyer.username,
+                creator_name: creator.display_name || creator.username,
+                purchase_amount: `R$ ${purchase.amount.toFixed(2)}`,
+                date: new Date().toLocaleDateString('pt-BR')
+              }
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Error sending new_purchase automatic message:', error);
+      }
+      
+      return newPurchase;
+    } catch (error) {
+      console.error("Error creating purchase:", error);
+      throw error;
+    }
+  }
+
+  async verifyPurchaseAccess(linkId: number, accessToken: string): Promise<boolean> {
+    try {
+      const result = await db
+        .select()
+        .from(paidMediaPurchases)
+        .where(
+          and(
+            eq(paidMediaPurchases.linkId, linkId),
+            eq(paidMediaPurchases.accessToken, accessToken),
+            eq(paidMediaPurchases.paymentStatus, "completed")
+          )
+        );
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error verifying purchase access:", error);
+      throw error;
+    }
+  }
+
+  async getPurchasesByLink(linkId: number): Promise<PaidMediaPurchase[]> {
+    try {
+      const result = await db
+        .select()
+        .from(paidMediaPurchases)
+        .where(eq(paidMediaPurchases.linkId, linkId))
+        .orderBy(desc(paidMediaPurchases.purchasedAt));
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching purchases by link:", error);
+      throw error;
+    }
+  }
+
+  // ===== PAID MEDIA STATS =====
+
+  async updateLinkStats(linkId: number, type: 'view' | 'purchase', amount?: number): Promise<void> {
+    try {
+      if (type === 'view') {
+        await db
+          .update(paidMediaLinks)
+          .set({ 
+            viewsCount: sql`${paidMediaLinks.viewsCount} + 1`,
+            updatedAt: new Date()
+          })
+          .where(eq(paidMediaLinks.id, linkId));
+      } else if (type === 'purchase' && amount) {
+        await db
+          .update(paidMediaLinks)
+          .set({ 
+            purchasesCount: sql`${paidMediaLinks.purchasesCount} + 1`,
+            totalEarnings: sql`${paidMediaLinks.totalEarnings} + ${amount}`,
+            updatedAt: new Date()
+          })
+          .where(eq(paidMediaLinks.id, linkId));
+      }
+    } catch (error) {
+      console.error("Error updating link stats:", error);
+      throw error;
+    }
+  }
+
+  // ===== PROMOTIONS & SUBSCRIPTION MANAGEMENT =====
+
+  // Subscription Price Management
+  async updateSubscriptionPrice(creatorId: number, price: number): Promise<void> {
+    try {
+      await db
+        .update(creatorProfiles)
+        .set({ subscriptionPrice: price })
+        .where(eq(creatorProfiles.userId, creatorId));
+    } catch (error) {
+      console.error("Error updating subscription price:", error);
+      throw error;
+    }
+  }
+
+  async getSubscriptionPrice(creatorId: number): Promise<number> {
+    try {
+      const result = await db
+        .select({ subscriptionPrice: creatorProfiles.subscriptionPrice })
+        .from(creatorProfiles)
+        .where(eq(creatorProfiles.userId, creatorId))
+        .limit(1);
+
+      return result[0]?.subscriptionPrice || 0;
+    } catch (error) {
+      console.error("Error getting subscription price:", error);
+      throw error;
+    }
+  }
+
+  // Free Trial Setting
+  async updateFreeTrialSetting(creatorId: number, allowed: boolean): Promise<void> {
+    try {
+      await db
+        .update(creatorProfiles)
+        .set({ allowFreeTrialWithoutPayment: allowed })
+        .where(eq(creatorProfiles.userId, creatorId));
+    } catch (error) {
+      console.error("Error updating free trial setting:", error);
+      throw error;
+    }
+  }
+
+  async getFreeTrialSetting(creatorId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .select({ allowFreeTrialWithoutPayment: creatorProfiles.allowFreeTrialWithoutPayment })
+        .from(creatorProfiles)
+        .where(eq(creatorProfiles.userId, creatorId))
+        .limit(1);
+
+      return result[0]?.allowFreeTrialWithoutPayment || false;
+    } catch (error) {
+      console.error("Error getting free trial setting:", error);
+      throw error;
+    }
+  }
+
+  // Subscription Packages Management
+  async getSubscriptionPackages(creatorId: number): Promise<SubscriptionPackage[]> {
+    try {
+      const result = await db
+        .select()
+        .from(subscriptionPackages)
+        .where(eq(subscriptionPackages.creatorId, creatorId))
+        .orderBy(desc(subscriptionPackages.createdAt));
+
+      // Se não há dados reais, retorna dados mock para desenvolvimento
+      if (result.length === 0) {
+        const mockPackages: SubscriptionPackage[] = [
+          {
+            id: 1,
+            creatorId,
+            durationMonths: 3,
+            discountPercent: 10,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: 2,
+            creatorId,
+            durationMonths: 6,
+            discountPercent: 20,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ];
+        return mockPackages;
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error fetching subscription packages:", error);
+      throw error;
+    }
+  }
+
+  async createSubscriptionPackage(pkg: InsertSubscriptionPackage): Promise<SubscriptionPackage> {
+    try {
+      const result = await db
+        .insert(subscriptionPackages)
+        .values(pkg)
+        .returning();
+
+      return result[0];
+    } catch (error) {
+      console.error("Error creating subscription package:", error);
+      throw error;
+    }
+  }
+
+  async updateSubscriptionPackage(id: number, creatorId: number, data: Partial<InsertSubscriptionPackage>): Promise<SubscriptionPackage> {
+    try {
+      const result = await db
+        .update(subscriptionPackages)
+        .set({ ...data, updatedAt: new Date() })
+        .where(and(
+          eq(subscriptionPackages.id, id),
+          eq(subscriptionPackages.creatorId, creatorId)
+        ))
+        .returning();
+
+      if (result.length === 0) {
+        throw new Error("Package not found or access denied");
+      }
+
+      return result[0];
+    } catch (error) {
+      console.error("Error updating subscription package:", error);
+      throw error;
+    }
+  }
+
+  async deleteSubscriptionPackage(id: number, creatorId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .delete(subscriptionPackages)
+        .where(and(
+          eq(subscriptionPackages.id, id),
+          eq(subscriptionPackages.creatorId, creatorId)
+        ))
+        .returning({ id: subscriptionPackages.id });
+
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting subscription package:", error);
+      throw error;
+    }
+  }
+
+  async togglePackageStatus(id: number, creatorId: number): Promise<SubscriptionPackage> {
+    try {
+      const result = await db
+        .update(subscriptionPackages)
+        .set({ 
+          isActive: not(subscriptionPackages.isActive),
+          updatedAt: new Date()
+        })
+        .where(and(
+          eq(subscriptionPackages.id, id),
+          eq(subscriptionPackages.creatorId, creatorId)
+        ))
+        .returning();
+
+      if (result.length === 0) {
+        throw new Error("Package not found or access denied");
+      }
+
+      return result[0];
+    } catch (error) {
+      console.error("Error toggling package status:", error);
+      throw error;
+    }
+  }
+
+  // Promotional Offers Management
+  async getPromotionalOffers(creatorId: number, filters?: { isActive?: boolean }): Promise<PromotionalOffer[]> {
+    try {
+      let query = db
+        .select()
+        .from(promotionalOffers)
+        .where(eq(promotionalOffers.creatorId, creatorId));
+
+      if (filters?.isActive !== undefined) {
+        query = query.where(and(
+          eq(promotionalOffers.creatorId, creatorId),
+          eq(promotionalOffers.isActive, filters.isActive)
+        ));
+      }
+
+      const result = await query.orderBy(desc(promotionalOffers.createdAt));
+
+      // Se não há dados reais, retorna dados mock para desenvolvimento
+      if (result.length === 0) {
+        const mockOffers: PromotionalOffer[] = [
+          {
+            id: 1,
+            creatorId,
+            title: "Teste Grátis de 7 dias",
+            description: "Experimente sem compromisso",
+            offerType: "trial",
+            trialDays: 7,
+            discountPercent: null,
+            discountDurationMonths: null,
+            targetAudience: "new",
+            notifyFollowers: false,
+            isActive: true,
+            startDate: null,
+            endDate: null,
+            usageCount: 15,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: 2,
+            creatorId,
+            title: "Desconto de 30% por 3 meses",
+            description: "Oferta especial para novos assinantes",
+            offerType: "discount",
+            trialDays: null,
+            discountPercent: 30,
+            discountDurationMonths: 3,
+            targetAudience: "all",
+            notifyFollowers: true,
+            isActive: true,
+            startDate: new Date(),
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 dias
+            usageCount: 8,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ];
+
+        // Aplica filtros aos dados mock se necessário
+        if (filters?.isActive !== undefined) {
+          return mockOffers.filter(offer => offer.isActive === filters.isActive);
+        }
+
+        return mockOffers;
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error fetching promotional offers:", error);
+      throw error;
+    }
+  }
+
+  async createPromotionalOffer(offer: InsertPromotionalOffer): Promise<PromotionalOffer> {
+    try {
+      const result = await db
+        .insert(promotionalOffers)
+        .values(offer)
+        .returning();
+
+      return result[0];
+    } catch (error) {
+      console.error("Error creating promotional offer:", error);
+      throw error;
+    }
+  }
+
+  async updatePromotionalOffer(id: number, creatorId: number, data: Partial<InsertPromotionalOffer>): Promise<PromotionalOffer> {
+    try {
+      const result = await db
+        .update(promotionalOffers)
+        .set({ ...data, updatedAt: new Date() })
+        .where(and(
+          eq(promotionalOffers.id, id),
+          eq(promotionalOffers.creatorId, creatorId)
+        ))
+        .returning();
+
+      if (result.length === 0) {
+        throw new Error("Offer not found or access denied");
+      }
+
+      return result[0];
+    } catch (error) {
+      console.error("Error updating promotional offer:", error);
+      throw error;
+    }
+  }
+
+  async deletePromotionalOffer(id: number, creatorId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .delete(promotionalOffers)
+        .where(and(
+          eq(promotionalOffers.id, id),
+          eq(promotionalOffers.creatorId, creatorId)
+        ))
+        .returning({ id: promotionalOffers.id });
+
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting promotional offer:", error);
+      throw error;
+    }
+  }
+
+  async toggleOfferStatus(id: number, creatorId: number): Promise<PromotionalOffer> {
+    try {
+      const result = await db
+        .update(promotionalOffers)
+        .set({ 
+          isActive: not(promotionalOffers.isActive),
+          updatedAt: new Date()
+        })
+        .where(and(
+          eq(promotionalOffers.id, id),
+          eq(promotionalOffers.creatorId, creatorId)
+        ))
+        .returning();
+
+      if (result.length === 0) {
+        throw new Error("Offer not found or access denied");
+      }
+
+      return result[0];
+    } catch (error) {
+      console.error("Error toggling offer status:", error);
+      throw error;
+    }
+  }
+
+  // ===== AUTOMATIC MESSAGES MANAGEMENT =====
+
+  // Buscar todas as mensagens de um criador
+  async getAutomaticMessages(creatorId: number): Promise<AutomaticMessage[]> {
+    try {
+      // Para desenvolvimento, retornar dados mock
+      const mockMessages = this.getMockAutomaticMessages();
+      return mockMessages.map(msg => ({
+        id: msg.eventType === 'new_subscriber' ? 1 : 
+            msg.eventType === 'new_follower' ? 2 :
+            msg.eventType === 'subscriber_canceled' ? 3 :
+            msg.eventType === 're_subscribed' ? 4 :
+            msg.eventType === 'subscription_renewed' ? 5 :
+            msg.eventType === 'new_purchase' ? 6 : 7,
+        creatorId,
+        eventType: msg.eventType,
+        isEnabled: msg.isEnabled,
+        messageText: msg.messageText,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }));
+
+      // Implementação real com database (quando tabela existir)
+      // const result = await db
+      //   .select()
+      //   .from(automaticMessages)
+      //   .where(eq(automaticMessages.creatorId, creatorId))
+      //   .orderBy(asc(automaticMessages.eventType));
+      // return result;
+    } catch (error) {
+      console.error("Error fetching automatic messages:", error);
+      throw error;
+    }
+  }
+
+  // Buscar mensagem específica por evento
+  async getAutomaticMessageByEvent(creatorId: number, eventType: string): Promise<AutomaticMessage | null> {
+    try {
+      const messages = await this.getAutomaticMessages(creatorId);
+      return messages.find(msg => msg.eventType === eventType) || null;
+    } catch (error) {
+      console.error("Error fetching automatic message by event:", error);
+      throw error;
+    }
+  }
+
+  // Criar ou atualizar mensagem de um evento
+  async upsertAutomaticMessage(creatorId: number, eventType: string, data: {
+    isEnabled: boolean;
+    messageText: string;
+  }): Promise<AutomaticMessage> {
+    try {
+      // Para desenvolvimento, simular upsert
+      const mockMessage = {
+        id: eventType === 'new_subscriber' ? 1 : 
+            eventType === 'new_follower' ? 2 :
+            eventType === 'subscriber_canceled' ? 3 :
+            eventType === 're_subscribed' ? 4 :
+            eventType === 'subscription_renewed' ? 5 :
+            eventType === 'new_purchase' ? 6 : 7,
+        creatorId,
+        eventType,
+        isEnabled: data.isEnabled,
+        messageText: data.messageText,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      return mockMessage;
+
+      // Implementação real com database (quando tabela existir)
+      // const existing = await this.getAutomaticMessageByEvent(creatorId, eventType);
+      // 
+      // if (existing) {
+      //   const result = await db
+      //     .update(automaticMessages)
+      //     .set({
+      //       isEnabled: data.isEnabled,
+      //       messageText: data.messageText,
+      //       updatedAt: new Date()
+      //     })
+      //     .where(and(
+      //       eq(automaticMessages.creatorId, creatorId),
+      //       eq(automaticMessages.eventType, eventType)
+      //     ))
+      //     .returning();
+      //   return result[0];
+      // } else {
+      //   const result = await db
+      //     .insert(automaticMessages)
+      //     .values({
+      //       creatorId,
+      //       eventType,
+      //       isEnabled: data.isEnabled,
+      //       messageText: data.messageText
+      //     })
+      //     .returning();
+      //   return result[0];
+      // }
+    } catch (error) {
+      console.error("Error upserting automatic message:", error);
+      throw error;
+    }
+  }
+
+  // Ativar/desativar mensagem
+  async toggleAutomaticMessage(creatorId: number, eventType: string): Promise<AutomaticMessage> {
+    try {
+      const existing = await this.getAutomaticMessageByEvent(creatorId, eventType);
+      if (!existing) {
+        throw new Error("Message not found");
+      }
+
+      return await this.upsertAutomaticMessage(creatorId, eventType, {
+        isEnabled: !existing.isEnabled,
+        messageText: existing.messageText
+      });
+    } catch (error) {
+      console.error("Error toggling automatic message:", error);
+      throw error;
+    }
+  }
+
+  // Resetar mensagem para padrão do sistema
+  async resetAutomaticMessage(creatorId: number, eventType: string): Promise<AutomaticMessage> {
+    try {
+      const defaultMessage = this.getDefaultMessage(eventType);
+      return await this.upsertAutomaticMessage(creatorId, eventType, {
+        isEnabled: true,
+        messageText: defaultMessage
+      });
+    } catch (error) {
+      console.error("Error resetting automatic message:", error);
+      throw error;
+    }
+  }
+
+  // Enviar mensagem automática quando um evento ocorrer
+  async sendAutomaticMessage(
+    creatorId: number, 
+    eventType: string, 
+    recipientId: number, 
+    variables: Record<string, string>
+  ): Promise<Message | null> {
+    try {
+      // Buscar mensagem configurada para este evento
+      const automaticMessage = await this.getAutomaticMessageByEvent(creatorId, eventType);
+      
+      // Verificar se existe e está ativa
+      if (!automaticMessage || !automaticMessage.isEnabled) {
+        return null;
+      }
+
+      // Substituir variáveis no texto
+      let messageText = automaticMessage.messageText;
+      Object.entries(variables).forEach(([key, value]) => {
+        const regex = new RegExp(`\\{${key}\\}`, 'g');
+        messageText = messageText.replace(regex, value);
+      });
+
+      // Criar mensagem no banco de dados
+      const message = await this.createMessage({
+        senderId: creatorId,
+        receiverId: recipientId,
+        content: messageText,
+        isRead: false,
+      });
+
+      return message;
+    } catch (error) {
+      console.error(`Error sending automatic message (${eventType}):`, error);
+      return null;
+    }
+  }
+
+  // Dados mock para desenvolvimento
+  private getMockAutomaticMessages() {
+    return [
+      { eventType: 'new_subscriber', isEnabled: true, messageText: this.getDefaultMessage('new_subscriber') },
+      { eventType: 'new_follower', isEnabled: true, messageText: this.getDefaultMessage('new_follower') },
+      { eventType: 'subscriber_canceled', isEnabled: false, messageText: this.getDefaultMessage('subscriber_canceled') },
+      { eventType: 're_subscribed', isEnabled: true, messageText: this.getDefaultMessage('re_subscribed') },
+      { eventType: 'subscription_renewed', isEnabled: true, messageText: this.getDefaultMessage('subscription_renewed') },
+      { eventType: 'new_purchase', isEnabled: true, messageText: this.getDefaultMessage('new_purchase') },
+      { eventType: 'first_message_reply', isEnabled: true, messageText: this.getDefaultMessage('first_message_reply') },
+    ];
+  }
+
+  // Obter mensagem padrão por tipo de evento
+  private getDefaultMessage(eventType: string): string {
+    const defaultMessages: Record<string, string> = {
+      new_subscriber: "Olá {user_name}! 🎉 Bem-vindo(a) à minha comunidade exclusiva! Obrigado por se tornar um assinante. Estou animado(a) para compartilhar conteúdo especial com você!",
+      new_follower: "Oi {user_name}! 👋 Obrigado por me seguir! Fique atento ao meu perfil para não perder nenhum conteúdo novo!",
+      subscriber_canceled: "Olá {user_name}, lamento ver você partir. 😢 Se mudou de ideia ou tem algum feedback, estou aqui! Espero te ver novamente em breve.",
+      re_subscribed: "Que bom ter você de volta, {user_name}! 🎊 Obrigado por renovar sua confiança. Vamos continuar essa jornada juntos!",
+      subscription_renewed: "Oi {user_name}! ✨ Sua assinatura foi renovada com sucesso. Obrigado por continuar me apoiando!",
+      new_purchase: "Olá {user_name}! 🛒 Obrigado pela sua compra! Espero que aproveite o conteúdo exclusivo. Qualquer dúvida, estou à disposição!",
+      first_message_reply: "Oi {user_name}! 💬 Obrigado pela mensagem! Vou responder assim que possível. Sua interação é muito importante para mim!"
+    };
+    
+    return defaultMessages[eventType] || "Olá {user_name}! Obrigado pela sua interação!";
+  }
+
+  // ===== SUBSCRIBER LISTS METHODS =====
+
+  async getSubscriberLists(creatorId: number, filters?: { listType?: 'smart' | 'custom', isActive?: boolean }): Promise<SubscriberList[]> {
+    try {
+      let query = db.select().from(subscriberLists).where(eq(subscriberLists.creatorId, creatorId));
+
+      if (filters?.listType) {
+        query = query.where(and(
+          eq(subscriberLists.creatorId, creatorId),
+          eq(subscriberLists.listType, filters.listType)
+        ));
+      }
+
+      if (filters?.isActive !== undefined) {
+        const conditions = filters.listType 
+          ? [eq(subscriberLists.creatorId, creatorId), eq(subscriberLists.listType, filters.listType), eq(subscriberLists.isActive, filters.isActive)]
+          : [eq(subscriberLists.creatorId, creatorId), eq(subscriberLists.isActive, filters.isActive)];
+        
+        query = query.where(and(...conditions));
+      }
+
+      const lists = await query.orderBy(desc(subscriberLists.createdAt));
+      return lists;
+    } catch (error) {
+      console.error('Error fetching subscriber lists:', error);
+      throw new Error('Erro ao buscar listas de assinantes');
+    }
+  }
+
+  async getListById(listId: number, creatorId: number): Promise<SubscriberList | null> {
+    try {
+      const [list] = await db.select().from(subscriberLists)
+        .where(and(
+          eq(subscriberLists.id, listId),
+          eq(subscriberLists.creatorId, creatorId)
+        ));
+      
+      return list || null;
+    } catch (error) {
+      console.error('Error fetching list by ID:', error);
+      throw new Error('Erro ao buscar lista');
+    }
+  }
+
+  async createSubscriberList(data: InsertSubscriberList): Promise<SubscriberList> {
+    try {
+      // Verificar se já existe lista com mesmo nome para o criador
+      const existingList = await db.select().from(subscriberLists)
+        .where(and(
+          eq(subscriberLists.creatorId, data.creatorId),
+          eq(subscriberLists.name, data.name)
+        ));
+
+      if (existingList.length > 0) {
+        throw new Error('Já existe uma lista com este nome');
+      }
+
+      // Verificar limite de listas personalizadas
+      if (data.listType === 'custom') {
+        const customLists = await db.select().from(subscriberLists)
+          .where(and(
+            eq(subscriberLists.creatorId, data.creatorId),
+            eq(subscriberLists.listType, 'custom')
+          ));
+
+        if (customLists.length >= 50) {
+          throw new Error('Limite de 50 listas personalizadas atingido');
+        }
+      }
+
+      const [newList] = await db.insert(subscriberLists).values(data).returning();
+      return newList;
+    } catch (error) {
+      console.error('Error creating subscriber list:', error);
+      throw error;
+    }
+  }
+
+  async updateSubscriberList(listId: number, creatorId: number, data: Partial<InsertSubscriberList>): Promise<SubscriberList> {
+    try {
+      // Verificar se nome já existe (se estiver sendo atualizado)
+      if (data.name) {
+        const existingList = await db.select().from(subscriberLists)
+          .where(and(
+            eq(subscriberLists.creatorId, creatorId),
+            eq(subscriberLists.name, data.name),
+            ne(subscriberLists.id, listId)
+          ));
+
+        if (existingList.length > 0) {
+          throw new Error('Já existe uma lista com este nome');
+        }
+      }
+
+      const [updatedList] = await db.update(subscriberLists)
+        .set({ ...data, updatedAt: new Date() })
+        .where(and(
+          eq(subscriberLists.id, listId),
+          eq(subscriberLists.creatorId, creatorId)
+        ))
+        .returning();
+
+      if (!updatedList) {
+        throw new Error('Lista não encontrada');
+      }
+
+      return updatedList;
+    } catch (error) {
+      console.error('Error updating subscriber list:', error);
+      throw error;
+    }
+  }
+
+  async deleteSubscriberList(listId: number, creatorId: number): Promise<boolean> {
+    try {
+      // Primeiro, remover todos os membros da lista
+      await db.delete(listMembers).where(eq(listMembers.listId, listId));
+
+      // Depois, excluir a lista
+      const result = await db.delete(subscriberLists)
+        .where(and(
+          eq(subscriberLists.id, listId),
+          eq(subscriberLists.creatorId, creatorId)
+        ));
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting subscriber list:', error);
+      throw new Error('Erro ao excluir lista');
+    }
+  }
+
+  async toggleListStatus(listId: number, creatorId: number): Promise<SubscriberList> {
+    try {
+      const [updatedList] = await db.update(subscriberLists)
+        .set({ 
+          isActive: sql`NOT ${subscriberLists.isActive}`,
+          updatedAt: new Date()
+        })
+        .where(and(
+          eq(subscriberLists.id, listId),
+          eq(subscriberLists.creatorId, creatorId)
+        ))
+        .returning();
+
+      if (!updatedList) {
+        throw new Error('Lista não encontrada');
+      }
+
+      return updatedList;
+    } catch (error) {
+      console.error('Error toggling list status:', error);
+      throw new Error('Erro ao alterar status da lista');
+    }
+  }
+
+  // ===== LIST MEMBERS METHODS =====
+
+  async getListMembers(listId: number, creatorId: number, page: number = 1, limit: number = 20): Promise<{
+    members: (ListMember & { user: User })[];
+    totalCount: number;
+    totalPages: number;
+  }> {
+    try {
+      // Verificar se a lista pertence ao criador
+      const list = await this.getListById(listId, creatorId);
+      if (!list) {
+        throw new Error('Lista não encontrada');
+      }
+
+      const offset = (page - 1) * limit;
+
+      // Buscar membros com dados do usuário
+      const members = await db.select({
+        id: listMembers.id,
+        listId: listMembers.listId,
+        userId: listMembers.userId,
+        addedAt: listMembers.addedAt,
+        addedBy: listMembers.addedBy,
+        user: {
+          id: users.id,
+          username: users.username,
+          display_name: users.display_name,
+          profile_image: users.profile_image,
+          user_type: users.user_type,
+          is_verified: users.is_verified,
+          created_at: users.created_at,
+          updated_at: users.updated_at,
+          email: users.email,
+          password: users.password,
+          bio: users.bio,
+          cover_image: users.cover_image
+        }
+      })
+      .from(listMembers)
+      .innerJoin(users, eq(listMembers.userId, users.id))
+      .where(eq(listMembers.listId, listId))
+      .orderBy(desc(listMembers.addedAt))
+      .limit(limit)
+      .offset(offset);
+
+      // Contar total de membros
+      const [{ count }] = await db.select({ count: sql<number>`count(*)` })
+        .from(listMembers)
+        .where(eq(listMembers.listId, listId));
+
+      const totalPages = Math.ceil(count / limit);
+
+      return {
+        members: members as (ListMember & { user: User })[],
+        totalCount: count,
+        totalPages
+      };
+    } catch (error) {
+      console.error('Error fetching list members:', error);
+      throw new Error('Erro ao buscar membros da lista');
+    }
+  }
+
+  async addMemberToList(listId: number, userId: number, creatorId: number): Promise<ListMember> {
+    try {
+      // Verificar se a lista pertence ao criador
+      const list = await this.getListById(listId, creatorId);
+      if (!list) {
+        throw new Error('Lista não encontrada');
+      }
+
+      // Verificar se usuário já está na lista
+      const existingMember = await db.select().from(listMembers)
+        .where(and(
+          eq(listMembers.listId, listId),
+          eq(listMembers.userId, userId)
+        ));
+
+      if (existingMember.length > 0) {
+        throw new Error('Usuário já está nesta lista');
+      }
+
+      // Adicionar membro
+      const [newMember] = await db.insert(listMembers).values({
+        listId,
+        userId,
+        addedBy: 'manual'
+      }).returning();
+
+      // Atualizar contador de membros
+      await this.calculateListMemberCount(listId);
+
+      return newMember;
+    } catch (error) {
+      console.error('Error adding member to list:', error);
+      throw error;
+    }
+  }
+
+  async removeMemberFromList(listId: number, userId: number, creatorId: number): Promise<boolean> {
+    try {
+      // Verificar se a lista pertence ao criador
+      const list = await this.getListById(listId, creatorId);
+      if (!list) {
+        throw new Error('Lista não encontrada');
+      }
+
+      const result = await db.delete(listMembers)
+        .where(and(
+          eq(listMembers.listId, listId),
+          eq(listMembers.userId, userId)
+        ));
+
+      // Atualizar contador de membros
+      await this.calculateListMemberCount(listId);
+
+      return true;
+    } catch (error) {
+      console.error('Error removing member from list:', error);
+      throw new Error('Erro ao remover membro da lista');
+    }
+  }
+
+  async addMultipleMembersToList(listId: number, userIds: number[], creatorId: number): Promise<ListMember[]> {
+    try {
+      // Verificar se a lista pertence ao criador
+      const list = await this.getListById(listId, creatorId);
+      if (!list) {
+        throw new Error('Lista não encontrada');
+      }
+
+      // Verificar quais usuários já estão na lista
+      const existingMembers = await db.select().from(listMembers)
+        .where(and(
+          eq(listMembers.listId, listId),
+          inArray(listMembers.userId, userIds)
+        ));
+
+      const existingUserIds = existingMembers.map(m => m.userId);
+      const newUserIds = userIds.filter(id => !existingUserIds.includes(id));
+
+      if (newUserIds.length === 0) {
+        throw new Error('Todos os usuários já estão nesta lista');
+      }
+
+      // Adicionar novos membros
+      const newMembers = await db.insert(listMembers).values(
+        newUserIds.map(userId => ({
+          listId,
+          userId,
+          addedBy: 'manual'
+        }))
+      ).returning();
+
+      // Atualizar contador de membros
+      await this.calculateListMemberCount(listId);
+
+      return newMembers;
+    } catch (error) {
+      console.error('Error adding multiple members to list:', error);
+      throw error;
+    }
+  }
+
+  // ===== SMART LIST FILTERS METHODS =====
+
+  async getSmartListMembers(creatorId: number, filters: SmartListFilters): Promise<User[]> {
+    try {
+      let userIds: number[] = [];
+
+      // Aplicar filtros de assinatura
+      if (filters.subscriptionStatus || filters.relationshipType) {
+        userIds = await this.applySubscriptionFilters(creatorId, filters);
+      }
+
+      // Aplicar filtros de comportamento
+      if (filters.spending) {
+        const behaviorUserIds = await this.applyBehaviorFilters(creatorId, filters);
+        userIds = userIds.length > 0 ? userIds.filter(id => behaviorUserIds.includes(id)) : behaviorUserIds;
+      }
+
+      // Aplicar filtros de período
+      if (filters.period) {
+        const periodUserIds = await this.applyPeriodFilters(creatorId, filters);
+        userIds = userIds.length > 0 ? userIds.filter(id => periodUserIds.includes(id)) : periodUserIds;
+      }
+
+      // Buscar dados dos usuários
+      if (userIds.length === 0) {
+        return [];
+      }
+
+      const users = await db.select().from(users)
+        .where(inArray(users.id, userIds));
+
+      return users;
+    } catch (error) {
+      console.error('Error getting smart list members:', error);
+      throw new Error('Erro ao calcular membros da lista inteligente');
+    }
+  }
+
+  async applySubscriptionFilters(creatorId: number, filters: SmartListFilters): Promise<number[]> {
+    try {
+      let userIds: number[] = [];
+
+      if (filters.subscriptionStatus === 'active') {
+        // Assinantes ativos
+        const activeSubscribers = await db.select({ userId: subscriptions.userId })
+          .from(subscriptions)
+          .where(and(
+            eq(subscriptions.creatorId, creatorId),
+            eq(subscriptions.status, 'active'),
+            gte(subscriptions.endDate, new Date())
+          ));
+        userIds = activeSubscribers.map(s => s.userId);
+      } else if (filters.subscriptionStatus === 'expired') {
+        // Assinaturas expiradas
+        const expiredSubscribers = await db.select({ userId: subscriptions.userId })
+          .from(subscriptions)
+          .where(and(
+            eq(subscriptions.creatorId, creatorId),
+            eq(subscriptions.status, 'active'),
+            lt(subscriptions.endDate, new Date())
+          ));
+        userIds = expiredSubscribers.map(s => s.userId);
+      } else if (filters.subscriptionStatus === 'cancelled') {
+        // Assinaturas canceladas
+        const cancelledSubscribers = await db.select({ userId: subscriptions.userId })
+          .from(subscriptions)
+          .where(and(
+            eq(subscriptions.creatorId, creatorId),
+            eq(subscriptions.status, 'cancelled')
+          ));
+        userIds = cancelledSubscribers.map(s => s.userId);
+      }
+
+      // Se filtro for por tipo de relacionamento
+      if (filters.relationshipType === 'follower' || filters.relationshipType === 'both') {
+        const followers = await db.select({ followerId: follows.followerId })
+          .from(follows)
+          .where(eq(follows.followingId, creatorId));
+        
+        const followerIds = followers.map(f => f.followerId);
+        
+        if (filters.relationshipType === 'follower') {
+          userIds = followerIds;
+        } else if (filters.relationshipType === 'both') {
+          // Combinar assinantes e seguidores
+          const allIds = [...new Set([...userIds, ...followerIds])];
+          userIds = allIds;
+        }
+      }
+
+      return userIds;
+    } catch (error) {
+      console.error('Error applying subscription filters:', error);
+      throw new Error('Erro ao aplicar filtros de assinatura');
+    }
+  }
+
+  async applyBehaviorFilters(creatorId: number, filters: SmartListFilters): Promise<number[]> {
+    try {
+      let userIds: number[] = [];
+
+      if (filters.spending?.type === 'spent_more_than') {
+        // Usuários que gastaram mais de X reais
+        const spenders = await db.select({ userId: transactions.userId })
+          .from(transactions)
+          .where(and(
+            eq(transactions.type, 'subscription'),
+            gte(transactions.amount, filters.spending.value || 50)
+          ));
+        userIds = spenders.map(t => t.userId);
+      } else if (filters.spending?.type === 'purchased_paid_media') {
+        // Usuários que compraram mídia paga
+        const purchasers = await db.select({ userId: paidMediaPurchases.userId })
+          .from(paidMediaPurchases)
+          .innerJoin(paidMediaLinks, eq(paidMediaPurchases.linkId, paidMediaLinks.id))
+          .where(eq(paidMediaLinks.creatorId, creatorId));
+        userIds = purchasers.map(p => p.userId);
+      } else if (filters.spending?.type === 'sent_tips') {
+        // Usuários que enviaram tips
+        const tippers = await db.select({ senderId: tips.senderId })
+          .from(tips)
+          .where(eq(tips.receiverId, creatorId));
+        userIds = tippers.map(t => t.senderId);
+      }
+
+      return userIds;
+    } catch (error) {
+      console.error('Error applying behavior filters:', error);
+      throw new Error('Erro ao aplicar filtros de comportamento');
+    }
+  }
+
+  async applyPeriodFilters(creatorId: number, filters: SmartListFilters): Promise<number[]> {
+    try {
+      let userIds: number[] = [];
+
+      if (filters.period === 'new_subscribers') {
+        // Novos assinantes (últimos 30 dias)
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const newSubscribers = await db.select({ userId: subscriptions.userId })
+          .from(subscriptions)
+          .where(and(
+            eq(subscriptions.creatorId, creatorId),
+            gte(subscriptions.createdAt, thirtyDaysAgo)
+          ));
+        userIds = newSubscribers.map(s => s.userId);
+      } else if (filters.period === 'this_month') {
+        // Novos neste mês
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const thisMonthSubscribers = await db.select({ userId: subscriptions.userId })
+          .from(subscriptions)
+          .where(and(
+            eq(subscriptions.creatorId, creatorId),
+            gte(subscriptions.createdAt, startOfMonth)
+          ));
+        userIds = thisMonthSubscribers.map(s => s.userId);
+      } else if (filters.period === 'long_term') {
+        // Assinantes de longo prazo (mais de 6 meses)
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const longTermSubscribers = await db.select({ userId: subscriptions.userId })
+          .from(subscriptions)
+          .where(and(
+            eq(subscriptions.creatorId, creatorId),
+            lte(subscriptions.createdAt, sixMonthsAgo)
+          ));
+        userIds = longTermSubscribers.map(s => s.userId);
+      }
+
+      return userIds;
+    } catch (error) {
+      console.error('Error applying period filters:', error);
+      throw new Error('Erro ao aplicar filtros de período');
+    }
+  }
+
+  async calculateListMemberCount(listId: number): Promise<number> {
+    try {
+      const [{ count }] = await db.select({ count: sql<number>`count(*)` })
+        .from(listMembers)
+        .where(eq(listMembers.listId, listId));
+
+      await db.update(subscriberLists)
+        .set({ memberCount: count, updatedAt: new Date() })
+        .where(eq(subscriberLists.id, listId));
+
+      return count;
+    } catch (error) {
+      console.error('Error calculating list member count:', error);
+      throw new Error('Erro ao calcular contagem de membros');
+    }
+  }
+
+  // ===== BULK ACTIONS METHODS =====
+
+  async sendMessageToList(listId: number, creatorId: number, message: string): Promise<{
+    sentCount: number;
+    failedCount: number;
+    messageIds: number[];
+  }> {
+    try {
+      // Verificar se a lista pertence ao criador
+      const list = await this.getListById(listId, creatorId);
+      if (!list) {
+        throw new Error('Lista não encontrada');
+      }
+
+      // Buscar todos os membros da lista
+      const members = await db.select({ userId: listMembers.userId })
+        .from(listMembers)
+        .where(eq(listMembers.listId, listId));
+
+      if (members.length === 0) {
+        throw new Error('Lista não possui membros');
+      }
+
+      // Enviar mensagem para cada membro
+      const messageIds: number[] = [];
+      let failedCount = 0;
+
+      for (const member of members) {
+        try {
+          const [newMessage] = await db.insert(messages).values({
+            senderId: creatorId,
+            receiverId: member.userId,
+            content: message,
+            isRead: false
+          }).returning();
+
+          messageIds.push(newMessage.id);
+        } catch (error) {
+          console.error(`Error sending message to user ${member.userId}:`, error);
+          failedCount++;
+        }
+      }
+
+      return {
+        sentCount: messageIds.length,
+        failedCount,
+        messageIds
+      };
+    } catch (error) {
+      console.error('Error sending message to list:', error);
+      throw new Error('Erro ao enviar mensagens em massa');
+    }
+  }
+
+  async getListEligibleOffers(listId: number, creatorId: number): Promise<PromotionalOffer[]> {
+    try {
+      // Buscar ofertas ativas do criador
+      const offers = await db.select().from(promotionalOffers)
+        .where(and(
+          eq(promotionalOffers.creatorId, creatorId),
+          eq(promotionalOffers.isActive, true)
+        ));
+
+      // Por enquanto, retornar todas as ofertas ativas
+      // Futuramente, pode-se implementar lógica mais específica
+      return offers;
+    } catch (error) {
+      console.error('Error getting list eligible offers:', error);
+      throw new Error('Erro ao buscar ofertas elegíveis');
+    }
   }
 }
 // ⚡ Override temporário dos métodos de usuário para usar Supabase direto

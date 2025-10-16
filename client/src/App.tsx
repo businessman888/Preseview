@@ -26,10 +26,12 @@ import { QueuePage } from "@/pages/creator/tools/QueuePage";
 import { PaidMediaLinksPage } from "@/pages/creator/tools/PaidMediaLinksPage";
 import { TrackingLinksPage } from "@/pages/creator/tools/TrackingLinksPage";
 import { PromotionsPage } from "@/pages/creator/tools/PromotionsPage";
-import { AutoMessagesPage } from "@/pages/creator/tools/AutoMessagesPage";
+import { AutomaticMessagesPage } from "@/pages/creator/tools/AutomaticMessagesPage";
 import { ListsPage } from "@/pages/creator/tools/ListsPage";
-import { AIToolsPage } from "@/pages/creator/tools/AIToolsPage";
-import { ManagementPage } from "@/pages/creator/tools/ManagementPage";
+
+// Public Paid Links Pages
+import { PaidLinkPreviewPage } from "@/pages/PaidLinkPreviewPage";
+import { PaidLinkAccessPage } from "@/pages/PaidLinkAccessPage";
 
 // Creator Additional Pages
 import { FinancesPage } from "@/pages/creator/FinancesPage";
@@ -73,6 +75,10 @@ function Router() {
       <Route path="/become-creator" component={BecomeCreatorPage} />
       <Route path="/auth" component={AuthPage} />
       
+      {/* Public Paid Links Routes */}
+      <Route path="/l/:slug" component={PaidLinkPreviewPage} />
+      <Route path="/l/:slug/access/:token" component={PaidLinkAccessPage} />
+      
       {/* Creator Tools Routes */}
       <Route path="/creator/tools/statistics" component={StatisticsPage} />
       <Route path="/creator/tools/vault" component={VaultPage} />
@@ -80,10 +86,8 @@ function Router() {
       <Route path="/creator/tools/paid-media-links" component={PaidMediaLinksPage} />
       <Route path="/creator/tools/tracking-links" component={TrackingLinksPage} />
       <Route path="/creator/tools/promotions" component={PromotionsPage} />
-      <Route path="/creator/tools/auto-messages" component={AutoMessagesPage} />
+      <Route path="/creator/tools/automatic-messages" component={AutomaticMessagesPage} />
       <Route path="/creator/tools/lists" component={ListsPage} />
-      <Route path="/creator/tools/ai-tools" component={AIToolsPage} />
-      <Route path="/creator/tools/management" component={ManagementPage} />
       
       {/* Creator Additional Routes */}
       <Route path="/creator/finances" component={FinancesPage} />
