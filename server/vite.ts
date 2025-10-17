@@ -41,6 +41,33 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
+  
+  // Landing page route for development
+  app.get("/landing", async (req, res, next) => {
+    try {
+      const landingTemplate = path.resolve(
+        import.meta.dirname,
+        "..",
+        "landing",
+        "index.html",
+      );
+
+      let template = await fs.promises.readFile(landingTemplate, "utf-8");
+      template = template.replace(
+        `src="/src/main.tsx"`,
+        `src="/src/main.tsx?v=${nanoid()}"`,
+      );
+      const page = await vite.transformIndexHtml(req.originalUrl, template);
+      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+    } catch (e) {
+      vite.ssrFixStacktrace(e as Error);
+      next(e);
+    }
+  });
+
+  // Serve landing page assets in development
+  app.use("/landing/assets", express.static(path.join(import.meta.dirname, "../dist/landing/assets")));
+
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 

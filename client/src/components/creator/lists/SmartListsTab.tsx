@@ -227,3 +227,6 @@ function SmartListCard({
     </Card>
   );
 }
+
+
+

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -46,6 +47,14 @@ app.use((req, res, next) => {
 
     res.status(status).json({ message });
     throw err;
+  });
+
+  // Serve landing page static files FIRST (before specific routes)
+  app.use("/landing", express.static(path.join(import.meta.dirname, "../dist/landing")));
+
+  // Landing page route - serve index.html for /landing
+  app.get("/landing", (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, "../dist/landing/index.html"));
   });
 
   // importantly only setup vite in development and after
