@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search } from "lucide-react";
 import { Link } from "wouter";
+import { UserLayout } from "@/components/user/UserLayout";
 import { User as UserType, Message } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -28,7 +29,8 @@ export const ScreenMessages = (): JSX.Element => {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
+    <UserLayout>
+      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-4 py-3">
         <div className="flex items-center gap-4 max-w-2xl mx-auto">
           <Link href="/">
@@ -120,6 +122,7 @@ export const ScreenMessages = (): JSX.Element => {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </UserLayout>
   );
 };

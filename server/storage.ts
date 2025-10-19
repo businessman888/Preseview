@@ -112,8 +112,10 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
-  updateUserProfile(userId: number, data: { bio?: string; profileImage?: string; coverImage?: string }): Promise<User>;
+  updateUserProfile(userId: number, data: { displayName?: string; username?: string; bio?: string; location?: string; profileImage?: string; coverImage?: string }): Promise<User>;
   upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }>;
+  createCreatorAccount(userData: { name: string; email: string; password: string; userType: string }, creatorProfileData: any): Promise<{ user: User, profile: CreatorProfile }>;
+  isUsernameAvailable(username: string, excludeUserId?: number): Promise<boolean>;
   
   // Creator Profiles
   getCreatorProfile(userId: number, viewerUserId?: number): Promise<(PublicUser & { creatorProfile?: CreatorProfile, isFollowing: boolean, isSubscribed: boolean }) | undefined>;
@@ -463,11 +465,15 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async updateUserProfile(userId: number, data: { bio?: string; profileImage?: string; coverImage?: string }): Promise<User> {
+  async updateUserProfile(userId: number, data: { displayName?: string; username?: string; bio?: string; location?: string; profileImage?: string; coverImage?: string }): Promise<User> {
     const updateData: any = { updatedAt: new Date() };
     
-    if (data.bio !== undefined) updateData.bio = data.bio;
-    if (data.profileImage !== undefined) updateData.profileImage = data.profileImage;
+    if (data.displayName !== undefined) updateData.display_name = data.displayName;
+    if (data.username !== undefined) updateData.username = data.username;
+    // Temporarily skip bio field until database is updated
+    // if (data.bio !== undefined) updateData.bio = data.bio;
+    if (data.location !== undefined) updateData.location = data.location;
+    if (data.profileImage !== undefined) updateData.profile_image = data.profileImage;
     if (data.coverImage !== undefined) updateData.coverImage = data.coverImage;
 
     const [user] = await db
@@ -556,44 +562,134 @@ export class DatabaseStorage implements IStorage {
     return profile;
   }
 
-  async upgradeToCreator(userId: number, profileData?: Partial<InsertCreatorProfile>): Promise<{ user: User, profile: CreatorProfile }> {
-    // Update user type to creator using Supabase
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .update({ 
+  async upgradeToCreator(userId: number, profileData?: any): Promise<{ user: User, profile: CreatorProfile }> {
+    try {
+      // Check if username is provided and available
+      if (profileData?.username) {
+        const isAvailable = await this.isUsernameAvailable(profileData.username, userId);
+        if (!isAvailable) {
+          throw new Error("Username já está em uso");
+        }
+      }
+
+      // Update user profile with new data
+      const userUpdateData: any = {
         user_type: 'creator',
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', userId)
-      .select()
-      .single();
+        updated_at: new Date()
+      };
 
-    if (userError || !user) {
-      console.error('Error updating user to creator:', userError);
-      throw new Error("Usuário não encontrado");
+      if (profileData?.displayName) userUpdateData.display_name = profileData.displayName;
+      if (profileData?.username) userUpdateData.username = profileData.username;
+      // Temporarily skip bio field until database is updated
+      // if (profileData?.bio) userUpdateData.bio = profileData.bio;
+      if (profileData?.profileImage) userUpdateData.profile_image = profileData.profileImage;
+      if (profileData?.coverImage) userUpdateData.cover_image = profileData.coverImage;
+      if (profileData?.gender) userUpdateData.gender = profileData.gender;
+
+      const [updatedUser] = await db
+        .update(users)
+        .set(userUpdateData)
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      // Create creator profile
+      const [creatorProfile] = await db
+        .insert(creatorProfiles)
+        .values({
+          user_id: userId,
+          subscription_price: profileData?.subscriptionPrice || 0,
+          description: null, // Temporarily skip bio until database is updated
+          is_active: true,
+          verification_status: profileData?.verificationStatus || 'pending',
+        })
+        .returning();
+
+      if (!creatorProfile) {
+        throw new Error("Erro ao criar perfil de criador");
+      }
+
+      return { user: updatedUser, profile: creatorProfile };
+    } catch (error: any) {
+      console.error('Error upgrading to creator:', error);
+      throw error;
     }
+  }
 
-    // Create creator profile using Supabase
-    const { data: profile, error: profileError } = await supabase
-      .from('creator_profiles')
-      .insert({
-        user_id: userId,
-        subscription_price: profileData?.subscriptionPrice || 0,
-        description: profileData?.description || null,
-        categories: profileData?.categories || [],
-        social_links: profileData?.socialLinks || [],
-        is_active: profileData?.isActive ?? true,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+  async isUsernameAvailable(username: string, excludeUserId?: number): Promise<boolean> {
+    try {
+      const query = db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.username, username));
 
-    if (profileError || !profile) {
-      console.error('Error creating creator profile:', profileError);
-      throw new Error("Erro ao criar perfil de criador");
+      if (excludeUserId) {
+        query.where(and(eq(users.username, username), ne(users.id, excludeUserId)));
+      }
+
+      const existingUser = await query;
+      return existingUser.length === 0;
+    } catch (error) {
+      console.error('Error checking username availability:', error);
+      return false;
     }
+  }
 
-    return { user, profile };
+  async createCreatorAccount(userData: { name: string; email: string; password: string; userType: string }, creatorProfileData: any): Promise<{ user: User, profile: CreatorProfile }> {
+    try {
+      // Create user with minimal required fields only
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          email: userData.email,
+          username: userData.email, // Use email as username initially
+          password: userData.password,
+          display_name: userData.name,
+          user_type: 'creator',
+          created_at: new Date(),
+        })
+        .returning();
+
+      if (!newUser) {
+        throw new Error("Erro ao criar usuário");
+      }
+
+      // Update username if provided and different from email
+      if (creatorProfileData.username && creatorProfileData.username !== userData.email) {
+        const [updatedUser] = await db
+          .update(users)
+          .set({ username: creatorProfileData.username })
+          .where(eq(users.id, newUser.id))
+          .returning();
+        
+        if (updatedUser) {
+          Object.assign(newUser, updatedUser);
+        }
+      }
+
+      // Create creator profile with minimal fields
+      const [creatorProfile] = await db
+        .insert(creatorProfiles)
+        .values({
+          userId: newUser.id,
+          subscriptionPrice: creatorProfileData.subscriptionPrice || 0,
+          isActive: true,
+          createdAt: new Date(),
+        })
+        .returning();
+
+      if (!creatorProfile) {
+        throw new Error("Erro ao criar perfil de criador");
+      }
+
+      return { user: newUser, profile: creatorProfile };
+    } catch (error: any) {
+      console.error('Error creating creator account:', error);
+      throw error;
+    }
   }
 
   // Creator Profiles
@@ -2635,6 +2731,125 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // ===== USER PURCHASES =====
+
+  async getUserPurchases(userId: number): Promise<Array<{
+    id: string;
+    title: string;
+    description?: string;
+    mediaUrls: string[];
+    thumbnailUrl?: string;
+    creatorId: string;
+    creatorName: string;
+    creatorUsername: string;
+    purchaseDate: string;
+    price: number;
+    type: 'post' | 'video' | 'image' | 'album';
+    isExclusive: boolean;
+  }>> {
+    try {
+      const purchases = await db
+        .select({
+          id: paidMediaPurchases.id,
+          title: paidMediaLinks.title,
+          description: paidMediaLinks.description,
+          mediaUrl: paidMediaLinks.mediaUrl,
+          thumbnailUrl: paidMediaLinks.thumbnail,
+          creatorId: paidMediaLinks.creatorId,
+          creatorName: users.displayName,
+          creatorUsername: users.username,
+          purchaseDate: paidMediaPurchases.purchasedAt,
+          price: paidMediaPurchases.amount,
+          mediaType: paidMediaLinks.mediaType,
+          isExclusive: paidMediaLinks.isExclusive,
+        })
+        .from(paidMediaPurchases)
+        .innerJoin(paidMediaLinks, eq(paidMediaPurchases.linkId, paidMediaLinks.id))
+        .innerJoin(users, eq(paidMediaLinks.creatorId, users.id))
+        .where(eq(paidMediaPurchases.userId, userId))
+        .orderBy(desc(paidMediaPurchases.purchasedAt));
+
+      return purchases.map(purchase => ({
+        id: purchase.id.toString(),
+        title: purchase.title,
+        description: purchase.description || undefined,
+        mediaUrls: [purchase.mediaUrl],
+        thumbnailUrl: purchase.thumbnailUrl || undefined,
+        creatorId: purchase.creatorId.toString(),
+        creatorName: purchase.creatorName || 'Criador',
+        creatorUsername: purchase.creatorUsername || 'criador',
+        purchaseDate: purchase.purchaseDate.toISOString(),
+        price: Number(purchase.price),
+        type: purchase.mediaType as 'post' | 'video' | 'image' | 'album',
+        isExclusive: Boolean(purchase.isExclusive),
+      }));
+    } catch (error) {
+      console.error('Error fetching user purchases:', error);
+      return [];
+    }
+  }
+
+  // ===== USER LIKES =====
+
+  async getUserLikes(userId: number): Promise<Array<{
+    id: string;
+    title: string;
+    description?: string;
+    mediaUrls: string[];
+    thumbnailUrl?: string;
+    creatorId: string;
+    creatorName: string;
+    creatorUsername: string;
+    likeDate: string;
+    type: 'post' | 'video' | 'image' | 'album';
+    isExclusive: boolean;
+    likesCount: number;
+    commentsCount: number;
+  }>> {
+    try {
+      const userLikes = await db
+        .select({
+          id: likes.id,
+          title: posts.title,
+          description: posts.description,
+          mediaUrls: posts.mediaUrls,
+          thumbnailUrl: posts.thumbnail,
+          creatorId: posts.creatorId,
+          creatorName: users.displayName,
+          creatorUsername: users.username,
+          likeDate: likes.createdAt,
+          mediaType: posts.mediaType,
+          isExclusive: posts.isExclusive,
+          likesCount: posts.likesCount,
+          commentsCount: posts.commentsCount,
+        })
+        .from(likes)
+        .innerJoin(posts, eq(likes.postId, posts.id))
+        .innerJoin(users, eq(posts.creatorId, users.id))
+        .where(eq(likes.userId, userId))
+        .orderBy(desc(likes.createdAt));
+
+      return userLikes.map(like => ({
+        id: like.id.toString(),
+        title: like.title || 'Post sem título',
+        description: like.description || undefined,
+        mediaUrls: like.mediaUrls || [],
+        thumbnailUrl: like.thumbnailUrl || undefined,
+        creatorId: like.creatorId.toString(),
+        creatorName: like.creatorName || 'Criador',
+        creatorUsername: like.creatorUsername || 'criador',
+        likeDate: like.likeDate.toISOString(),
+        type: (like.mediaType as 'post' | 'video' | 'image' | 'album') || 'post',
+        isExclusive: Boolean(like.isExclusive),
+        likesCount: Number(like.likesCount) || 0,
+        commentsCount: Number(like.commentsCount) || 0,
+      }));
+    } catch (error) {
+      console.error('Error fetching user likes:', error);
+      return [];
+    }
+  }
+
   // ===== PAID MEDIA PURCHASES =====
 
   async createPurchase(purchase: InsertPaidMediaPurchase): Promise<PaidMediaPurchase> {
@@ -3459,7 +3674,7 @@ export class DatabaseStorage implements IStorage {
           updated_at: users.updated_at,
           email: users.email,
           password: users.password,
-          bio: users.bio,
+          bio: null, // Temporarily skip bio until database is updated
           cover_image: users.cover_image
         }
       })

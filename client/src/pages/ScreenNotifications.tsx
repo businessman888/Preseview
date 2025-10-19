@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
+import { UserLayout } from "@/components/user/UserLayout";
 import { Notification, User as UserType } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -53,7 +54,8 @@ export const ScreenNotifications = (): JSX.Element => {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
+    <UserLayout>
+      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-4 py-3">
         <div className="flex items-center gap-4 max-w-2xl mx-auto">
           <Link href="/">
@@ -173,6 +175,7 @@ export const ScreenNotifications = (): JSX.Element => {
           </TabsContent>
         </Tabs>
       </main>
-    </div>
+      </div>
+    </UserLayout>
   );
 };

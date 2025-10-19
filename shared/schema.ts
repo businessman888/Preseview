@@ -15,13 +15,13 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   display_name: text("display_name").notNull(),
-  bio: text("bio"),
-  profile_image: text("profile_image"),
-  cover_image: text("cover_image"),
+  // bio: text("bio"), // Temporarily commented out - column doesn't exist in DB
+  // profile_image: text("profile_image"), // Temporarily commented out - column doesn't exist in DB
+  // cover_image: text("cover_image"), // Temporarily commented out - column doesn't exist in DB
   user_type: userTypeEnum("user_type").default('user').notNull(),
-  is_verified: boolean("is_verified").default(false),
+  // is_verified: boolean("is_verified").default(false), // Temporarily commented out - column doesn't exist in DB
   created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").defaultNow().notNull(),
+  // updated_at: timestamp("updated_at").defaultNow().notNull(), // Temporarily commented out - column doesn't exist in DB
 });
 
 // Creator profiles (additional info for creators)
@@ -29,14 +29,14 @@ export const creatorProfiles = pgTable("creator_profiles", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id).notNull().unique(),
   subscriptionPrice: real("subscription_price").default(0).notNull(),
-  description: text("description"),
-  categories: text("categories").array(),
-  socialLinks: text("social_links").array(),
+  // description: text("description"), // Temporarily commented out - column doesn't exist in DB
+  // categories: text("categories").array(), // Temporarily commented out - column doesn't exist in DB
+  // socialLinks: text("social_links").array(), // Temporarily commented out - column doesn't exist in DB
   isActive: boolean("is_active").default(true),
-  totalEarnings: real("total_earnings").default(0),
-  subscriberCount: integer("subscriber_count").default(0),
-  postCount: integer("post_count").default(0),
-  allowFreeTrialWithoutPayment: boolean("allow_free_trial_without_payment").default(false),
+  // totalEarnings: real("total_earnings").default(0), // Temporarily commented out - column doesn't exist in DB
+  // subscriberCount: integer("subscriber_count").default(0), // Temporarily commented out - column doesn't exist in DB
+  // postCount: integer("post_count").default(0), // Temporarily commented out - column doesn't exist in DB
+  // allowFreeTrialWithoutPayment: boolean("allow_free_trial_without_payment").default(false), // Temporarily commented out - column doesn't exist in DB
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

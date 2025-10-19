@@ -6,20 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Eye, EyeOff, Heart, Star, Sparkles } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function AuthPage() {
   const { user, isLoading, loginMutation, registerMutation, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
-  const [loginData, setLoginData] = useState({ username: "", password: "" });
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
-    displayName: "",
-    userType: "user" as "user" | "creator"
   });
 
   // Redirecionar se já estiver logado
@@ -40,71 +37,74 @@ export default function AuthPage() {
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    registerMutation.mutate(registerData);
+    // Convert to the format expected by the backend
+    const userData = {
+      username: registerData.email, // Use email as username for now
+      email: registerData.email,
+      password: registerData.password,
+      displayName: registerData.name,
+      userType: "user" as const
+    };
+    registerMutation.mutate(userData);
+  };
+
+  const handleCreatorRedirect = () => {
+    setLocation("/register/creator");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-600 to-red-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         
         {/* Hero Section */}
-        <div className="text-white space-y-6 text-center lg:text-left">
+        <div className="text-gray-900 space-y-6 text-center lg:text-left">
           <div className="space-y-4">
             <h1 className="text-4xl lg:text-6xl font-bold">
-              Conecte-se com seus
-              <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                {" "}criadores favoritos
+              Conecte-se com
+              <br />
+              seus{" "}
+              <span className="text-red-500">
+                criadores
+              </span>
+              <br />
+              <span className="text-red-500">
+                favoritos
               </span>
             </h1>
-            <p className="text-xl lg:text-2xl text-purple-100">
-              Uma plataforma exclusiva para conteúdo premium e interação direta com criadores
+            <p className="text-xl lg:text-2xl text-gray-600">
+              Uma plataforma feita
+              <br />
+              exclusivamente para a
+              <br />
+              conexão premium
+              <br />
+              entre criadores e fãs
             </p>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 justify-center lg:justify-start">
-              <Heart className="text-red-400" size={24} />
-              <span className="text-lg">Conteúdo exclusivo dos seus criadores favoritos</span>
-            </div>
-            <div className="flex items-center gap-3 justify-center lg:justify-start">
-              <Star className="text-yellow-400" size={24} />
-              <span className="text-lg">Stories e posts que você não encontra em outro lugar</span>
-            </div>
-            <div className="flex items-center gap-3 justify-center lg:justify-start">
-              <Sparkles className="text-green-400" size={24} />
-              <span className="text-lg">Interação direta através de mensagens e presentes</span>
-            </div>
           </div>
         </div>
 
         {/* Auth Forms */}
         <div className="w-full max-w-md mx-auto">
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="register">Criar Conta</TabsTrigger>
-            </TabsList>
+          <Card className="shadow-lg">
+            <CardContent className="p-0">
+              <Tabs defaultValue="login" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 rounded-none border-b bg-gray-50">
+                  <TabsTrigger value="login" className="rounded-none">Login</TabsTrigger>
+                  <TabsTrigger value="register" className="rounded-none">Cadastrar-se</TabsTrigger>
+                </TabsList>
 
-            {/* Login Form */}
-            <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Entrar na sua conta</CardTitle>
-                  <CardDescription>
-                    Entre com suas credenciais para acessar a plataforma
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                {/* Login Form */}
+                <TabsContent value="login" className="p-6">
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="login-username">Nome de usuário</Label>
+                      <Label htmlFor="login-email">Email</Label>
                       <Input
-                        id="login-username"
-                        data-testid="input-login-username"
-                        type="text"
-                        placeholder="seu_usuario"
-                        value={loginData.username}
-                        onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
+                        id="login-email"
+                        data-testid="input-login-email"
+                        type="email"
+                        placeholder="Seu email..."
+                        value={loginData.email}
+                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                         required
                       />
                     </div>
@@ -115,7 +115,7 @@ export default function AuthPage() {
                           id="login-password"
                           data-testid="input-login-password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
+                          placeholder="Digite sua senha..."
                           value={loginData.password}
                           onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                           required
@@ -133,62 +133,44 @@ export default function AuthPage() {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white"
                       data-testid="button-login"
                       disabled={loginMutation.isPending}
                     >
-                      {loginMutation.isPending ? "Entrando..." : "Entrar"}
+                      {loginMutation.isPending ? "Entrando..." : "Login"}
                     </Button>
                   </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </TabsContent>
 
-            {/* Register Form */}
-            <TabsContent value="register">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Criar nova conta</CardTitle>
-                  <CardDescription>
-                    Junte-se à comunidade e comece a explorar conteúdo exclusivo
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                {/* Register Form */}
+                <TabsContent value="register" className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Cadastrar-se como usuário padrão
+                    </h3>
+                  </div>
+                  
                   <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="register-username">Nome de usuário</Label>
-                        <Input
-                          id="register-username"
-                          data-testid="input-register-username"
-                          type="text"
-                          placeholder="seu_usuario"
-                          value={registerData.username}
-                          onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="register-display-name">Nome completo</Label>
-                        <Input
-                          id="register-display-name"
-                          data-testid="input-register-display-name"
-                          type="text"
-                          placeholder="Seu Nome"
-                          value={registerData.displayName}
-                          onChange={(e) => setRegisterData({ ...registerData, displayName: e.target.value })}
-                          required
-                        />
-                      </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-name">Nome:</Label>
+                      <Input
+                        id="register-name"
+                        data-testid="input-register-name"
+                        type="text"
+                        placeholder="Digite seu nome..."
+                        value={registerData.name}
+                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                        required
+                      />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="register-email">Email</Label>
+                      <Label htmlFor="register-email">Email:</Label>
                       <Input
                         id="register-email"
                         data-testid="input-register-email"
                         type="email"
-                        placeholder="seu@email.com"
+                        placeholder="Seu email..."
                         value={registerData.email}
                         onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                         required
@@ -196,13 +178,13 @@ export default function AuthPage() {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="register-password">Senha</Label>
+                      <Label htmlFor="register-password">Senha:</Label>
                       <div className="relative">
                         <Input
                           id="register-password"
                           data-testid="input-register-password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
+                          placeholder="Digite sua senha..."
                           value={registerData.password}
                           onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
                           required
@@ -218,46 +200,63 @@ export default function AuthPage() {
                         </Button>
                       </div>
                     </div>
-                    
-                    <div className="space-y-3">
-                      <Label>Tipo de conta</Label>
-                      <RadioGroup
-                        value={registerData.userType}
-                        onValueChange={(value) => 
-                          setRegisterData({ ...registerData, userType: value as "user" | "creator" })
-                        }
-                        className="space-y-2"
+
+                    {/* Social Login Buttons */}
+                    <div className="flex justify-center gap-3 py-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="w-12 h-12 rounded-full bg-red-500 border-red-500 hover:bg-red-600"
+                        data-testid="button-google"
                       >
-                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                          <RadioGroupItem value="user" id="user" data-testid="radio-user" />
-                          <Label htmlFor="user" className="flex-1 cursor-pointer">
-                            <div className="font-medium">Usuário</div>
-                            <div className="text-sm text-gray-500">Quero consumir conteúdo exclusivo</div>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                          <RadioGroupItem value="creator" id="creator" data-testid="radio-creator" />
-                          <Label htmlFor="creator" className="flex-1 cursor-pointer">
-                            <div className="font-medium">Criador</div>
-                            <div className="text-sm text-gray-500">Quero criar e monetizar conteúdo</div>
-                          </Label>
-                        </div>
-                      </RadioGroup>
+                        <span className="text-white font-bold">G</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="w-12 h-12 rounded-full bg-red-500 border-red-500 hover:bg-red-600"
+                        data-testid="button-twitter"
+                      >
+                        <span className="text-white">𝕏</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="w-12 h-12 rounded-full bg-red-500 border-red-500 hover:bg-red-600"
+                        data-testid="button-facebook"
+                      >
+                        <span className="text-white font-bold">f</span>
+                      </Button>
                     </div>
                     
                     <Button 
                       type="submit" 
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white"
                       data-testid="button-register"
                       disabled={registerMutation.isPending}
                     >
-                      {registerMutation.isPending ? "Criando conta..." : "Criar conta"}
+                      {registerMutation.isPending ? "Cadastrando..." : "Cadastrar-se"}
                     </Button>
+
+                    {/* Link para cadastro de criador */}
+                    <div className="text-center mt-4">
+                      <button
+                        type="button"
+                        onClick={handleCreatorRedirect}
+                        className="text-sm text-gray-600 hover:text-gray-800 underline"
+                        data-testid="link-sou-criador"
+                      >
+                        Sou criador
+                      </button>
+                    </div>
                   </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

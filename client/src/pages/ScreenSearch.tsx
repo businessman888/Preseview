@@ -1,12 +1,7 @@
 import {
   ArrowLeftIcon,
-  BellIcon,
-  HomeIcon,
-  MessageCircleIcon,
   SearchIcon,
-  UserIcon,
   FilterIcon,
-  Plus,
 } from "lucide-react";
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,12 +10,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { CreatePostModal } from "@/components/CreatePostModal";
+import { UserLayout } from "@/components/user/UserLayout";
 
 export const ScreenSearch = (): JSX.Element => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
 
   const trendingTopics = [
     { id: 1, tag: "#VerãoBrasil", posts: "125K posts" },
@@ -62,7 +56,8 @@ export const ScreenSearch = (): JSX.Element => {
   const recentSearches = ["Marina Macedo", "Lorena ruiva", "#VerãoBrasil"];
 
   return (
-    <div className="flex flex-col h-screen bg-[#fdfdfa]">
+    <UserLayout>
+      <div className="flex flex-col h-screen bg-[#fdfdfa]">
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-white shadow-sm">
         <Link href="/">
@@ -240,19 +235,18 @@ export const ScreenSearch = (): JSX.Element => {
           </Button>
         </Link>
 
-        {user?.userType === 'creator' ? (
+        {user?.userType === 'creator' && (
           <Button 
             variant="ghost" 
             size="icon" 
             className="p-0" 
-            onClick={() => setIsCreatePostModalOpen(true)}
+            onClick={() => {
+              // TODO: Implementar modal de criar post para criadores
+              console.log('Abrir modal de criar post');
+            }}
             data-testid="nav-create-post"
           >
             <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
-          </Button>
-        ) : (
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-search">
-            <Plus className="w-[38px] h-[38px] text-[#e71d36]" />
           </Button>
         )}
 
@@ -269,11 +263,7 @@ export const ScreenSearch = (): JSX.Element => {
         </Link>
       </div>
 
-      {/* Create Post Modal */}
-      <CreatePostModal
-        isOpen={isCreatePostModalOpen}
-        onClose={() => setIsCreatePostModalOpen(false)}
-      />
     </div>
+    </UserLayout>
   );
 };

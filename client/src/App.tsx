@@ -12,8 +12,11 @@ import { ScreenChatConversation } from "@/pages/ScreenChatConversation";
 import { ScreenSearch } from "@/pages/ScreenSearch";
 import { ScreenNotifications } from "@/pages/ScreenNotifications";
 import { ScreenProfile } from "@/pages/ScreenProfile";
+import { EditProfilePage } from "@/pages/EditProfilePage";
+import { EditProfileInfoPage } from "@/pages/EditProfileInfoPage";
 import { ScreenSettings } from "@/pages/ScreenSettings";
 import BecomeCreatorPage from "@/pages/BecomeCreatorPage";
+import RegisterCreatorPage from "@/pages/RegisterCreatorPage";
 import { CreatorProfile } from "@/pages/CreatorProfile";
 import { CreatorDashboard } from "@/pages/CreatorDashboard";
 import { useAuth } from "@/hooks/use-auth";
@@ -69,10 +72,13 @@ function Router() {
       <Route path="/search" component={ScreenSearch} />
       <Route path="/notifications" component={ScreenNotifications} />
       <Route path="/profile" component={ScreenProfile} />
+      <Route path="/profile/edit" component={EditProfilePage} />
+      <Route path="/profile/edit/info" component={EditProfileInfoPage} />
       <Route path="/creator/:id" component={CreatorProfile} />
       <Route path="/settings" component={ScreenSettings} />
       <Route path="/settings/*" component={ScreenSettings} />
       <Route path="/become-creator" component={BecomeCreatorPage} />
+      <Route path="/register/creator" component={RegisterCreatorPage} />
       <Route path="/auth" component={AuthPage} />
       
       {/* Public Paid Links Routes */}

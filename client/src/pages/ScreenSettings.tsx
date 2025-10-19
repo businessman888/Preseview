@@ -12,6 +12,7 @@ import { Link, useRoute, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
+import { UserLayout } from "@/components/user/UserLayout";
 
 // Seção: Torne-se criador
 import { BecomeCreatorSection } from "./settings/BecomeCreatorSection";
@@ -85,7 +86,8 @@ export const ScreenSettings = (): JSX.Element => {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-[#fdfdfa]">
+    <UserLayout>
+      <div className="flex flex-col h-screen bg-[#fdfdfa]">
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-white shadow-sm">
         <Link href="/profile">
@@ -117,6 +119,7 @@ export const ScreenSettings = (): JSX.Element => {
           ))}
         </div>
       </div>
-    </div>
+      </div>
+    </UserLayout>
   );
 };

@@ -25,18 +25,154 @@ app.get("/api/users", async (req, res) => {
     try {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
-      const { bio, profileImage, coverImage } = req.body;
+      const { displayName, username, bio, location, profileImage, coverImage } = req.body;
       
       const updatedUser = await storage.updateUserProfile(req.user!.id, {
-        bio: bio !== undefined ? bio : undefined,
-        profileImage: profileImage !== undefined ? profileImage : undefined,
-        coverImage: coverImage !== undefined ? coverImage : undefined,
+        displayName,
+        username,
+        bio: bio || null,
+        location,
+        profileImage,
+        coverImage,
       });
 
       res.json(updatedUser);
     } catch (error: any) {
       console.error("Error updating profile:", error);
       res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
+  });
+
+  // Get user purchases
+  app.get("/api/user/purchases", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const purchases = await storage.getUserPurchases(req.user!.id);
+      res.json(purchases);
+    } catch (error: any) {
+      console.error("Error fetching user purchases:", error);
+      res.status(500).json({ error: "Erro ao buscar compras" });
+    }
+  });
+
+  // Get user likes
+  app.get("/api/user/likes", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const likes = await storage.getUserLikes(req.user!.id);
+      res.json(likes);
+    } catch (error: any) {
+      console.error("Error fetching user likes:", error);
+      res.status(500).json({ error: "Erro ao buscar curtidas" });
+    }
+  });
+
+  // Check username availability
+  app.get("/api/user/check-username", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { username } = req.query;
+      
+      if (!username || typeof username !== 'string') {
+        return res.status(400).json({ error: "Username é obrigatório" });
+      }
+
+      const isAvailable = await (storage as any).isUsernameAvailable(username, req.user!.id);
+      
+      res.json({ available: isAvailable });
+    } catch (error: any) {
+      console.error("Error checking username:", error);
+      res.status(500).json({ error: "Erro ao verificar username" });
+    }
+  });
+
+  // Register as creator
+  app.post("/api/register/creator", async (req, res) => {
+    try {
+      console.log("Register creator request body:", req.body);
+      
+      const { 
+        name,
+        email,
+        password,
+        gender,
+        profileImage,
+        displayName,
+        username,
+        coverImage,
+        bio,
+        subscriptionPrice,
+        verificationStatus
+      } = req.body;
+      
+      // Validate required fields
+      if (!name || !email || !password) {
+        console.log("Missing required fields:", { name: !!name, email: !!email, password: !!password });
+        return res.status(400).json({ error: "Nome, email e senha são obrigatórios" });
+      }
+
+      // Check if email already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        console.log("Email already exists:", email);
+        return res.status(400).json({ error: "Email já está em uso" });
+      }
+
+      // Check if username is provided and available
+      if (username) {
+        const isAvailable = await (storage as any).isUsernameAvailable(username);
+        if (!isAvailable) {
+          console.log("Username already exists:", username);
+          return res.status(400).json({ error: "Username já está em uso" });
+        }
+      }
+
+      console.log("Creating creator account...");
+      
+      // Create creator account
+      const result = await (storage as any).createCreatorAccount({
+        name,
+        email,
+        password,
+        userType: 'creator'
+      }, {
+        gender: gender || null,
+        profileImage: profileImage || null,
+        displayName: displayName || name,
+        username: username || null,
+        coverImage: coverImage || null,
+        bio: bio || null,
+        subscriptionPrice: subscriptionPrice || 0,
+        verificationStatus: verificationStatus || 'pending',
+      });
+
+      console.log("Creator account created successfully:", result.user.id);
+
+      // Auto-login the user after successful registration
+      req.login(result.user, (err) => {
+        if (err) {
+          console.error("Auto-login error:", err);
+          return res.status(500).json({ error: "Erro ao fazer login automático" });
+        }
+        
+        res.json({
+          user: result.user,
+          profile: result.profile,
+          message: "Conta de criador criada com sucesso"
+        });
+      });
+    } catch (error: any) {
+      console.error("Error creating creator account:", error);
+      if (error.message === "Email já está em uso") {
+        return res.status(400).json({ error: error.message });
+      }
+      if (error.message === "Username já está em uso") {
+        return res.status(400).json({ error: error.message });
+      }
+      res.status(500).json({ error: "Erro ao criar conta de criador: " + error.message });
     }
   });
 
@@ -50,12 +186,26 @@ app.get("/api/users", async (req, res) => {
         return res.status(400).json({ error: "Você já é um criador" });
       }
 
-      const { subscriptionPrice, description, categories } = req.body;
+      const { 
+        gender,
+        profileImage,
+        displayName,
+        username,
+        coverImage,
+        bio,
+        subscriptionPrice,
+        verificationStatus
+      } = req.body;
       
       const result = await storage.upgradeToCreator(req.user!.id, {
+        gender: gender || null,
+        profileImage: profileImage || null,
+        displayName: displayName || null,
+        username: username || null,
+        coverImage: coverImage || null,
+        bio: bio || null,
         subscriptionPrice: subscriptionPrice || 0,
-        description: description || null,
-        categories: categories || [],
+        verificationStatus: verificationStatus || 'pending',
       });
 
       res.json(result);
@@ -63,6 +213,9 @@ app.get("/api/users", async (req, res) => {
       console.error("Error upgrading to creator:", error);
       if (error.message === "Usuário não encontrado") {
         return res.status(404).json({ error: error.message });
+      }
+      if (error.message === "Username já está em uso") {
+        return res.status(400).json({ error: error.message });
       }
       res.status(500).json({ error: "Erro ao se tornar criador" });
     }

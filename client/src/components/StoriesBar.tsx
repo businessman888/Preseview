@@ -13,9 +13,10 @@ interface StoryWithCreator extends Story {
 interface StoriesBarProps {
   onAddStory: () => void;
   onViewStory: (stories: StoryWithCreator[], startIndex: number) => void;
+  showAddButton?: boolean;
 }
 
-export function StoriesBar({ onAddStory, onViewStory }: StoriesBarProps) {
+export function StoriesBar({ onAddStory, onViewStory, showAddButton = false }: StoriesBarProps) {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { data: stories = [], isLoading } = useQuery<StoryWithCreator[]>({
     queryKey: ["/api/stories"],
@@ -55,16 +56,18 @@ export function StoriesBar({ onAddStory, onViewStory }: StoriesBarProps) {
 
   return (
     <div className="flex gap-3 p-4 overflow-x-auto scrollbar-hide bg-white dark:bg-gray-900 border-b dark:border-gray-800" data-testid="stories-bar">
-      <button
-        onClick={onAddStory}
-        className="flex flex-col items-center gap-2 flex-shrink-0"
-        data-testid="button-add-story"
-      >
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
-          <Plus className="w-8 h-8 text-white" />
-        </div>
-        <span className="text-xs text-gray-700 dark:text-gray-300">Adicionar</span>
-      </button>
+      {showAddButton && (
+        <button
+          onClick={onAddStory}
+          className="flex flex-col items-center gap-2 flex-shrink-0"
+          data-testid="button-add-story"
+        >
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+            <Plus className="w-8 h-8 text-white" />
+          </div>
+          <span className="text-xs text-gray-700 dark:text-gray-300">Adicionar</span>
+        </button>
+      )}
 
       {storyGroups.map((group, index) => (
         <button

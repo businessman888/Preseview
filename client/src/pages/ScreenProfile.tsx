@@ -1,472 +1,107 @@
-import {
-  ArrowLeftIcon,
-  BellIcon,
-  HomeIcon,
-  MessageCircleIcon,
-  Plus,
-  UserIcon,
-  SettingsIcon,
-  ShareIcon,
-  GridIcon,
-  PlayIcon,
-  BookmarkIcon,
-  ImageIcon,
-  Edit2Icon,
-  Trash2Icon,
-  MoreVerticalIcon,
-  BarChart3Icon,
-  MegaphoneIcon,
-} from "lucide-react";
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { useCreatorPosts } from "@/hooks/use-creator-posts";
-import { CreatePostModal } from "@/components/CreatePostModal";
-import { EditProfileModal } from "@/components/EditProfileModal";
-import { InsightsModal } from "@/components/InsightsModal";
-import { PromotionModal } from "@/components/PromotionModal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { UserLayout } from "@/components/user/UserLayout";
+import { PurchasedGrid } from "@/components/user/PurchasedGrid";
+import { LikedGrid } from "@/components/user/LikedGrid";
+import { ProfileSuggestedCreators } from "@/components/user/ProfileSuggestedCreators";
 
 export const ScreenProfile = (): JSX.Element => {
   const { user } = useAuth();
-  const { posts, imagePosts, videoPosts, deletePost, isDeleting } = useCreatorPosts(user?.id);
-  const [activeTab, setActiveTab] = useState("posts");
-  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
-  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-  const [isInsightsModalOpen, setIsInsightsModalOpen] = useState(false);
-  const [isPromotionModalOpen, setIsPromotionModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<any>(null);
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [postToDelete, setPostToDelete] = useState<number | null>(null);
-
-  const getDisplayPosts = () => {
-    switch (activeTab) {
-      case "videos":
-        return videoPosts;
-      case "images":
-        return imagePosts;
-      default:
-        return posts;
-    }
-  };
-
-  const handleViewPost = (post: any) => {
-    setSelectedPost(post);
-    setIsViewDialogOpen(true);
-  };
-
-  const handleDeleteClick = (postId: number) => {
-    setPostToDelete(postId);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (postToDelete) {
-      deletePost(postToDelete);
-      setIsDeleteDialogOpen(false);
-      setPostToDelete(null);
-    }
-  };
-
-  const displayPosts = getDisplayPosts();
+  const [activeTab, setActiveTab] = useState("purchased");
 
   return (
-    <div className="flex flex-col h-screen bg-[#fdfdfa]">
-      <div className="flex-1 overflow-y-auto pb-20">
-        {/* Banner with Settings Icon */}
-        <div className="relative h-32 bg-gradient-to-r from-gray-200 to-gray-300">
-          <Link href="/settings">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-4 right-4 bg-white/80 hover:bg-white"
-              data-testid="button-settings"
-            >
-              <SettingsIcon className="w-5 h-5 text-[#5d5b5b]" />
-            </Button>
-          </Link>
-        </div>
-
-        {/* Profile Info */}
-        <div className="px-6 pb-6 bg-white">
-          {/* Profile Picture - Circular on Left */}
-          <div className="flex -mt-16 mb-4">
-            <Avatar className="w-32 h-32 border-4 border-white">
-              <AvatarImage
-                src={user?.profileImage || "/figmaAssets/ellipse-19.png"}
-                alt={user?.displayName || "Você"}
-                className="object-cover"
-              />
-              <AvatarFallback className="text-2xl">{user?.displayName?.charAt(0) || "V"}</AvatarFallback>
-            </Avatar>
-          </div>
-
-          {/* Name and Username */}
-          <div className="mb-3">
-            <div className="flex items-center space-x-2 mb-1">
-              <h2 className="[font-family:'Inria_Sans',Helvetica] font-bold text-[#5d5b5b] text-xl">
-                {user?.displayName || "Você"}
-              </h2>
-              {user?.isVerified && (
-                <img
-                  className="w-5 h-5"
-                  alt="Verified"
-                  src="/figmaAssets/verified.png"
-                />
-              )}
-            </div>
-            <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#8b8585] text-sm">
-              @{user?.username || "seuusername"}
-            </p>
-          </div>
-
-          {/* Stats Icons */}
-          <div className="flex items-center space-x-6 mb-4">
-            <div 
-              className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
-              data-testid="stats-videos"
-            >
-              <PlayIcon className="w-4 h-4 text-[#5d5b5b]" />
-              <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
-                {videoPosts.length}
-              </span>
-            </div>
-            <div 
-              className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
-              data-testid="stats-images"
-            >
-              <ImageIcon className="w-4 h-4 text-[#5d5b5b]" />
-              <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
-                {imagePosts.length}
-              </span>
-            </div>
-            <div 
-              className="flex items-center space-x-1 cursor-pointer hover:opacity-80 transition-opacity"
-              data-testid="stats-likes"
-            >
-              <span className="text-[#5d5b5b] text-sm">❤️</span>
-              <span className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm">
-                {posts.reduce((acc, post) => acc + (post.likesCount || 0), 0)}
-              </span>
-            </div>
-          </div>
-
-          <p className="[font-family:'Inria_Sans',Helvetica] font-normal text-[#5d5b5b] text-sm mb-4">
-            {user?.bio || "Bem-vindo ao meu perfil! Compartilhando momentos especiais da minha vida ✨"}
-          </p>
-
-          <div className="flex gap-2">
-            <Button
-              className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
-              onClick={() => setIsEditProfileModalOpen(true)}
-              data-testid="button-edit-profile"
-            >
-              Editar perfil
-            </Button>
-            
-            <Button
-              className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
-              onClick={() => setIsInsightsModalOpen(true)}
-              data-testid="button-insights"
-            >
-              Insights
-            </Button>
-
-            <Button
-              className="flex-1 bg-white hover:bg-gray-100 text-[#5d5b5b] border border-gray-300 rounded-lg"
-              onClick={() => setIsPromotionModalOpen(true)}
-              data-testid="button-promotion"
-            >
-              Promotion
-            </Button>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex bg-white border-b border-[#cccccc]">
-          <Button
-            variant="ghost"
-            className={`flex-1 py-3 ${
-              activeTab === "posts"
-                ? "border-b-2 border-[#e71d36] text-[#e71d36]"
-                : "text-[#8b8585]"
-            }`}
-            onClick={() => setActiveTab("posts")}
-            data-testid="tab-posts"
-          >
-            <GridIcon className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            className={`flex-1 py-3 ${
-              activeTab === "images"
-                ? "border-b-2 border-[#e71d36] text-[#e71d36]"
-                : "text-[#8b8585]"
-            }`}
-            onClick={() => setActiveTab("images")}
-            data-testid="tab-images"
-          >
-            <ImageIcon className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            className={`flex-1 py-3 ${
-              activeTab === "videos"
-                ? "border-b-2 border-[#e71d36] text-[#e71d36]"
-                : "text-[#8b8585]"
-            }`}
-            onClick={() => setActiveTab("videos")}
-            data-testid="tab-videos"
-          >
-            <PlayIcon className="w-5 h-5" />
-          </Button>
-        </div>
-
-        {/* Posts Grid */}
-        <div className="p-4">
-          {displayPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-[#8b8585] text-lg mb-4">
-                {activeTab === "videos" 
-                  ? "Nenhum vídeo publicado ainda" 
-                  : activeTab === "images"
-                  ? "Nenhuma imagem publicada ainda"
-                  : "Nenhum post publicado ainda"}
-              </p>
-              {user?.userType === 'creator' && (
-                <Button
-                  onClick={() => setIsCreatePostModalOpen(true)}
-                  className="bg-[#e71d36] hover:bg-[#c41a2f] text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Criar primeiro post
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 gap-2">
-              {displayPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden group"
-                  data-testid={`post-${post.id}`}
-                >
-                  {post.mediaUrls && post.mediaUrls.length > 0 ? (
-                    <img
-                      src={post.mediaUrls[0]}
-                      alt={post.title}
-                      className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => handleViewPost(post)}
-                    />
-                  ) : (
-                    <div 
-                      className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-400 cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => handleViewPost(post)}
-                    >
-                      <p className="text-white text-center p-2 text-sm line-clamp-3">
-                        {post.title}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {post.mediaUrls && post.mediaUrls.some((url: string) => url.match(/\.(mp4|webm|ogg|mov)$/i)) && (
-                    <div className="absolute top-2 right-2">
-                      <PlayIcon className="w-4 h-4 text-white drop-shadow-lg" />
-                    </div>
-                  )}
-
-                  {/* Management options */}
-                  {user?.userType === 'creator' && (
-                    <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="secondary"
-                            size="icon"
-                            className="h-8 w-8 bg-white/90 hover:bg-white"
-                          >
-                            <MoreVerticalIcon className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => handleViewPost(post)}>
-                            <GridIcon className="mr-2 h-4 w-4" />
-                            Visualizar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleDeleteClick(post.id)}
-                            className="text-red-600"
-                          >
-                            <Trash2Icon className="mr-2 h-4 w-4" />
-                            Deletar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  )}
-
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
-                    <div className="flex items-center space-x-2 text-xs">
-                      <span>❤️ {post.likesCount || 0}</span>
-                      <span>💬 {post.commentsCount || 0}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="flex w-full items-center justify-center gap-[30px] px-[5px] py-2.5 fixed bottom-0 left-0 bg-white rounded-[30px_30px_0px_0px] overflow-hidden shadow-[3px_4px_4px_#00000040]">
-        <Link href="/">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-home">
-            <HomeIcon className="w-[43px] h-9 text-[#5d5b5b]" />
-          </Button>
-        </Link>
-
-        <Link href="/messages">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-messages">
-            <MessageCircleIcon className="w-[38px] h-[38px] text-[#5d5b5b]" />
-          </Button>
-        </Link>
-
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="p-0" 
-          onClick={() => setIsCreatePostModalOpen(true)}
-          data-testid="nav-create-post"
-        >
-          <Plus className="w-[38px] h-[38px] text-[#5d5b5b]" />
-        </Button>
-
-        <Link href="/notifications">
-          <Button variant="ghost" size="icon" className="p-0" data-testid="nav-notifications">
-            <BellIcon className="w-[43px] h-[43px] text-[#5d5b5b]" />
-          </Button>
-        </Link>
-
-        <Button variant="ghost" size="icon" className="p-0" data-testid="nav-profile">
-          <UserIcon className="w-[50px] h-[49px] text-[#e71d36]" />
-        </Button>
-      </div>
-
-      {/* Create Post Modal */}
-      <CreatePostModal
-        isOpen={isCreatePostModalOpen}
-        onClose={() => setIsCreatePostModalOpen(false)}
-      />
-
-      {/* Edit Profile Modal */}
-      <EditProfileModal
-        isOpen={isEditProfileModalOpen}
-        onClose={() => setIsEditProfileModalOpen(false)}
-      />
-
-      {/* Insights Modal */}
-      <InsightsModal
-        isOpen={isInsightsModalOpen}
-        onClose={() => setIsInsightsModalOpen(false)}
-      />
-
-      {/* Promotion Modal */}
-      <PromotionModal
-        isOpen={isPromotionModalOpen}
-        onClose={() => setIsPromotionModalOpen(false)}
-      />
-
-      {/* View Post Dialog */}
-      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{selectedPost?.title}</DialogTitle>
-            <DialogDescription>
-              {selectedPost?.isExclusive && (
-                <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full mr-2">
-                  Conteúdo Exclusivo
-                </span>
-              )}
-              {selectedPost?.tags?.map((tag: string) => (
-                <span key={tag} className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mr-1">
-                  #{tag}
-                </span>
-              ))}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {selectedPost?.mediaUrls && selectedPost.mediaUrls.length > 0 && (
-              <div className="space-y-2">
-                {selectedPost.mediaUrls.map((url: string, index: number) => (
-                  <div key={index} className="rounded-lg overflow-hidden">
-                    {url.match(/\.(mp4|webm|ogg|mov)$/i) ? (
-                      <video src={url} controls className="w-full" />
-                    ) : (
-                      <img src={url} alt={`Mídia ${index + 1}`} className="w-full" />
-                    )}
-                  </div>
-                ))}
+    <UserLayout>
+      <div className="min-h-screen bg-gray-50 dark:bg-black">
+        {/* Main Content Area */}
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex gap-6">
+            {/* Left Column - Profile Content */}
+            <div className="flex-1 max-w-2xl">
+              {/* Banner */}
+              <div className="relative h-32 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 rounded-t-lg">
+                {/* Banner content */}
               </div>
-            )}
-            <p className="text-sm text-gray-700">{selectedPost?.content}</p>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>❤️ {selectedPost?.likesCount || 0} curtidas</span>
-              <span>💬 {selectedPost?.commentsCount || 0} comentários</span>
-              <span>👁️ {selectedPost?.viewsCount || 0} visualizações</span>
+
+              {/* Profile Info */}
+              <div className="bg-white dark:bg-gray-900 rounded-b-lg shadow-sm">
+                {/* Profile Picture */}
+                <div className="flex justify-center -mt-16 mb-4">
+                  <Avatar className="w-32 h-32 border-4 border-white dark:border-gray-900">
+                    <AvatarImage src={user?.profilePicture || ""} />
+                    <AvatarFallback className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-2xl">
+                      {user?.username?.[0]?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+
+                {/* Name and Username */}
+                <div className="text-center mb-4">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {user?.displayName || user?.username || "Usuário"}
+                  </h1>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    @{user?.username || "username"}
+                  </p>
+                </div>
+
+                {/* Edit Profile Button */}
+                <div className="flex justify-center mb-6">
+                  <Link href="/profile/edit">
+                    <Button className="bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 rounded-lg px-6 py-2">
+                      Editar perfil
+                    </Button>
+                  </Link>
+                </div>
+
+                {/* Tab Navigation */}
+                <div className="flex border-b border-gray-200 dark:border-gray-700">
+                  <Button
+                    variant="ghost"
+                    className={`flex-1 py-3 rounded-none ${
+                      activeTab === "purchased"
+                        ? "border-b-2 border-pink-500 text-pink-600 dark:text-pink-400"
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                    onClick={() => setActiveTab("purchased")}
+                    data-testid="tab-purchased"
+                  >
+                    Purchased
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className={`flex-1 py-3 rounded-none ${
+                      activeTab === "liked"
+                        ? "border-b-2 border-pink-500 text-pink-600 dark:text-pink-400"
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                    onClick={() => setActiveTab("liked")}
+                    data-testid="tab-liked"
+                  >
+                    Liked
+                  </Button>
+                </div>
+
+                {/* Content Grid */}
+                <div className="p-4">
+                  {activeTab === "purchased" ? (
+                    <PurchasedGrid />
+                  ) : (
+                    <LikedGrid />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Suggested Creators (Desktop only) */}
+            <div className="hidden lg:block w-80">
+              <ProfileSuggestedCreators />
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deletando..." : "Deletar"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+        </div>
+      </div>
+    </UserLayout>
   );
 };
